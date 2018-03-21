@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Accounts{% endblock %}
+
+{% block page_title %}All Account{% endblock %}
+
+
+{% block content %}
+<div class="row justify-content-center">
+	<div class="col-md-12">
+		{% if messages %}
+		{% for message in messages %}
+		<div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+			{{ message }}
+		</div>
+		{% endfor %}
+		{% endif %}
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			<a href="{% url 'authentication:register_user' %}" class="pull-right btn btn-primary"><i class="mdi mdi-plus"></i> Account</a>
+			<h3>Account details</h3>
+			</div>
+			<div class="panel-body">
+				<table class="table table-bordered">
+					<thead>
+						<th>Username</th>
+						<th>Email</th>
+						<th>Usertype</th>
+						<th>Joined on</th>
+						<th>Last login</th>
+						<th>Action</th>
+					</thead>
+					<tbody>
+					{% for user in users %}
+						<tr>
+							<td><a href="#">{{ user.user.username }}</a></td>
+							<td>{{ user.user.email }}</td>
+							<td>{{ user.usertype }}</td>
+							<td>{{ user.user.date_joined }}</td>
+							<td>{{ user.user.last_login }}</td>
+							<td>
+								<a href="#"><i class="fa fa-edit" style="color:#4ac18e;"></i></a> &nbsp
+								{% if user.is_active %}
+								<a href="{% url 'authentication:deactivate-account' user.pk %}" onclick="return confirm('This action is irreversible. Are you sure?');"><i class="fa fa-hand-stop-o"></i></a> &nbsp
+								{% else %}
+								<a href="{% url 'authentication:activate-account' user.pk %}"><i class="fa fa-thumbs-o-up" style="color:#4ac18e;"></i></a>
+								{% endif %}
+								<a href="{% url 'authentication:delete-account' user.pk %}" onclick="return confirm('This action is irreversible. Are you sure?');"><i class="fa fa-trash-o" style="color:red;"></i></a> &nbsp
+							</td>
+						</tr>
+					{% empty %}
+						<tr>
+							<td class="text-center" colspan="4"><h3>No accounts to display!!</h3></td>
+						</tr>
+					{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

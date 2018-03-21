@@ -1,0 +1,272 @@
+{% extends "base.html" %}
+
+{% block title %}Record Facility Visit{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Facility Visit Details </h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'distribution:nets_distribution' %}">Visits Dashboard</a></li>
+            <li class="active">New visit</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="row">
+    <div class="col-md-12">
+        {{ totalnets }}
+    </div>
+</div>
+<!-- Row -->
+<div class="row">
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+    <div class="col-md-4">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Visit details</h3>
+            <form class="form-horizontal" method="POST" action="{% url 'visits:record_visit' %}">{% csrf_token %}
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Facility:</label>
+                    <input type="text" class="form-control" name="facility" id="all-facilities" value="{{ data.id }}">
+                </div>
+                <p><label for="recipient-name" class="control-label">Visit date:</label></p>
+                <div class="input-group date" data-provide="datepicker">
+                    <input type="text" name="visit_date" class="form-control tarehe" placeholder="yyyy-mm-dd">
+                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Visit details</h3>
+                <p>Reports submission for last 3 months:</p>
+                <div class="form-group">
+                    <label class="radio-inline">
+                        <input type="radio" name="reporting_frequency" value="1">1
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="reporting_frequency" value="2">2
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="reporting_frequency" value="3">3
+                    </label>
+                </div>
+                <p>Ordered last quarter?:</p>
+                <div class="form-group">
+                    <label class="radio-inline"><input type="radio" name="quarter_order" value="1">Yes</label>
+                    <label class="radio-inline"><input type="radio" name="quarter_order" value="0">No</label>
+                </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Ordering challenges</h3>
+                <p>Solve ordering challenges:</p>
+                <div class="form-group">
+                    <label class="radio-inline">
+                        <input type="radio" name="challenge_solver" value="OJT">OJT
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="challenge_solver" value="N/A">N/A
+                    </label>
+                </div>
+                <p>OJT on LLIN LMIS done:</p>
+                <div class="form-group">
+                    <label class="radio-inline"><input type="radio" name="ojt_performed" value="1">Yes</label>
+                    <label class="radio-inline"><input type="radio" name="ojt_performed" value="0">No</label>
+                </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Policy compliance</h3>
+                <p>Compliant with issuance policy:</p>
+                <div class="form-group">
+                    <label class="radio-inline">
+                        <input type="radio" name="policy_compliance" value="1" id="compliance-yes" onchange="hideNonComplianceReason();">Yes
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="policy_compliance" id="compliance-no" value="0" onchange="hideNonComplianceReason();">No
+                    </label>
+                </div>
+                <div class="form-group" id="noncompliance-reason" style="display: none;">
+                    <label for="recipient-name" class="control-label">Reason for issuance to non-target group:</label>
+                    <textarea class="form-control" rows="5" name="non_compliance_reason"></textarea>
+                </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">ANC Missed opportunities</h3>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">New ANC in MOH-711:</label>
+                    <input type="text" class="form-control" name="new_anc_moh711">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Nets in MOH-711:</label>
+                    <input type="text" class="form-control" name="nets_anc_moh711">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Nets in FNPRC:</label>
+                    <input type="text" class="form-control" name="nets_anc_fnprc">
+                </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">CWC Missed opportunities</h3>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">OPV1 in MOH-710:</label>
+                    <input type="text" class="form-control" name="new_cwc_moh710">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Nets in MOH-711:</label>
+                    <input type="text" class="form-control" name="nets_cwc_moh711">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Nets in FNPRC:</label>
+                    <input type="text" class="form-control" name="nets_cwc_fnprc">
+                </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Commodity Accountability</h3>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Book balance:</label>
+                    <input type="text" class="form-control" name="book_bal" id="book-bal">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Physical count:</label>
+                    <input type="text" class="form-control" name="physical_count" id="physical-count" onblur="hideBalVarianceReason();">
+                </div>
+                <div class="form-group" id="bal-variance-reason" style="display: none;">
+                    <label for="recipient-name" class="control-label">Reason for variance:</label>
+                    <textarea class="form-control" rows="5" name="bal_variance_reason"></textarea>
+                </div>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Transporter Monitoring</h3>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">last delivery quantity:</label>
+                    <input type="text" class="form-control" name="ld_quantity">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Last delivery invoice:</label>
+                    <input type="text" class="form-control" name="ld_invoice_no">
+                </div>
+                <div class="form-group">
+                    <p><label for="recipient-name" class="control-label">Last delivery date:</label></p>
+                    <div id="first-last" class="input-group date" data-provide="datepicker">
+                        <input type="text" class="form-control tarehe" name="ld_date">
+                        <div class="input-group-addon">
+                            <span class="glyphicon glyphicon-th"></span>
+                        </div>
+                    </div>
+                </div>
+                
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Transporter Monitoring</h3>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">2nd last delivery quantity:</label>
+                    <input type="text" class="form-control" name="lld_quantity">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">2nd Last delivery invoice:</label>
+                    <input type="text" class="form-control" name="lld_invoice_no">
+                </div>
+                <p><label for="recipient-name" class="control-label">2nd Last delivery date:</label></p>
+                <div id="second-last" class="input-group date" data-provide="datepicker">
+                    <input type="text" class="form-control tarehe" name="lld_date">
+                    <div class="input-group-addon">
+                        <span class="glyphicon glyphicon-th"></span>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Beneficiary details confirmable</h3>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">MOH 511(CWC):</label>
+                    <input type="text" class="form-control" name="confirmable_cwc">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">MOH 405(ANC):</label>
+                    <input type="text" class="form-control" name="confirmable_anc">
+                </div>
+        </div>
+    </div>
+    <div class="col-md-12">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Storage details</h3>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">How are the nets stored:</label>
+                    <input type="text" class="form-control" name="nets_stored_in">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Type of store:</label>
+                    <input type="text" class="form-control" name="store_type">
+                </div>
+                <div class="form-group">
+                    <p><b>Stock control card availability</b></p>
+                    <label class="radio-inline">
+                        <input type="radio" name="stock_control_card" value="1">Yes
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="stock_control_card" value="0">No
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Access to store:</label>
+                    <input type="text" class="form-control" name="store_access">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Risk of rodents:</label>
+                    <input type="text" class="form-control" name="pests_risk">
+                </div>
+                <p><b>Fire prevention mechanisms:</b></p>
+                <div class="form-group">
+                    <label class="radio-inline">
+                        <input type="radio" name="fire_prevention" id="fire-prevention" value="1" onchange="showFirePreventionMech();">Yes
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="fire_prevention" id="no-fire-prevention" value="0" onchange="showFirePreventionMech();">No
+                    </label>
+                </div>
+                <div class="form-group" id="fire-prevention-mechanism" style="display: none;">
+                    <label for="recipient-name" class="control-label">Type of fire prevention mechanism:</label>
+                    <input type="text" class="form-control" name="fire_prevention_mechanism">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Other remarks:</label>
+                    <textarea class="form-control" rows="8" name="other_remarks"></textarea>
+                </div>
+        </div>
+        <div class="form-btns">
+          <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Submit</button>
+          <button type="reset" class="btn btn-inverse waves-effect waves-light">Cancel</button>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+{% endblock %}

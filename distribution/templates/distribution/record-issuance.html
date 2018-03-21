@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Record Facility Nets Issuance{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Facility net issuance</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'distribution:nets_distribution' %}">Distribution Dashboard</a></li>
+            <li class="active">New issue</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- Row -->
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Issuance details</h3>
+            <form class="form-horizontal" method="POST" action="{% url 'distribution:issue_nets' %}">{% csrf_token %}
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Facility:</label>
+                    <input type="text" class="form-control" name="facility" id="all-facilities" value="{{ data.id }}">
+                    <!-- <select name="facility" class="form-control selectpicker" id="item-search" data-live-search="true" required>
+                      <option value="" disabled selected>--Pick facility--</option>
+                      {% for facility in facilities %}
+                      <option value="{{ facility.pk }}">{{ facility.facility_name }}</option>
+                      {% endfor %}
+                    </select> -->
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Invoice No:</label>
+                    <input type="text" class="form-control" name="invoice_no">
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Nets quantity:</label>
+                    <input type="text" class="form-control" name="nets_issued">
+                </div>
+                <p><label for="recipient-name" class="control-label">Date issued:</label></p>
+                <div class="input-group date" data-provide="datepicker">
+                    <input type="text" name="date_issued" class="form-control" placeholder="yyyy-mm-dd">
+                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                </div>
+                <div class="form-btns">
+                    <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Submit</button>
+                    <button type="reset" class="btn btn-inverse waves-effect waves-light">Cancel</button>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+{% endblock %}

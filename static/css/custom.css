@@ -1,0 +1,32 @@
+.ui-autocomplete{
+	top: 260px !important;
+	left: 260px !important;
+	z-index: 2 !important;
+	display: none;
+}
+
+.datepicker{
+	top: 150px;
+}
+
+.form-btns{
+	margin-top: 3%;
+	padding: 10px;
+}
+
+.top-bar-btns{
+	text-align: right;
+	padding: 10px;
+}
+
+#county-facilities-graph{
+	height: 400px;
+}
+
+h4.facility-detail{
+	font-weight: 500;
+}
+
+.facility-detail span{
+	font-weight: 100;
+}

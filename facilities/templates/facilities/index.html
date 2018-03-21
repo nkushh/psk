@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Home{% endblock %}
+
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Dashboard</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li class="active">Dashboard</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!--row -->
+<div class="row">
+    <div class="col-md-3 col-sm-6">
+        <div class="white-box">
+            <div class="r-icon-stats">
+                <i class="fa fa-hospital-o bg-megna"></i>
+                <div class="bodystate">
+                    <h4>{{ total_facilities | intcomma }}</h4>
+                    <span class="text-muted">Total Facilities</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="white-box">
+            <div class="r-icon-stats">
+                <i class="ti-shopping-cart bg-info"></i>
+                <div class="bodystate">
+                    <h4>{{ nets_distributed.distributed_nets | intcomma }}</h4>
+                    <span class="text-muted">Distributed</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="white-box">
+            <div class="r-icon-stats">
+                <i class="ti-wallet bg-inverse"></i>
+                <div class="bodystate">
+                    <h4>{{ nets_issued.issued_nets | intcomma }}</h4>
+                    <span class="text-muted">Issued</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="white-box">
+            <div class="r-icon-stats">
+                <i class="ti-wallet bg-success"></i>
+                <div class="bodystate">
+                    <h4>{{ accounts }}</h4>
+                    <span class="text-muted">Accounts</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--/row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="white-box">
+            <h3 class="box-title">County Facilities Count</h3>
+            <div id="county-facilities-graph"></div>
+        </div>
+        
+    </div>
+</div>
+<!-- .row -->
+<div class="row">
+    <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="white-box">
+            <h3 class="box-title"><small class="pull-right m-t-10 text-success"><i class="fa fa-sort-asc"></i> 18% High then last month</small> New Facilities</h3>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <h6>Overall</h6>
+                    <b>80.40%</b></div>
+                <div class="stat-item">
+                    <h6>Montly</h6>
+                    <b>15.40%</b></div>
+                <div class="stat-item">
+                    <h6>Day</h6>
+                    <b>5.50%</b></div>
+            </div>
+            <div id="sparkline8" class="minus-mar"></div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="white-box">
+            <h3 class="box-title"><small class="pull-right m-t-10 text-danger"><i class="fa fa-sort-desc"></i> 18% less then last month</small>ANC Numbers</h3>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <h6>Overall</h6>
+                    <b>80.40%</b></div>
+                <div class="stat-item">
+                    <h6>Montly</h6>
+                    <b>15.40%</b></div>
+                <div class="stat-item">
+                    <h6>Day</h6>
+                    <b>5.50%</b></div>
+            </div>
+            <div id="sparkline9" class="minus-mar"></div>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="white-box">
+            <h3 class="box-title"><small class="pull-right m-t-10 text-success"><i class="fa fa-sort-asc"></i> 18% High then last month</small>CWC Numbers</h3>
+            <div class="stats-row">
+                <div class="stat-item">
+                    <h6>Overall Growth</h6>
+                    <b>80.40%</b></div>
+                <div class="stat-item">
+                    <h6>Montly</h6>
+                    <b>15.40%</b></div>
+                <div class="stat-item">
+                    <h6>Day</h6>
+                    <b>5.50%</b></div>
+            </div>
+            <div id="sparkline10" class="minus-mar"></div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+{% endblock %}

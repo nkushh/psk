@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Facility details{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Facility Details</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'facilities:facilities' %}">Facilities</a></li>
+            <li class="active">Facility details</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+
+<div class="row">
+	<div class="col-md-4">
+		<div class="white-box">
+			<h3 class="box-title">Basic Info</h3>
+			<h4 class="facility-detail">Name: <span>{{ facility.facility_name }}</span></h4>
+			<h4 class="facility-detail">MFL Code: <span>{{ facility.mfl_code }}</span></h4>
+			<h4 class="facility-detail">Epidemiological Zone: <span>{{ facility.epidemiological_zone }}</span></h4>
+			<h4 class="facility-detail">County: <span>{{ facility.county }}</span></h4>
+			<h4 class="facility-detail">Sub-county: <span>{{ facility.sub_county }}</span></h4>
+			<h4 class="facility-detail">Ownership: <span>{{ facility.facility_ownership }}</span></h4>
+		</div>
+	</div>
+	<div class="col-md-8">
+		<div class="white-box">
+				<h3 class="facility-detail">Recent Net Deliveries</h3>
+				<div class="responsive-table">
+					<table class="table">
+						<thead>
+							<th>Invoice No.</th>
+							<th>Nets delivered</th>
+							<th>Date delivered</th>
+						</thead>
+						<tbody>
+							{% for delivered in nets_delivered %}
+							<tr>
+								<td>{% if delivered.invoice_no %}{{ delivered.invoice_no }}{% else %}N/A{% endif %}</td>
+								<td>{{ delivered.nets_issued }}</td>
+								<td>{{ delivered.date_issued }}</td>
+							</tr>
+							{% empty %}
+							<tr>
+								<td colspan="3" class="text-center"><h3 class="empty-objects">No data on nets supplied to facility!</h3></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			<!-- End row -->
+			<!-- Start row -->
+				<h3 class="facility-detail">Recent Nets Issued</h3>
+				<div class="responsive-table">
+					<table class="table">
+						<thead>
+							<th>Month</th>
+							<th>Year</th>
+							<th>CWC</th>
+							<th>ANC</th>
+							<th>Total nets</th>
+						</thead>
+						<tbody>
+							{% for issued in nets_issued %}
+							<tr>
+								<td>{{ issued.dist_month }}</td>
+								<td>{{ issued.dist_year }}</td>
+								<td>{{ issued.cwc_nets }}</td>
+								<td>{{ issued.anc_nets }}</td>
+								<td>{{ issued.total_nets }}</td>
+							</tr>
+							{% empty %}
+							<tr>
+								<td colspan="5" class="text-center"><h3 class="empty-objects">No data on nets issued!</h3></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			<!-- End row -->
+			<!-- Start row -->
+			<div class="row">
+				<h3 class="facility-detail">Recent Facility Visits</h3>
+				<div class="responsive-table">
+					<table class="table">
+						<thead>
+							<th>Visit date</th>
+                            <th>ANC MOs</th>
+                            <th>CWC MOs</th>
+                            <th>Nets Variance</th>
+                            <th>Stock status</th>
+						</thead>
+						<tbody>
+							{% for visit in visits %}
+							<tr>
+								<td>{{ visit.visit_date }}</td>
+	                            <td class="text-center">{{ visit.nets_anc_variance }}</td>
+	                            <td class="text-center">{{ visit.nets_cwc_variance }}</td>
+	                            <td class="text-center">{{ visit.balance_variance }}</td>
+	                            <td class="text-center">{{ visit.months_of_stock | floatformat:2 }}</td>
+							</tr>
+							{% empty %}
+							<tr>
+								<td colspan="5" class="text-center"><h3 class="empty-objects">No data on facility visits!</h3></td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<!-- End row -->
+			
+		</div>
+	</div>
+</div>
+{% endblock %}

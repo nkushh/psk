@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Facilities{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Facilities Registered</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="">Facilities</a></li>
+            <li class="active">Facility list</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a class="btn btn-success" href="{% url 'distribution:record_distribution' %}"><i class="fa fa-plus"></i> Facility by county</a>
+            <a class="btn btn-primary" href="{% url 'distribution:record_distribution' %}"><i class="fa fa-plus"></i> New facility</a>
+        </div>
+    </div>
+</div>
+<!-- /row -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Facility List</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>MFL #</th>
+                            <th>Facility</th>
+                            <th>County</th>
+                            <th>Sub-county</th>
+                            <th>Ownership</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    	{% for facility in facilities %}
+                        <tr>
+                            <td>{{ facility.mfl_code }}</td>
+                            <td><a href="{% url 'facilities:facility_details' facility.pk %}">{{ facility.facility_name }}</a></td>
+                            <td>{{ facility.county }}</td>
+                            <td>{{ facility.sub_county }}</td>
+                            <td>
+                            	<span class="label {% if facility.facility_ownership == 'Public' %}label-danger
+                            	{% elif  facility.facility_ownership == 'FBO' %}label-success
+                            	{% else %}label-primary{% endif %}">
+                            		{{ facility.facility_ownership }}
+                        		</span> 
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center"><h3>No Facilities to display</h3></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<!-- /.row -->
+{% endblock %}

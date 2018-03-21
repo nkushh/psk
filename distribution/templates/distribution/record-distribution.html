@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Record Facility Distribution{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Facility net distribution</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'distribution:nets_distribution' %}">Distribution Dashboard</a></li>
+            <li class="active">New record</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- Row -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Distribution details</h3>
+            <form class="form-horizontal" method="POST" action="{% url 'distribution:record_distribution' %}">{% csrf_token %}
+                <div class="form-group ui-widget">
+                    <label for="recipient-name" class="control-label">Facility:</label>
+                    <input type="text" class="form-control" name="facility" id="all-facilities">
+                    <!-- <select name="facility" class="form-control selectpicker" id="item-search" data-live-search="true" required>
+                      <option value="" disabled selected>--Pick facility--</option>
+                      {% for facility in facilities %}
+                      <option value="{{ facility.pk }}">{{ facility.facility_name }}</option>
+                      {% endfor %}
+                    </select> -->
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Month:</label>
+                    <select name="dist_month" class="form-control" required>
+                      <option value="" disabled selected>--Pick month--</option>
+                      <option value="January">January</option>
+                      <option value="February">February</option>
+                      <option value="March">March</option>
+                      <option value="April">April</option>
+                      <option value="May">May</option>
+                      <option value="June">June</option>
+                      <option value="July">July</option>
+                      <option value="August">August</option>
+                      <option value="September">September</option>
+                      <option value="October">October</option>
+                      <option value="November">November</option>
+                      <option value="December">December</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="recipient-name" class="control-label">Year:</label>
+                    <select name="dist_year" class="form-control selectpicker" id="item-search" data-live-search="true" required>
+                      <option value="" disabled selected>--Pick year--</option>
+                      {% for mwaka in miaka %}
+                      <option value="{{ mwaka }}">{{ mwaka }}</option>
+                      {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">Nets to CWC</label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" name="cwc_nets" placeholder="nets issued to CWC" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">Nets to ANC</label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" name="anc_nets" placeholder="Nets issued to ANC" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">Nets to non-target</label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" name="others_nets" placeholder="Nets issued to non-target group">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">Nets Balance B/F</label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" name="bal_bf" placeholder="Nets balance brought forward" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-md-12">Nets Balance C/F</label>
+                    <div class="col-md-12">
+                        <input type="text" class="form-control" name="bal_cf" placeholder="Nets balance carried forward" required>
+                    </div>
+                </div>
+                <div class="form-btns">
+                  <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Submit</button>
+                  <button type="reset" class="btn btn-inverse waves-effect waves-light">Cancel</button>
+                </div>
+                
+            </form>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+{% endblock %}
