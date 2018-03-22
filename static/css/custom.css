@@ -5,8 +5,13 @@
 	display: none;
 }
 
+form .tarehe{
+	position: relative !important;
+}
+
 .datepicker{
-	top: 150px;
+	top: 3%;
+	position: absolute !important;
 }
 
 .form-btns{
@@ -23,10 +28,18 @@
 	height: 400px;
 }
 
-h4.facility-detail{
+/* Headers styling */
+
+.facility-detail{
 	font-weight: 500;
+	color: #01c0c8;
 }
 
 .facility-detail span{
 	font-weight: 100;
+	color: #000;
+}
+
+.empty-objects{
+	color: #ff6849;
 }

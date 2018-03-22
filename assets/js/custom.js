@@ -47,6 +47,7 @@ function hideBalVarianceReason(){
 
 	if(book_bal!=physical_count){
 		bal_variance_reason.setAttribute("style", "display: block");
+		bal_variance_reason.setAttribute("required", "True");
 	}else if(book_bal==physical_count){
 		bal_variance_reason.setAttribute("style", "display: none");
 	}else{
