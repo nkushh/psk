@@ -5,13 +5,17 @@
 	display: none;
 }
 
-form .tarehe{
+.form-group{
 	position: relative !important;
+}
+
+#datepicker1 {
+	top: 33%;
 }
 
 .datepicker{
 	top: 3%;
-	position: absolute !important;
+ 	position: absolute !important;
 }
 
 .form-btns{
