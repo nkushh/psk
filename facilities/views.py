@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Q, Count, Sum
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -33,11 +34,73 @@ def dashboard(request):
 
 @login_required(login_url='login')
 def facilities(request):
-	context = {
-		'facilities' : Facilities.objects.all()[:50],
-	}
-	template = "facilities/facilities.html"
-	return render(request, template, context)
+	
+    counties = Facilities.objects.values('county').distinct()
+    facilities = Facilities.objects.all()
+    facility_count = Facilities.objects.all().count()
+    page_count = int(facility_count/50)
+    try:
+        page = request.GET.get('page', '1')
+    except:
+        page = 1
+
+    paginator = Paginator(facilities, 50)
+
+    try:
+        facilities = paginator.page(page)
+    except PageNotAnInteger:
+        facilities = paginator.page(1)
+    except EmptyPage:
+        facilities = paginator.page(paginator.num_pages)
+
+    context = {
+        'counties' : counties,
+        'facilities' : facilities,
+        'page_count' : page_count
+    }
+    template = "facilities/facilities.html"
+    return render(request, template, context)
+
+# @login_required(login_url='login')
+# def county_name_change(request):
+#     facilities = Facilities.objects.filter(county="T/Nithi")
+
+#     for facility in facilities:
+#         facility.county = "Tharaka Nithi"
+#         facility.save()    
+#     template = "facilities/facilities.html"
+#     context = {
+#         'counties' : Facilities.objects.values('county').distinct(),
+#         'facilities' : Facilities.objects.all()[:50],
+#     }
+#     return render(request, template, context)
+
+@login_required(login_url='login')
+def county_facilities(request, county_name):
+    
+    counties = Facilities.objects.values('county').distinct()
+    facilities = Facilities.objects.filter(county=county_name)
+    facility_count = Facilities.objects.filter(county=county_name).count()
+    page_count = int(facility_count/50)
+
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(facilities, 50)
+
+    try:
+        facilities = paginator.page(page)
+    except PageNotAnInteger:
+        facilities = paginator.page(1)
+    except EmptyPage:
+        facilities = paginator.page(paginator.num_pages)
+
+    context = {
+        'counties' : counties,
+        'facilities' : facilities,
+        'page_count' : page_count
+    }
+    template = "facilities/facilities.html"
+    return render(request, template, context)
 
 @login_required(login_url='login')
 def new_facility(request):

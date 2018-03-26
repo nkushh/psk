@@ -21,6 +21,18 @@ def distribution_index(request):
 	template = "distribution/index.html"
 	return render(request, template, context)
 
+# Fetch nets issued to facilities month and year
+@login_required(login_url='login')
+def nets_issued_to_facilities(request):
+	today = datetime.datetime.now()
+	recently_delivered = Nets_distributed.objects.all()
+
+	template = "distribution/delivery-records.html"
+	context = {
+		'recently_delivered' : recently_delivered
+	}
+	return render(request, template, context)
+
 # record nets issued to a facility
 @login_required(login_url='login')
 def record_nets_issued(request):
@@ -40,7 +52,7 @@ def record_nets_issued(request):
 		context={}
 		return render(request, template, context)
 
-# Fetch nets distribution records for current month and year
+# Fetch nets issued to cwc and anc for current month and year
 @login_required(login_url='login')
 def nets_distributed(request):
 	today = datetime.datetime.now()

@@ -18,7 +18,19 @@
 <div class="row">
     <div class="col-md-12">
         <div class="top-bar-btns">
-            <a class="btn btn-success" href="{% url 'distribution:record_distribution' %}"><i class="fa fa-plus"></i> Facility by county</a>
+            <div class="btn-group m-r-10">
+                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-info dropdown-toggle waves-effect waves-light" type="button">By County <span class="caret"></span></button>
+                <ul role="menu" class="dropdown-menu">
+                    <li><a href="#">--Select county--</a></li>
+                    <li><a href="{% url 'facilities:facilities' %}">All facilities</a></li>
+                    {% for county in counties %}
+                    <li><a href="{% url 'facilities:county_facilities' county.county %}">{{ county.county }}</a></li>
+                    {% endfor %}
+                    <li class="divider"></li>
+                    <li><a href="#">Separated link</a></li>
+                </ul>
+            </div>
+            
             <a class="btn btn-primary" href="{% url 'distribution:record_distribution' %}"><i class="fa fa-plus"></i> New facility</a>
         </div>
     </div>
@@ -62,6 +74,33 @@
                     </tbody>
                 </table>
             </div>
+          {% if facilities.has_other_pages %}
+          <ul id="pagination-demo" class="pagination pagination-split">
+            {% if facilities.has_previous %}
+              <li><a class="page-link" href="?page={{ facilities.previous_page_number }}">Previous</a></li>
+            {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in facilities.paginator.page_range %}
+              {% if facilities.number == i %}
+                <li class="active">{{ i }} <span class="sr-only">(current)</span></li>
+              {% else %}
+                <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+
+            {% if facilities.paginator.num_pages > facilities.number|add:'4' %}
+            <li><a href="?page={{ facilities.number|add:'5' }}">&hellip;</a></li>
+            {% endif %}
+
+            {% if facilities.has_next %}
+              <li><a class="page-link" href="?page={{ facilities.next_page_number }}">&raquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+          </ul>
+          {% endif %}
+
         </div>
     </div>
     

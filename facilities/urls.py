@@ -6,7 +6,8 @@ app_name = 'facilities'
 
 urlpatterns = [
 	path('', views.dashboard, name="dashboard"),
-	path('facilities', views.facilities, name="facilities"),
+	path('facilities/', views.facilities, name="facilities"),
+	path('county-facilities/<str:county_name>/', views.county_facilities, name="county_facilities"),
 	path('add-facility', views.new_facility, name="add_facility"),
 	path('new-facilities', views.excel_upload, name="new_facilities"),
 	path('facility-detail/<int:facility_pk>/', views.facility_details, name="facility_details"),

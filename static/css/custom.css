@@ -1,16 +1,12 @@
-.ui-autocomplete{
+/*.ui-autocomplete{
 	top: 260px !important;
 	left: 260px !important;
 	z-index: 2 !important;
 	display: none;
-}
+}*/
 
 .form-group{
 	position: relative !important;
-}
-
-#datepicker1 {
-	top: 33%;
 }
 
 .datepicker{
@@ -46,4 +42,12 @@
 
 .empty-objects{
 	color: #ff6849;
+}
+
+
+@media only screen and (max-width: 768px){
+		.ui-autocomplete{
+		left: 40px !important;
+		z-index: 2 !important;
+	}
 }

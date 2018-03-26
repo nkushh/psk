@@ -20,8 +20,8 @@
 		<div class="facility-form">
 			<form method="POST" action="{% url 'facilities:new_facilities' %}" enctype="multipart/form-data">{% csrf_token %}
 				<div class="form-group">
-					<label>Filename</label>
-					<input type="file" class="form-control" name="excel_file">
+					<label>Excel filename</label>
+					<input type="file" name="excel_file">
 				</div>
 				<button type="submit" class="btn btn-primary">Upload</button>
 			</form>
