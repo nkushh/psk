@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}PSK Zones{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">PS Kenya Zones</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'facilities:dashboard' %}">Dashboard</a></li>
+            <li class="active">Zones list</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- Top bar actions -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a class="btn btn-primary" href="{% url 'facilities:new_zone' %}"><i class="fa fa-plus"></i> New zone</a>
+        </div>
+    </div>
+</div>
+
+<!-- Table area -->
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Zones List</h3>
+            <div class="table-responsive table-hover">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Zone #</th>
+                            <th>Zone name</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    	{% for zone in zones %}
+                        <tr>
+                            <td>{{ zone.pk }}</td>
+                            <td><a href="#">{{ zone.zone_name }}</a></td>
+                            <td class="text-center">
+                            	<a href="{% url 'facilities:update_zone' zone.pk %}"><i class="fa fa-edit"></i> Edit</a> | 
+                            	<a href="{% url 'facilities:delete_zone' zone.pk %}" onclick="return confirm('This action is irreversible. Are you sure?')"><i class="fa fa-trash-o"></i> Delete</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center"><h3>No epidemiological zones to display</h3></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+          {% if zones.has_other_pages %}
+          <ul class="pagination pagination-split">
+            {% if zones.has_previous %}
+              <li><a class="page-link" href="?page={{ zones.previous_page_number }}">Previous</a></li>
+            {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in page_range %}
+              {% if zones.number == i %}
+                <li class="active"><a href="#">{{ i }}</a></li>
+              {% else %}
+                <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+
+            {% if zones.has_next %}
+              <li><a class="page-link" href="?page={{ zones.next_page_number }}">&raquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+          </ul>
+          {% endif %}
+
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

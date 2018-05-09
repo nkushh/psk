@@ -44,6 +44,28 @@
 	color: #ff6849;
 }
 
+.table-responsive{
+	overflow: visible;
+}
+
+.dropdown-menu-left{
+	overflow-x: visible;
+	left: -20px;
+}
+
+/* Link colors */
+.dropdown-menu .edit-link a{
+	color: green;
+}
+
+.dropdown-menu .danger-link a{
+	color: red;
+}
+
+.dropdown-menu .primary-link a{
+	color: #03a9f3;
+}
+
 
 @media only screen and (max-width: 768px){
 		.ui-autocomplete{

@@ -1,32 +1,82 @@
 {% extends "base.html" %}
 
-{% block title %}Add Facilities{% endblock %}
+{% block title %}Add New Facility{% endblock %}
 
 {% block content %}
 <div class="row bg-title">
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-        <h4 class="page-title">Add Facilities</h4>
+        <h4 class="page-title">Add New Facility</h4>
     </div>
     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
         <ol class="breadcrumb">
-            <li><a href="index.html">Facilities</a></li>
-            <li class="active">New facilities</li>
+            <li><a href="{% url 'facilities:dashboard' %}">Dashboard</a></li>
+            <li class="active">New facility</li>
         </ol>
     </div>
     <!-- /.col-lg-12 -->
 </div>
+<!-- Top bar actions -->
 <div class="row">
-	<div class=" col-md-6">
-		<div class="facility-form">
-			<form method="POST" action="{% url 'facilities:new_facilities' %}" enctype="multipart/form-data">{% csrf_token %}
-				<div class="form-group">
-					<label>Excel filename</label>
-					<input type="file" name="excel_file">
-				</div>
-				<button type="submit" class="btn btn-primary">Upload</button>
-			</form>
-		</div>
-	</div>
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a class="btn btn-primary" href="{% url 'facilities:facilities' %}"><i class="fa fa-list"></i> Facility list</a>
+        </div>
+    </div>
 </div>
 
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <h3 class="box-title m-b-0">Facility details | <a href="{% url 'facilities:new_facilities' %}">Upload excel</a></h3>
+        <div class="white-box">
+        	<form method="POST" action="{% url 'facilities:new_facility' %}">{% csrf_token %}
+        		<div class="form-group">
+        			<label>Facility name</label>
+        			<input type="text" class="form-control" name="facility_name" required>
+        		</div>
+        		<div class="form-group">
+        			<label>MFL Code</label>
+        			<input type="text" class="form-control" name="mfl_code" required>
+        		</div>
+        		<div class="form-group">
+        			<label>Facility ownership</label>
+        			<select class="form-control" name="facility_ownership">
+                        <option value="" required disbaled>--Select ownership--</option>
+                        <option value="Public">Public</option>
+                        <option value="Private">Private</option>
+                        <option value="FBO">FBO</option>    
+                        <option value="Other">Other</option>     
+                    </select>
+        		</div>
+        		<div class="form-group">
+        			<label>County</label>
+        			<input type="text" class="form-control" name="county" required>
+        		</div>
+        		<div class="form-group">
+        			<label>Sub-county</label>
+        			<input type="text" class="form-control" name="sub_county" required>
+        		</div>
+        		<div class="form-group">
+        			<label>Constituency</label>
+        			<input type="text" class="form-control" name="constituency">
+        		</div>
+        		<div class="form-group">
+        			<label>Ward</label>
+        			<input type="text" class="form-control" name="ward">
+        		</div>
+                <div class="form-btns">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-danger">Cancel</button>
+                </div>
+        	</form>
+        </div>
+    </div>
+</div>s
 {% endblock %}

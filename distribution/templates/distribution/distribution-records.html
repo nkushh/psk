@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load my_filters %}
 
 {% block title %}Net Distribution Records{% endblock %}
 
@@ -19,6 +20,7 @@
     <div class="col-md-12">
         <div class="top-bar-btns">
             <a class="btn btn-primary" href="{% url 'distribution:record_distribution' %}"><i class="fa fa-plus"></i> Nets issuance</a>
+            <a class="btn btn-success" href="{% url 'distribution:counties_issued_nets' %}"><i class="fa fa-files"></i> County issuance</a>
         </div>
     </div>
 </div>
@@ -54,7 +56,7 @@
                         <tr>
                             <td>{{ record.pk }}</td>
                             <td>{{ record.facility.facility_name }}</td>
-                            <td>{{ record.dist_month }} - {{ record.dist_year }}</td>
+                            <td>{{ record.dist_month | month_name }} - {{ record.dist_year }}</td>
                             <td>{{ record.cwc_nets }}</td>
                             <td>{{ record.anc_nets }}</td>
                             <td>{{ record.others_nets }}</td>

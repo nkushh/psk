@@ -21,13 +21,13 @@
     <link href="{% static 'css/animate.css' %}" rel="stylesheet">
     <!-- Custom CSS -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet">
-    <link href="{% static 'css/custom.css' %}" rel="stylesheet">
     <!-- color CSS -->
     <link href="{% static 'css/colors/megna.css' %}" id="theme" rel="stylesheet">
     <!-- Date picker plugins css -->
     <link href="{% static 'plugins/bower_components/bootstrap-datepicker/bootstrap-datepicker.min.css' %}" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+    <!-- Custom -->
     <link href="{% static 'css/custom.css' %}" rel="stylesheet">
 
     <!-- jQuery -->
@@ -69,22 +69,22 @@
                             <li>
                                 <div class="message-center">
                                     <a href="#">
-                                        <div class="user-img"> <img src="{% static 'plugins/images/users/pawandeep.jpg' %}" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div>
+                                        <div class="user-img"> <i class="fa fa-user"></i> <span class="profile-status online pull-right"></span> </div>
                                         <div class="mail-contnet">
                                             <h5>Pavan kumar</h5> <span class="mail-desc">Just see the my admin!</span> <span class="time">9:30 AM</span> </div>
                                     </a>
                                     <a href="#">
-                                        <div class="user-img"> <img src="{% static 'plugins/images/users/sonu.jpg' %}" alt="user" class="img-circle"> <span class="profile-status busy pull-right"></span> </div>
+                                        <div class="user-img"> <i class="fa fa-user"></i> <span class="profile-status busy pull-right"></span> </div>
                                         <div class="mail-contnet">
                                             <h5>Sonu Nigam</h5> <span class="mail-desc">I've sung a song! See you at</span> <span class="time">9:10 AM</span> </div>
                                     </a>
                                     <a href="#">
-                                        <div class="user-img"> <img src="{% static 'plugins/images/users/arijit.jpg' %}" alt="user" class="img-circle"> <span class="profile-status away pull-right"></span> </div>
+                                        <div class="user-img"> <i class="fa fa-user"></i> <span class="profile-status away pull-right"></span> </div>
                                         <div class="mail-contnet">
                                             <h5>Arijit Sinh</h5> <span class="mail-desc">I am a singer!</span> <span class="time">9:08 AM</span> </div>
                                     </a>
                                     <a href="#">
-                                        <div class="user-img"> <img src="{% static 'plugins/images/users/pawandeep.jpg' %}" alt="user" class="img-circle"> <span class="profile-status offline pull-right"></span> </div>
+                                        <div class="user-img"> <i class="fa fa-user"></i> <span class="profile-status offline pull-right"></span> </div>
                                         <div class="mail-contnet">
                                             <h5>Pavan kumar</h5> <span class="mail-desc">Just see the my admin!</span> <span class="time">9:02 AM</span> </div>
                                     </a>
@@ -171,58 +171,7 @@
             <!-- /.navbar-static-side -->
         </nav>
         <!-- Left navbar-header -->
-        <div class="navbar-default sidebar" role="navigation">
-            <div class="sidebar-nav navbar-collapse slimscrollsidebar">
-                <ul class="nav" id="side-menu">
-                    <li class="sidebar-search hidden-sm hidden-md hidden-lg">
-                        <!-- input-group -->
-                        <div class="input-group custom-search-form">
-                            <input type="text" class="form-control" placeholder="Search..."> <span class="input-group-btn">
-            <button class="btn btn-default" type="button"> <i class="fa fa-search"></i> </button>
-            </span> </div>
-                        <!-- /input-group -->
-                    </li>
-                    <li class="user-pro">
-                        <a href="#" class="waves-effect"><img src="{% static 'plugins/images/users/d1.jpg' %}" alt="user-img" class="img-circle"> <span class="hide-menu">{{ user.username }}<span class="fa arrow"></span></span>
-                        </a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="javascript:void(0)"><i class="ti-user"></i> My Profile</a></li>
-                            <li><a href="javascript:void(0)"><i class="ti-email"></i> Inbox</a></li>
-                            <li><a href="javascript:void(0)"><i class="ti-settings"></i> Account Setting</a></li>
-                            <li><a href="{% url 'logout' %}"><i class="fa fa-power-off"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                    <li> <a href="{% url 'facilities:dashboard' %}" class="waves-effect"><i class="ti-dashboard p-r-10"></i> <span class="hide-menu">Dashboard</span></a> </li>
-                    
-                    <li> <a href="" class="waves-effect"><i class="fa fa-hospital-o p-r-10"></i> <span class="hide-menu"> Facilities <span class="fa arrow"></span></span></a>
-                        <ul class="nav nav-second-level">
-                            <li> <a href="{% url 'facilities:facilities' %}">All Facilities</a> </li>
-                            <li> <a href="{% url 'facilities:add_facility' %}">Add Facilities</a> </li>
-                        </ul>
-                    </li>
-                    <li> <a href="" class="waves-effect"><i class="fa fa-arrows-alt p-r-10"></i> <span class="hide-menu"> Distribution <span class="fa arrow"></span></span></a>
-                        <ul class="nav nav-second-level">
-                            <li> <a href="{% url 'distribution:nets_to_facilities' %}">Nets delivery</a> </li>
-                            <li> <a href="{% url 'distribution:nets_distributed' %}">Nets issuance</a> </li>
-                        </ul>
-                    </li>
-                    <li> <a href="{% url 'visits:visits_index' %}" class="waves-effect"><i class="icon-folder p-r-10"></i> <span class="hide-menu"> Facility visits </span></a>
-                    </li>
-                    <li> <a href="" class="waves-effect"><i class="icon-chart p-r-10"></i> <span class="hide-menu"> Reports <span class="fa arrow"></span></span></a>
-                        <ul class="nav nav-second-level">
-                            <li> <a href="#">Monthly Report</a></li>
-                            <li> <a href="#">Quarter Report</a></li>
-                            <li> <a href="#">Annual Report</a></li>
-                        </ul>
-                    </li>
-                    {% ifequal user.userprofile.usertype "Admin" %}
-                    <li> <a href="{% url 'authentication:accounts' %}" class="waves-effect"><i class="icon-people p-r-10"></i> <span class="hide-menu"> Accounts </span></a>  
-                    </li>
-                    {% endifequal %}
-                    
-                </ul>
-            </div>
-        </div>
+        {% include "sidebar.html" %}
         <!-- Left navbar-header end -->
         <!-- Page Content -->
         <div id="page-wrapper">
@@ -267,9 +216,6 @@
     
     <script src="{% static 'js/custom.js' %}"></script>
 
-    <!-- Pagination plugin -->
-    <script src="{% static 'js/jquery.twbsPagination.min.js' %}"></script>
-
 
     
     <!-- Live search -->
@@ -284,26 +230,7 @@
 
     <script type="text/javascript">
     // Date Picker
-    $('.datepicker').datepicker({
-        format: 'yyyy-mm-dd',
-        autoclose: true,
-        orientation: "bottom auto"
-    });
-    </script>
-
-    <script type="text/javascript">
-        $(function(){
-            $('#pagination-demo').twbsPagination({
-            visiblePages: 5,
-            totalPages: {{ page_count }},
-            href : true,
-            pageVariable : 'page',
-            initiateStartPageClick : false,
-            startPage : 1
-
-        });
-        });
-        
+    jQuery('.mydatepicker, #datepicker').datepicker({format: 'yyyy-mm-dd'});
     </script>
 
     {% include "facilities/graphs.html" %}

@@ -25,9 +25,18 @@
 			<h4 class="facility-detail">Name: <span>{{ facility.facility_name }}</span></h4>
 			<h4 class="facility-detail">MFL Code: <span>{{ facility.mfl_code }}</span></h4>
 			<h4 class="facility-detail">Epidemiological Zone: <span>{{ facility.epidemiological_zone }}</span></h4>
+			<h4 class="facility-detail">PSK Region: <span>{{ facility.psk_region }}</span></h4>
 			<h4 class="facility-detail">County: <span>{{ facility.county }}</span></h4>
 			<h4 class="facility-detail">Sub-county: <span>{{ facility.sub_county }}</span></h4>
+			<h4 class="facility-detail">Constituency: <span>{{ facility.constituency }}</span></h4>
+			<h4 class="facility-detail">Ward: <span>{{ facility.ward }}</span></h4>
 			<h4 class="facility-detail">Ownership: <span>{{ facility.facility_ownership }}</span></h4>
+			<hr>
+			<h3 class="box-title">Facility Numbers</h3>
+			<h4 class="facility-detail">Nets balance: <span>{{ facility.net_balance | intcomma}}</span></h4>
+			<h4 class="facility-detail">Total nets received: <span>{{ nets_delivered_count.total_delivered | intcomma }}</span></h4>
+			<h4 class="facility-detail">Total nets issued: <span>{{ nets_issued_count.total_issued | intcomma}}</span></h4>
+			<h4 class="facility-detail">Total visits: <span>{{ visits_count | intcomma}}</span></h4>
 		</div>
 	</div>
 	<div class="col-md-8">

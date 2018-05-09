@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Facility Settings{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Facility Settings</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'facilities:dashboard' %}">Dashboard</a></li>
+            <li class="active">settings</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- Top bar actions -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a class="btn btn-primary" href="{% url 'facilities:facilities' %}"><i class="fa fa-list"></i> Facility list</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+	<div class="col-md-12">
+		{% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+		<div class="white-box">
+			<h4>Assign facility regions</h4>
+			<p><span class="text text-info">* Click on any region to update its information on related facilities. *</span></p>
+			<ul class="list-inline">
+				{% for region in regions %}
+				<li class="list-inline-item"><a href="{% url 'facilities:set_facility_region' region.region_name %}">{{ region.region_name }}</a></li> | 
+				{% empty %}
+				<li class="list-inline-item"><span class="text text-info">No regions saved yet!</span></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="white-box">
+            <h4>Change facility county name</h4>
+            <p><span class="text text-info">* Enter new county name for the related facilities *</span></p>
+            <form method="POST" action="{% url 'facilities:county_name_change' %}">{% csrf_token %}
+                <div class="form-group">
+                    <label>Old county name</label>
+                    <input type="text" class="form-control" name="old_county_name">
+                </div>
+                <div class="form-group">
+                    <label>New county name</label>
+                    <input type="text" class="form-control" name="new_county_name">
+                </div>
+                <div class="form-btns">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-danger">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

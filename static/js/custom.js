@@ -45,10 +45,10 @@ function hideBalVarianceReason(){
 	var book_bal = document.getElementById("book-bal");
 	var physical_count = document.getElementById("physical-count");
 
-	if(book_bal!=physical_count){
+	if(book_bal.value!=physical_count.value){
 		bal_variance_reason.setAttribute("style", "display: block");
 		bal_variance_reason.setAttribute("required", "True");
-	}else if(book_bal==physical_count){
+	}else if(book_bal.value==physical_count.value){
 		bal_variance_reason.setAttribute("style", "display: none");
 	}else{
 		bal_variance_reason.setAttribute("style", "display: none");

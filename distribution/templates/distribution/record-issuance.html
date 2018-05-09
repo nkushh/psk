@@ -47,237 +47,73 @@
     </div>
     <div id="wrapper">
         <!-- Navigation -->
-        <nav class="navbar navbar-default navbar-static-top m-b-0">
-            <div class="navbar-header"> <a class="navbar-toggle hidden-sm hidden-md hidden-lg " href="javascript:void(0)" data-toggle="collapse" data-target=".navbar-collapse"><i class="ti-menu"></i></a>
-                <div class="top-left-part"><a class="logo" href="{% url 'facilities:dashboard' %}"><b><img src="{% static 'plugins/images/eliteadmin-logo.png' %}" alt="home" /></b><span class="hidden-xs"><strong>Net </strong>Reporting</span></a></div>
-                <ul class="nav navbar-top-links navbar-left hidden-xs">
-                    <li><a href="javascript:void(0)" class="open-close hidden-xs waves-effect waves-light"><i class="icon-arrow-left-circle ti-menu"></i></a></li>
-                    <li>
-                        <form role="search" method="GET" action="{% url 'facilities:search_facility' %}" class="app-search hidden-xs">
-                            <input type="text" placeholder="Search..." name="facility" class="form-control" required> <a href=""><i class="fa fa-search"></i></a> </form>
-                    </li>
-                </ul>
-                <ul class="nav navbar-top-links navbar-right pull-right">
-                    <li class="dropdown"> <a class="dropdown-toggle waves-effect waves-light" data-toggle="dropdown" href="#"><i class="icon-envelope"></i>
-          <div class="notify"><span class="heartbit"></span><span class="point"></span></div>
-          </a>
-                        <ul class="dropdown-menu mailbox animated bounceInDown">
-                            <li>
-                                <div class="drop-title">You have 4 new messages</div>
-                            </li>
-                            <li>
-                                <div class="message-center">
-                                    <a href="#">
-                                        <div class="user-img"> <img src="{% static 'plugins/images/users/pawandeep.jpg' %}" alt="user" class="img-circle"> <span class="profile-status online pull-right"></span> </div>
-                                        <div class="mail-contnet">
-                                            <h5>Pavan kumar</h5> <span class="mail-desc">Just see the my admin!</span> <span class="time">9:30 AM</span> </div>
-                                    </a>
-                                    <a href="#">
-                                        <div class="user-img"> <img src="{% static 'plugins/images/users/sonu.jpg' %}" alt="user" class="img-circle"> <span class="profile-status busy pull-right"></span> </div>
-                                        <div class="mail-contnet">
-                                            <h5>Sonu Nigam</h5> <span class="mail-desc">I've sung a song! See you at</span> <span class="time">9:10 AM</span> </div>
-                                    </a>
-                                    <a href="#">
-                                        <div class="user-img"> <img src="{% static 'plugins/images/users/arijit.jpg' %}" alt="user" class="img-circle"> <span class="profile-status away pull-right"></span> </div>
-                                        <div class="mail-contnet">
-                                            <h5>Arijit Sinh</h5> <span class="mail-desc">I am a singer!</span> <span class="time">9:08 AM</span> </div>
-                                    </a>
-                                    <a href="#">
-                                        <div class="user-img"> <img src="{% static 'plugins/images/users/pawandeep.jpg' %}" alt="user" class="img-circle"> <span class="profile-status offline pull-right"></span> </div>
-                                        <div class="mail-contnet">
-                                            <h5>Pavan kumar</h5> <span class="mail-desc">Just see the my admin!</span> <span class="time">9:02 AM</span> </div>
-                                    </a>
-                                </div>
-                            </li>
-                            <li>
-                                <a class="text-center" href="javascript:void(0);"> <strong>See all notifications</strong> <i class="fa fa-angle-right"></i> </a>
-                            </li>
-                        </ul>
-                        <!-- /.dropdown-messages -->
-                    </li>
-                    <!-- /.dropdown -->
-                    <li class="dropdown"> <a class="dropdown-toggle waves-effect waves-light" data-toggle="dropdown" href="#"><i class="icon-note"></i>
-          <div class="notify"><span class="heartbit"></span><span class="point"></span></div>
-          </a>
-                        <ul class="dropdown-menu dropdown-tasks animated slideInUp">
-                            <li>
-                                <a href="#">
-                                    <div>
-                                        <p> <strong>Task 1</strong> <span class="pull-right text-muted">40% Complete</span> </p>
-                                        <div class="progress progress-striped active">
-                                            <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100" style="width: 40%"> <span class="sr-only">40% Complete (success)</span> </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="#">
-                                    <div>
-                                        <p> <strong>Task 2</strong> <span class="pull-right text-muted">20% Complete</span> </p>
-                                        <div class="progress progress-striped active">
-                                            <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100" style="width: 20%"> <span class="sr-only">20% Complete</span> </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="#">
-                                    <div>
-                                        <p> <strong>Task 3</strong> <span class="pull-right text-muted">60% Complete</span> </p>
-                                        <div class="progress progress-striped active">
-                                            <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%"> <span class="sr-only">60% Complete (warning)</span> </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a href="#">
-                                    <div>
-                                        <p> <strong>Task 4</strong> <span class="pull-right text-muted">80% Complete</span> </p>
-                                        <div class="progress progress-striped active">
-                                            <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%"> <span class="sr-only">80% Complete (danger)</span> </div>
-                                        </div>
-                                    </div>
-                                </a>
-                            </li>
-                            <li class="divider"></li>
-                            <li>
-                                <a class="text-center" href="#"> <strong>See All Tasks</strong> <i class="fa fa-angle-right"></i> </a>
-                            </li>
-                        </ul>
-                        <!-- /.dropdown-tasks -->
-                    </li>
-                    <!-- /.dropdown -->
-                    <li class="dropdown">
-                        <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#"> <img src="{% static 'plugins/images/users/d1.jpg' %}" alt="user-img" width="36" class="img-circle"><b class="hidden-xs">{{ user.username }} | {{ user.userprofile.usertype }}</b> </a>
-                        <ul class="dropdown-menu dropdown-user animated flipInY">
-                            <li><a href="javascript:void(0)"><i class="ti-user"></i>  My Profile</a></li>
-                            <li><a href="javascript:void(0)"><i class="ti-email"></i>  Inbox</a></li>
-                            <li><a href="javascript:void(0)"><i class="ti-settings"></i>  Account Setting</a></li>
-                            <li><a href="{% url 'logout' %}"><i class="fa fa-power-off"></i>  Logout</a></li>
-                        </ul>
-                        <!-- /.dropdown-user -->
-                    </li>
-                    <li class="right-side-toggle"> <a class="waves-effect waves-light" href="javascript:void(0)"><i class="ti-settings"></i></a></li>
-                    <!-- /.dropdown -->
-                </ul>
-            </div>
-            <!-- /.navbar-header -->
-            <!-- /.navbar-top-links -->
-            <!-- /.navbar-static-side -->
-        </nav>
-        <!-- Left navbar-header -->
-        <div class="navbar-default sidebar" role="navigation">
-            <div class="sidebar-nav navbar-collapse slimscrollsidebar">
-                <ul class="nav" id="side-menu">
-                    <li class="sidebar-search hidden-sm hidden-md hidden-lg">
-                        <!-- input-group -->
-                        <div class="input-group custom-search-form">
-                            <input type="text" class="form-control" placeholder="Search..."> <span class="input-group-btn">
-            <button class="btn btn-default" type="button"> <i class="fa fa-search"></i> </button>
-            </span> </div>
-                        <!-- /input-group -->
-                    </li>
-                    <li class="user-pro">
-                        <a href="#" class="waves-effect"><img src="{% static 'plugins/images/users/d1.jpg' %}" alt="user-img" class="img-circle"> <span class="hide-menu">{{ user.username }}<span class="fa arrow"></span></span>
-                        </a>
-                        <ul class="nav nav-second-level">
-                            <li><a href="javascript:void(0)"><i class="ti-user"></i> My Profile</a></li>
-                            <li><a href="javascript:void(0)"><i class="ti-email"></i> Inbox</a></li>
-                            <li><a href="javascript:void(0)"><i class="ti-settings"></i> Account Setting</a></li>
-                            <li><a href="{% url 'logout' %}"><i class="fa fa-power-off"></i> Logout</a></li>
-                        </ul>
-                    </li>
-                    <li> <a href="{% url 'facilities:dashboard' %}" class="waves-effect"><i class="ti-dashboard p-r-10"></i> <span class="hide-menu">Dashboard</span></a> </li>
-                    
-                    <li> <a href="" class="waves-effect"><i class="fa fa-hospital-o p-r-10"></i> <span class="hide-menu"> Facilities <span class="fa arrow"></span></span></a>
-                        <ul class="nav nav-second-level">
-                            <li> <a href="{% url 'facilities:facilities' %}">All Facilities</a> </li>
-                            <li> <a href="{% url 'facilities:add_facility' %}">Add Facilities</a> </li>
-                        </ul>
-                    </li>
-                    <li> <a href="" class="waves-effect"><i class="fa fa-arrows-alt p-r-10"></i> <span class="hide-menu"> Distribution <span class="fa arrow"></span></span></a>
-                        <ul class="nav nav-second-level">
-                            <li> <a href="{% url 'distribution:nets_to_facilities' %}">Nets delivery</a> </li>
-                            <li> <a href="{% url 'distribution:nets_distributed' %}">Nets issuance</a> </li>
-                        </ul>
-                    </li>
-                    <li> <a href="{% url 'visits:visits_index' %}" class="waves-effect"><i class="icon-folder p-r-10"></i> <span class="hide-menu"> Facility visits </span></a>
-                    </li>
-                    <li> <a href="" class="waves-effect"><i class="icon-chart p-r-10"></i> <span class="hide-menu"> Reports <span class="fa arrow"></span></span></a>
-                        <ul class="nav nav-second-level">
-                            <li> <a href="#">Payment Report</a></li>
-                            <li> <a href="#">Income Report</a></li>
-                            <li> <a href="#">Sales Report</a></li>
-                        </ul>
-                    </li>
-                    {% ifequal user.userprofile.usertype "Admin" %}
-                    <li> <a href="{% url 'authentication:accounts' %}" class="waves-effect"><i class="icon-people p-r-10"></i> <span class="hide-menu"> Accounts </span></a>  
-                    </li>
-                    {% endifequal %}
-                    
-                </ul>
-            </div>
-        </div>
+        {% include "nav.html" %}
         <!-- Left navbar-header end -->
+        
         <!-- Page Content -->
         <div id="page-wrapper">
             <div class="container-fluid">
-<div class="row bg-title">
-    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-        <h4 class="page-title">Facility net issuance</h4>
-    </div>
-    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
-        <ol class="breadcrumb">
-            <li><a href="{% url 'distribution:nets_distribution' %}">Distribution Dashboard</a></li>
-            <li class="active">New issue</li>
-        </ol>
-    </div>
-    <!-- /.col-lg-12 -->
-</div>
-<!-- Row -->
-<div class="row">
-    <div class="col-sm-12">
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
-            {{ message }}
-        </div>
-        {% endfor %}
-        {% endif %}
-        <div class="white-box">
-            <h3 class="box-title m-b-0">Issuance details</h3>
-            <form class="form-horizontal" method="POST" action="{% url 'distribution:issue_nets' %}">{% csrf_token %}
-                <div class="form-group">
-                    <label for="recipient-name" class="control-label">Facility:</label>
-                    <input type="text" class="form-control" name="facility" id="all-facilities">
+                <div class="row bg-title">
+                    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+                        <h4 class="page-title">Facility net issuance</h4>
+                    </div>
+                    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+                        <ol class="breadcrumb">
+                            <li><a href="{% url 'distribution:nets_distribution' %}">Distribution Dashboard</a></li>
+                            <li class="active">New issue</li>
+                        </ol>
+                    </div>
+                    <!-- /.col-lg-12 -->
                 </div>
-                <div class="form-group">
-                    <label for="recipient-name" class="control-label">Invoice No:</label>
-                    <input type="text" class="form-control" name="invoice_no">
+                <!-- Row -->
+                <div class="row">
+                    <div class="col-sm-12">
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        <div class="white-box">
+                            <h3 class="box-title m-b-0">Issuance details | <a href="{% url 'distribution:issue_nets_excel' %}">Upload excel</a></h3>
+
+                            <form class="form-horizontal" method="POST" action="{% url 'distribution:issue_nets' %}">{% csrf_token %}
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">Facility:</label>
+                                    <input type="text" class="form-control" name="facility" id="all-facilities">
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">Invoice No:</label>
+                                    <input type="text" class="form-control" name="invoice_no">
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">Warehouse:</label>
+                                    <input type="text" class="form-control" name="invoice_no">
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">Nets donor:</label>
+                                    <input type="text" class="form-control" name="donor">
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient-name" class="control-label">Nets quantity:</label>
+                                    <input type="text" class="form-control" name="nets_issued">
+                                </div>
+                                <p><label for="recipient-name" class="control-label">Date issued:</label></p>
+                                <div class="input-group">
+                                    <input type="text" name="date_issued" class="form-control mydatepicker" placeholder="yyyy-mm-dd">
+                                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                                </div>
+                                <div class="form-btns">
+                                    <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Submit</button>
+                                    <button type="reset" class="btn btn-inverse waves-effect waves-light">Cancel</button>
+                                </div>
+                                
+                            </form>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="recipient-name" class="control-label">Nets quantity:</label>
-                    <input type="text" class="form-control" name="nets_issued">
-                </div>
-                <p><label for="recipient-name" class="control-label">Date issued:</label></p>
-                <div class="input-group">
-                    <input type="text" name="date_issued" class="form-control mydatepicker" placeholder="yyyy-mm-dd">
-                    <span class="input-group-addon"><i class="icon-calender"></i></span> 
-                </div>
-                <div class="form-btns">
-                    <button type="submit" class="btn btn-success waves-effect waves-light m-r-10">Submit</button>
-                    <button type="reset" class="btn btn-inverse waves-effect waves-light">Cancel</button>
-                </div>
-                
-            </form>
-        </div>
-    </div>
-</div>
-<!-- /.row -->
+                <!-- /.row -->
 
             </div>
             <!-- /.container-fluid -->

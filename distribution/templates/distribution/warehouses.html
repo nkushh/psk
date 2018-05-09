@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}PSK Warehouses{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">PSK Warehouses</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'facilities:dashboard' %}">Dashboard</a></li>
+            <li class="active">Warehouses</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a class="btn btn-primary" href="{% url 'distribution:new_warehouse' %}"><i class="fa fa-plus"></i> New Warehouse</a>
+            <a class="btn btn-success" href="{% url 'distribution:stock_warehouse' %}"><i class="fa fa-cubes"></i> Stock Warehouse</a>
+            <a class="btn btn-warning" href="{% url 'distribution:stocking_history' %}"><i class="fa fa-calendar"></i> Stocking History</a>
+        </div>
+    </div>
+</div>
+<!-- Row -->
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Warehouse details</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <th>Warehouse name</th>
+                        <th>County</th>
+                        <th>Location</th>
+                        <th>Contact</th>
+                        <th>Nets Bal</th>
+                    </thead>
+                    <tbody>
+                        {% for warehouse in warehouses %}
+                        <tr>
+                            <td>{{ warehouse.warehouse_name }}</td>
+                            <td>{{ warehouse.county}}</td>
+                            <td>{{ warehouse.location }}</td>
+                            <td>{{ warehouse.contact}}</td>
+                            <td>{{ warehouse.stock_balance|intcomma }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center"><h3>No warehouse records yet!</h3></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+{% endblock %}

@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Psk Regions{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">PS Kenya Regions</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'facilities:dashboard' %}">Dashboard</a></li>
+            <li class="active">Regions list</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- Top bar actions -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a class="btn btn-primary" href="{% url 'facilities:new_region' %}"><i class="fa fa-plus"></i> New region</a>
+        </div>
+    </div>
+</div>
+
+<!-- Table area -->
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Regions List</h3>
+            <div class="table-responsive table-hover">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Region #</th>
+                            <th>Region name</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    	{% for region in regions %}
+                        <tr>
+                            <td>{{ region.pk }}</td>
+                            <td><a href="#">{{ region.region_name }}</a></td>
+                            <td class="text-center">
+                            	<a href="{% url 'facilities:update_region' region.pk %}"><i class="fa fa-edit"></i> Edit</a> | 
+                            	<a href="{% url 'facilities:delete_region' region.pk %}" onclick="return confirm('This action is irreversible. Are you sure?')"><i class="fa fa-trash-o"></i> Delete</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center"><h3>No regions to display</h3></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+          {% if regions.has_other_pages %}
+          <ul class="pagination pagination-split">
+            {% if regions.has_previous %}
+              <li><a class="page-link" href="?page={{ regions.previous_page_number }}">Previous</a></li>
+            {% else %}
+              <li class="disabled"><span>&laquo;</span></li>
+            {% endif %}
+            {% for i in page_range %}
+              {% if regions.number == i %}
+                <li class="active"><a href="#">{{ i }}</a></li>
+              {% else %}
+                <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+              {% endif %}
+            {% endfor %}
+
+            {% if regions.has_next %}
+              <li><a class="page-link" href="?page={{ regions.next_page_number }}">&raquo;</a></li>
+            {% else %}
+              <li class="disabled"><span>&raquo;</span></li>
+            {% endif %}
+          </ul>
+          {% endif %}
+
+        </div>
+    </div>
+    
+</div>
+{% endblock %}
