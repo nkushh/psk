@@ -1,14 +1,16 @@
 import datetime, calendar
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import pyexcel as pe
+from authentication.models import UserProfile
 from .models import Nets_distributed, Distribution_report, Warehouse, Stocking_history
-from facilities.models import Counties, Facilities
+from facilities.models import Counties, Epidemiological_zones, Facilities, Regions
 
 # Loads distribution dashboard template
 @login_required(login_url='login')
@@ -31,8 +33,16 @@ def distribution_index(request):
 # Fetch nets issued to facilities month and year
 @login_required(login_url='login')
 def nets_issued_to_facilities(request):
-	today = datetime.datetime.now()
-	recently_delivered = Nets_distributed.objects.all()
+	account = request.user
+	account_profile = get_object_or_404(UserProfile, user=account)
+	counties = Facilities.objects.values('county').distinct()
+	regions = Regions.objects.all()
+	if account_profile.usertype=="Coordinator":
+		recently_delivered = Nets_distributed.objects.filter(facility__psk_region=account_profile.psk_region)
+	else:
+		recently_delivered = Nets_distributed.objects.all()
+	
+	
 
 	page = request.GET.get('page', 1)
 
@@ -54,7 +64,84 @@ def nets_issued_to_facilities(request):
 	template = "distribution/delivery-records.html"
 	context = {
 		'recently_delivered' : recently_delivered,
-		'page_range' : page_range
+		'page_range' : page_range,
+		'counties' : counties,
+		'regions' : regions
+	}
+	return render(request, template, context)
+
+@login_required(login_url='login')
+def delivery_by_county(request, county):
+	account = request.user
+	account_profile = get_object_or_404(UserProfile, user=account)
+	counties = Facilities.objects.values('county').distinct()
+	regions = Regions.objects.all()
+
+	recently_delivered = Nets_distributed.objects.filter(facility__county=county).order_by('-date_issued')
+	
+	
+
+	page = request.GET.get('page', 1)
+
+	paginator = Paginator(recently_delivered, 50)
+
+	try:
+		recently_delivered = paginator.page(page)
+	except PageNotAnInteger:
+		recently_delivered = paginator.page(1)
+	except EmptyPage:
+		recently_delivered = paginator.page(paginator.num_pages)
+
+	index = recently_delivered.number - 1
+	max_index = len(paginator.page_range)
+	start_index = index - 5 if index >= 5 else 0
+	end_index = index + 5 if index <= max_index - 5 else max_index
+	page_range = paginator.page_range[start_index:end_index]
+
+	template = "distribution/delivery-records.html"
+	context = {
+		'recently_delivered' : recently_delivered,
+		'page_range' : page_range,
+		'counties' : counties,
+		'regions' : regions
+	}
+	return render(request, template, context)
+
+
+@login_required(login_url='login')
+def delivery_by_region(request, region):
+	account = request.user
+	account_profile = get_object_or_404(UserProfile, user=account)
+	counties = Facilities.objects.values('county').distinct()
+	regions = Regions.objects.all()
+
+	recently_delivered = Nets_distributed.objects.filter(facility__psk_region=region).order_by('-date_issued')
+	
+	
+
+	page = request.GET.get('page', 1)
+
+	paginator = Paginator(recently_delivered, 50)
+
+	try:
+		recently_delivered = paginator.page(page)
+	except PageNotAnInteger:
+		recently_delivered = paginator.page(1)
+	except EmptyPage:
+		recently_delivered = paginator.page(paginator.num_pages)
+
+	index = recently_delivered.number - 1
+	max_index = len(paginator.page_range)
+	start_index = index - 5 if index >= 5 else 0
+	end_index = index + 5 if index <= max_index - 5 else max_index
+	page_range = paginator.page_range[start_index:end_index]
+
+	template = "distribution/delivery-records.html"
+	context = {
+		'recently_delivered' : recently_delivered,
+		'page_range' : page_range,
+		'counties' : counties,
+		'regions' : regions
 	}
 	return render(request, template, context)
 
@@ -206,8 +293,13 @@ def record_nets_distributed_excel(request):
 # Fetch nets issued to cwc and anc for current month and year
 @login_required(login_url='login')
 def nets_distributed(request):
-	today = datetime.datetime.now()
-	records = Distribution_report.objects.all()
+	account = request.user
+	account_profile = get_object_or_404(UserProfile, user=account)
+	if account_profile.usertype=="Coordinator":
+		records = Distribution_report.objects.filter(facility__psk_region=account_profile.psk_region)
+	else:
+		records = Distribution_report.objects.all()
+	
 	# facility = get_object_or_404(Facilities, pk=34)
 	# amc = Distribution_report.objects.filter(facility=facility).values('facility').aggregate(totalnets=Sum('total_nets'))
 	# sc_recently_distributed = Nets_distributed.objects.filter(facility__sub_county="Kajiado Central")

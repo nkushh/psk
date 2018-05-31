@@ -18,8 +18,9 @@
     <!-- /.col-lg-12 -->
 </div>
 <!--row -->
+
 <div class="row">
-    <div class="col-md-3 col-sm-6">
+    <div class="col-md-{% ifequal user.userprofile.usertype 'Admin' %}3{% else %}4{% endifequal %} col-sm-6">
         <div class="white-box">
             <div class="r-icon-stats">
                 <i class="fa fa-hospital-o bg-megna"></i>
@@ -30,7 +31,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-6">
+    <div class="col-md-{% ifequal user.userprofile.usertype 'Admin' %}3{% else %}4{% endifequal %} col-sm-6">
         <div class="white-box">
             <div class="r-icon-stats">
                 <i class="ti-shopping-cart bg-info"></i>
@@ -41,7 +42,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-6">
+    <div class="col-md-{% ifequal user.userprofile.usertype 'Admin' %}3{% else %}4{% endifequal %} col-sm-6">
         <div class="white-box">
             <div class="r-icon-stats">
                 <i class="ti-wallet bg-inverse"></i>
@@ -52,6 +53,7 @@
             </div>
         </div>
     </div>
+    {% ifequal user.userprofile.usertype "Admin" %}
     <div class="col-md-3 col-sm-6">
         <div class="white-box">
             <div class="r-icon-stats">
@@ -63,6 +65,7 @@
             </div>
         </div>
     </div>
+    {% endifequal %}
 </div>
 <!--/row -->
 <div class="row">

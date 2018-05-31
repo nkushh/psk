@@ -16,6 +16,7 @@
     <!-- /.col-lg-12 -->
 </div>
 <div class="row">
+    {{ facilities }}
     <div class="col-md-12">
         <div class="top-bar-btns">
             <div class="btn-group m-r-10">
@@ -43,7 +44,7 @@
     <div class="col-sm-12">
         {% if messages %}
         {% for message in messages %}
-        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+        <div class="alert alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}">
             {{ message }}
         </div>
         {% endfor %}
@@ -83,7 +84,7 @@
                                         <li><a href="#">--Select action--</a></li>
                                         <li class="primary-link"><a href="#">Record delivery</a></li>
                                         <li class="primary-link"><a href="#">Record issuance</a></li>
-                                        <li class="edit-link"><a href="#"><i class="fa fa-edit"></i> Edit</a></li>
+                                        <li class="edit-link"><a href="{% url 'facilities:update_facility' facility.pk %}"><i class="fa fa-edit"></i> Edit</a></li>
                                         <li class="danger-link"><a href="#"><i class="fa fa-exclamation"></i> Blacklist</a></li>
                                         <li class="danger-link"><a href="{% url 'facilities:delete_facility' facility.pk %}" onclick="return confirm('This action is irreversible. Are you sure?')"><i class="fa fa-trash-o"></i> Delete</a></li>
                                     </ul>
@@ -122,6 +123,7 @@
           {% endif %}
 
         </div>
+        <a href="{% url 'facilities:excel_facilities_download' %}" class="btn btn-success" target="_blank"><i class="fa fa-download"></i> Excel download</a>
     </div>
     
 </div>

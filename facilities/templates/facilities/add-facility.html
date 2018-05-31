@@ -57,7 +57,12 @@
         		</div>
         		<div class="form-group">
         			<label>County</label>
-        			<input type="text" class="form-control" name="county" required>
+        			<select name="county" class="form-control selectpicker" id="item-search" data-live-search="true" required>
+                      <option value="" disabled selected>--Pick county--</option>
+                      {% for county in counties %}
+                      <option value="{{ county.county }}">{{ county.county }}</option>
+                      {% endfor %}
+                    </select>
         		</div>
         		<div class="form-group">
         			<label>Sub-county</label>

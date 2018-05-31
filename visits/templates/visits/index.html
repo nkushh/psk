@@ -34,10 +34,49 @@
     </div>
 </div>
 <!-- End row -->
+<div class="row">
+    <div class="col-md-3">
+        <div class="white-box">
+            <h3>< 10</h3>
+            <p>{{ less_ten }}</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="white-box">
+            <h3>< 30</h3>
+            <p>{{ less_thirty }}</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="white-box">
+            <h3>< 60</h3>
+            <p>{{ less_sixty }}</p>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="white-box">
+            <h3>< 100</h3>
+            <p>{{ less_hundred }}</p>
+        </div>
+    </div>
+</div>
 <!--row -->
 <div class="row">
     <div class="col-md-12">
         <div class="top-bar-btns">
+            {% ifequal user.userprofile.usertype "Admin" %}
+            <div class="btn-group m-r-10">
+                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-info dropdown-toggle waves-effect waves-light" type="button">By Coordinator <span class="caret"></span></button>
+                <ul role="menu" class="dropdown-menu">
+                    <li><a href="#">--Select coordinator--</a></li>
+                    <li><a href="{% url 'visits:visits_index' %}">All coordinators</a></li>
+                    {% for coordinator in coordinators %}
+                    <li><a href="{% url 'visits:coordinator_visits' coordinator.user.pk %}">{{ coordinator.user }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endifequal %}
+            <a class="btn btn-success" href="{% url 'visits:coordinators_aggregate_visits' %}"><i class="fa fa-group"></i> Visits aggregate</a>
             <a class="btn btn-primary" href="{% url 'visits:record_visit' %}"><i class="fa fa-plus"></i> Record visit</a>
         </div>
     </div>
@@ -216,7 +255,30 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                {{ recently_visited }}
             </div>
+            {% if recently_visited.has_other_pages %}
+            <ul class="pagination pagination-split">
+                {% if recently_visited.has_previous %}
+                  <li><a class="page-link" href="?page={{ recently_visited.previous_page_number }}">Previous</a></li>
+                {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in page_range %}
+                  {% if recently_visited.number == i %}
+                    <li class="active"><a href="#">{{ i }}</a></li>
+                  {% else %}
+                    <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+
+                {% if recently_visited.has_next %}
+                  <li><a class="page-link" href="?page={{ recently_visited.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+            </ul>
+            {% endif %}
         </div>
     </div>
 </div>

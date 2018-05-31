@@ -73,6 +73,13 @@ def facilities(request):
     template = "facilities/facilities.html"
     return render(request, template, context)
 
+# Download them all
+@login_required(login_url='login')
+def download_facilities_excel(request):
+    facilities = Facilities.objects.all()
+    facilities = facilities.__dict__
+    # pe.save_as(records=facilities, dest_file_name="facilities.xls")
+    print(facilities)
 
 # Fetch facilities by county
 @login_required(login_url='login')
@@ -154,7 +161,7 @@ def new_facility(request):
             messages.success(request, "Success! {} addded to facilities database successfully".format(facility_name))
             return redirect('facilities:facilities')
     else:
-        counties = Counties.objects.all()
+        counties = Facilities.objects.values('county').distinct()
         regions = Regions.objects.all()
         
         context = {
@@ -162,6 +169,46 @@ def new_facility(request):
             'regions' : regions
         }
         template = "facilities/add-facility.html"
+        return render(request, template, context)
+
+@login_required(login_url='login')
+def update_facility(request, facility_pk):
+    facility = get_object_or_404(Facilities, pk=facility_pk)
+    if request.method=="POST":
+        psk_region = request.POST['psk_region']
+        mfl_code = request.POST['mfl_code']
+        facility_name = request.POST['facility_name'].title()
+        county = request.POST['county'].title()
+        sub_county = request.POST['sub_county'].title()
+        constituency = request.POST['constituency'].title()
+        ward = request.POST['ward'].title()
+        facility_ownership = request.POST['facility_ownership']
+        epidemiological_zone = facility_zone(county)
+
+        facility.mfl_code = mfl_code
+        facility.facility_name = facility_name
+        facility.county = county
+        facility.sub_county = sub_county
+        facility.constituency = constituency
+        facility.ward = ward
+        facility.epidemiological_zone = epidemiological_zone
+        facility.psk_region = psk_region
+
+        facility.save()
+        messages.success(request, "Success! {} details have been updated successfully.".format(facility_name))
+        return redirect("facilities:facility_details", facility_pk=facility.pk)
+
+
+    else:
+        counties = Facilities.objects.values('county').distinct()
+        regions = Regions.objects.all()
+        
+        context = {
+            'facility' : facility,
+            'counties' : counties,
+            'regions' : regions
+        }
+        template = "facilities/update-facility.html"
         return render(request, template, context)
 
 # Add facilities by excel
@@ -279,6 +326,14 @@ def delete_all_facilities(request):
 
 @login_required(login_url='login')
 def delete_facility(request, facility_pk):
+    facility = get_object_or_404(Facilities, pk=facility_pk)
+    facility.status = 0
+    facility.save()
+    messages.success(request, "Success! Facility details deleted.")
+    return redirect("facilities:facilities")
+
+@login_required(login_url='login')
+def delete_facility_2(request, facility_pk):
     facility = get_object_or_404(Facilities, pk=facility_pk)
     facility.delete()
     messages.success(request, "Success! Facility details deleted.")
@@ -452,6 +507,22 @@ def county_name_change(request):
         return render(request, template, context)
 
 @login_required(login_url='login')
+def region_name_change(request):
+    if request.method=="POST":
+        old_region_name = request.POST['old_region_name'].title()
+        new_region_name = request.POST['new_region_name'].title()
+        facilities = Facilities.objects.filter(psk_region=old_region_name)
+
+        for facility in facilities:
+            facility.psk_region = new_region_name
+            facility.save()
+        messages.success(request, "Success! {} changed to {}".format(old_region_name, new_region_name))
+        return redirect('facilities:facilities')
+    else:    
+        template = "facilities/facilities.html"
+        return render(request, template, context)
+
+@login_required(login_url='login')
 def facility_settings(request):
     template = "facilities/facility-settings.html"
     regions = Regions.objects.all()
@@ -513,6 +584,40 @@ def set_facility_region(request, psk_region):
             facilities = Facilities.objects.filter(Q(county="Busia") | Q(county="Vihiga") | Q(county="Bungoma") | Q(county="Kakamega"))
             for facility in facilities:
                 facility.psk_region = region
+                facility.save()
+        else:
+            messages.warning(request, "Warning! The provided region is not valid. Kindly enter a valid PS Kenya region")
+            return redirect('facilities:facilities')
+
+        messages.success(request, "Success! {} region set to {} facilities".format(region, facilities.count()))
+        return redirect('facilities:facility_settings')
+
+    else:
+            template = "facilities/facility-settings.html"
+            return render(request, template)
+
+@login_required(login_url='login')
+def set_facility_zone(request, psk_zone):
+    if psk_zone:
+        if zone=="Seasonal Transmission":
+            facilities = Facilities.objects.filter(Q(county="Kajiado") | Q(county="Makueni") | Q(county="Kitui") | Q(county="Machakos") | Q(county="Kimabu") | Q(county="Murang'a") | Q(county="Kirinyaga") | Q(county="Embu") | Q(county="Tharaka Nithi") | Q(county="Meru") | Q(county="Isiolo"))
+            for facility in facilities:
+                facility.epidemiological_zone = zone
+                facility.save()
+        elif region=="Highland Epidemic":
+            facilities = Facilities.objects.filter(Q(county="Narok") | Q(county="Kisii") | Q(county="Bomet") | Q(county="Nyamira") | Q(county="Kericho") | Q(county="Nandi") | Q(county="Uasin Gishu") | Q(county="Baringo") | Q(county="Elgeyo Marakwet") | Q(county="Trans Nzoia") | Q(county="West Pokot"))
+            for facility in facilities:
+                facility.epidemiological_zone = zone
+                facility.save()
+        elif region=="Coast Endemic":
+            facilities = Facilities.objects.filter(Q(county="Mombasa") | Q(county="Kwale") | Q(county="Kilifi") | Q(county="Lamu") | Q(county="Tana River") | Q(county="Taita Taveta"))
+            for facility in facilities:
+                facility.epidemiological_zone = zone
+                facility.save()
+        elif region=="Lake Endemic":
+            facilities = Facilities.objects.filter(Q(county="Migori") | Q(county="Homa Bay") | Q(county="Kisumu") | Q(county="Vihiga") | Q(county="Siaya") | Q(county="Kakamega") | Q(county="Busia") | Q(county="Bungoma"))
+            for facility in facilities:
+                facility.epidemiological_zone = zone
                 facility.save()
         else:
             messages.warning(request, "Warning! The provided region is not valid. Kindly enter a valid PS Kenya region")

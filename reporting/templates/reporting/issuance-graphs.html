@@ -1,0 +1,49 @@
+{% load static %}
+{% load humanize %}
+<!-- Monthly issuance comparison bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'issuance-bar',
+      data: [
+        { mwezi: 'Current', issued: 120000 },
+        { mwezi: 'Previous', issued: 100000 },
+      ],
+      xkey: 'mwezi',
+      ykeys: ['issued'],
+      labels: ['Nets'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e']
+    });
+</script>
+
+<!-- Monthly anc issuance comparison bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'anc-issuance-bar',
+      data: [
+        { mwezi: 'Current', distributed: {% if nets_to_anc.total_anc %}{{ nets_to_anc.total_anc }}{% else %}0{% endif %} },
+        { mwezi: 'Previous', distributed: {% if prev_month_anc.prev_anc %}{{ prev_month_anc.prev_anc }}{% else %}0{% endif %} }
+      ],
+      xkey: 'mwezi',
+      ykeys: ['distributed'],
+      labels: ['Nets'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e']
+    });
+</script>
+
+<!-- Monthly cwc issuance comparison bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'cwc-issuance-bar',
+      data: [
+        { mwezi: 'Current', distributed: {% if nets_to_cwc.total_cwc %}{{ nets_to_cwc.total_cwc }}{% else %}0{% endif %} },
+        { mwezi: 'Previous', distributed: {% if prev_month_cwc.prev_cwc %}{{ prev_month_cwc.prev_cwc }}{% else %}0{% endif %} }
+      ],
+      xkey: 'mwezi',
+      ykeys: ['distributed'],
+      labels: ['Nets'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e']
+    });
+</script>

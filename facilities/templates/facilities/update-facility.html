@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Update Facility{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Update Facility</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'facilities:dashboard' %}">Dashboard</a></li>
+            <li class="active">Update facility</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- Top bar actions -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a class="btn btn-primary" href="{% url 'facilities:facilities' %}"><i class="fa fa-list"></i> Facility list</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <h3 class="box-title m-b-0">Facility details</h3>
+        <div class="white-box">
+        	<form method="POST" action="{% url 'facilities:update_facility' facility.pk %}">{% csrf_token %}
+        		<div class="form-group">
+        			<label>Facility name</label>
+        			<input type="text" class="form-control" name="facility_name" value="{{ facility.facility_name }}" required>
+        		</div>
+        		<div class="form-group">
+        			<label>MFL Code</label>
+        			<input type="text" class="form-control" name="mfl_code" value="{{ facility.mfl_code }}" required>
+        		</div>
+        		<div class="form-group">
+        			<label>Facility ownership</label>
+        			<select class="form-control" name="facility_ownership">
+                        <option value="Public" {% ifequal facility.facility_ownership 'Public' %} selected {% endifequal %}>Public</option>
+                        <option value="Private" {% ifequal facility.facility_ownership 'Private' %} selected {% endifequal %}>Private</option>
+                        <option value="FBO" {% ifequal facility.facility_ownership 'FBO' %} selected {% endifequal %}>FBO</option>
+                        <option value="Other" {% ifequal facility.facility_ownership 'Other' %} selected {% endifequal %}>Other</option>     
+                    </select>
+        		</div>
+                <div class="form-group">
+                    <label>Region</label>
+                    <select name="psk_region" class="form-control selectpicker" id="item-search" data-live-search="true" required>
+                      {% for region in regions %}
+                      <option value="{{ region.region_name }}" {% ifequal facility.psk_region region.region_name %} selected {% endifequal %}>{{ region.region_name }}</option>
+                      {% endfor %}
+                    </select>
+                </div>
+        		<div class="form-group">
+        			<label>County</label>
+        			<select name="county" class="form-control selectpicker" id="item-search" data-live-search="true" required>
+                      {% for county in counties %}
+                      <option value="{{ county.county }}" {% ifequal facility.county county.county %} selected {% endifequal %}>{{ county.county }}</option>
+                      {% endfor %}
+                    </select>
+        		</div>
+        		<div class="form-group">
+        			<label>Sub-county</label>
+        			<input type="text" class="form-control" name="sub_county" value="{{ facility.sub_county }}" required>
+        		</div>
+        		<div class="form-group">
+        			<label>Constituency</label>
+        			<input type="text" class="form-control" name="constituency" value="{{ facility.constituency }}">
+        		</div>
+        		<div class="form-group">
+        			<label>Ward</label>
+        			<input type="text" class="form-control" name="ward" value="{{ facility.ward }}">
+        		</div>
+                <div class="form-btns">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-danger">Cancel</button>
+                </div>
+        	</form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -62,7 +62,6 @@
         <!-- Page Content -->
         <div id="page-wrapper">
             <div class="container-fluid">
-
                 <div class="row bg-title">
                     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
                         <h4 class="page-title">Facility Visit Details </h4>
@@ -76,27 +75,30 @@
                     <!-- /.col-lg-12 -->
                 </div>
                 <!-- Row -->
+                <div class="row">
+                    <div class="col-md-12">
+                        {% if messages %}
+                        {% for message in messages %}
+                        <div class="alert alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
                 <!-- Start row -->
                 <div class="row">
-
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
-                        {{ message }}
-                    </div>
-                    {% endfor %}
-                    {% endif %}
                     <div class="col-md-4">
                         <div class="white-box">
                             <h3 class="box-title m-b-0">Visit details</h3>
                             <form class="form-horizontal" method="POST" action="{% url 'visits:record_visit' %}">{% csrf_token %}
                                 <div class="form-group">
                                     <label for="recipient-name" class="control-label">Facility:</label>
-                                    <input type="text" class="form-control" name="facility" id="all-facilities" value="{{ data.id }}">
+                                    <input type="text" class="form-control" name="facility" id="all-facilities" required>
                                 </div>
                                 <p><label for="recipient-name" class="control-label">Visit date:</label></p>
                                 <div class="input-group date">
-                                    <input type="text" name="visit_date" class="form-control mydatepicker" placeholder="yyyy-mm-dd">
+                                    <input type="text" name="visit_date" class="form-control mydatepicker" placeholder="yyyy-mm-dd" required>
                                     <span class="input-group-addon"><i class="icon-calender"></i></span> 
                                 </div>
                         </div>
@@ -105,10 +107,10 @@
                     <div class="col-md-4">
                         <div class="white-box">
                             <h3 class="box-title m-b-0">Visit details</h3>
-                                <p>Reports submission for last 3 months:</p>
+                                <p>Reports submission for last 3 months:<span class="break-text">*</span></p>
                                 <div class="form-group">
                                     <label class="radio-inline">
-                                        <input type="radio" name="reporting_frequency" value="0">0
+                                        <input type="radio" name="reporting_frequency" value="0" checked>0
                                     </label>
                                     <label class="radio-inline">
                                         <input type="radio" name="reporting_frequency" value="1">1
@@ -120,7 +122,7 @@
                                         <input type="radio" name="reporting_frequency" value="3">3
                                     </label>
                                 </div>
-                                <p>Ordered last quarter?:</p>
+                                <p>Ordered last quarter?: <span class="break-text">*</span></p>
                                 <div class="form-group">
                                     <label class="radio-inline"><input type="radio" name="quarter_order" value="1">Yes</label>
                                     <label class="radio-inline"><input type="radio" name="quarter_order" value="0">No</label>
@@ -131,7 +133,7 @@
                     <div class="col-md-4">
                         <div class="white-box">
                             <h3 class="box-title m-b-0">Ordering challenges</h3>
-                                <p>Solve ordering challenges:</p>
+                                <p>Solve ordering challenges: <span class="break-text">*</span></p>
                                 <div class="form-group">
                                     <label class="radio-inline">
                                         <input type="radio" name="challenge_solver" value="OJT">OJT
@@ -140,7 +142,7 @@
                                         <input type="radio" name="challenge_solver" value="N/A">N/A
                                     </label>
                                 </div>
-                                <p>OJT on LLIN LMIS done:</p>
+                                <p>OJT on LLIN LMIS done: <span class="break-text">*</span></p>
                                 <div class="form-group">
                                     <label class="radio-inline"><input type="radio" name="ojt_performed" value="1">Yes</label>
                                     <label class="radio-inline"><input type="radio" name="ojt_performed" value="0">No</label>
@@ -150,7 +152,7 @@
                     <div class="col-md-4">
                         <div class="white-box">
                             <h3 class="box-title m-b-0">Policy compliance</h3>
-                                <p>Compliant with issuance policy:</p>
+                                <p>Compliant with issuance policy: <span class="break-text">*</span></p>
                                 <div class="form-group">
                                     <label class="radio-inline">
                                         <input type="radio" name="policy_compliance" value="1" id="compliance-yes" onchange="hideNonComplianceReason();">Yes
@@ -167,7 +169,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="white-box">
-                            <h3 class="box-title m-b-0">ANC Missed opportunities</h3>
+                            <h3 class="box-title m-b-0">ANC Missed opportunities</h3><span class="break-text">*(Last 3 months)</span>
                                 <div class="form-group">
                                     <label for="recipient-name" class="control-label">New ANC in MOH-711:</label>
                                     <input type="text" class="form-control" name="new_anc_moh711">
@@ -184,7 +186,7 @@
                     </div>
                     <div class="col-md-4">
                         <div class="white-box">
-                            <h3 class="box-title m-b-0">CWC Missed opportunities</h3>
+                            <h3 class="box-title m-b-0">CWC Missed opportunities</h3><span class="break-text">*(Last 3 months)</span>
                                 <div class="form-group">
                                     <label for="recipient-name" class="control-label">OPV1 in MOH-710:</label>
                                     <input type="text" class="form-control" name="new_cwc_moh710">
@@ -203,11 +205,11 @@
                         <div class="white-box">
                             <h3 class="box-title m-b-0">Commodity Accountability</h3>
                                 <div class="form-group">
-                                    <label for="recipient-name" class="control-label">Book balance:</label>
+                                    <label for="recipient-name" class="control-label">Book balance: <span class="break-text">*</span></label>
                                     <input type="text" class="form-control" name="book_bal" id="book-bal">
                                 </div>
                                 <div class="form-group">
-                                    <label for="recipient-name" class="control-label">Physical count:</label>
+                                    <label for="recipient-name" class="control-label">Physical count: <span class="break-text">*</span></label>
                                     <input type="text" class="form-control" name="physical_count" id="physical-count" onmouseout="hideBalVarianceReason();">
                                 </div>
                                 <div class="form-group" id="bal-variance-reason" style="display: none;">
@@ -220,15 +222,34 @@
                     <div class="col-md-4">
                         <div class="white-box">
                             <h3 class="box-title m-b-0">Transporter Monitoring</h3>
+                            <p>Last delivery details availability:</p>
                                 <div class="form-group">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="ld_data" value="Yes" id="ld-yes" onchange="hideLDFields();">Yes
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="ld_data" id="ld-no" value="No" onchange="hideLDFields();">No
+                                    </label>
+                                </div>
+                                <div class="form-group" id="ld-quantity" style="display: none;">
                                     <label for="recipient-name" class="control-label">last delivery quantity:</label>
                                     <input type="text" class="form-control" name="ld_quantity">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" id="ld-invoice-avail" style="display: none;">
+                                    <p><b>Invoice availability</b></p>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="invoice_avalability" id="invoice-yes" value="Yes" onchange="hideInvoiceFields();"> Yes
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="invoice_avalability" id="invoice-no" value="No" onchange="hideInvoiceFields();"> No
+                                    </label>
+
+                                </div>
+                                <div class="form-group" id="ld-invoice" style="display: none;">
                                     <label for="recipient-name" class="control-label">Last delivery invoice:</label>
                                     <input type="text" class="form-control" name="ld_invoice_no">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" id="ld-dates" style="display: none;">
                                     <p><label for="recipient-name" class="control-label">Last delivery date:</label></p>
                                     <div class="input-group">
                                         <input type="text" class="form-control mydatepicker" name="ld_date" placeholder="mm/dd/yyyy">
@@ -242,16 +263,36 @@
                     <div class="col-md-4">
                         <div class="white-box">
                             <h3 class="box-title m-b-0">Transporter Monitoring</h3>
+                            <p>2nd last delivery details availability:</p>
                                 <div class="form-group">
+                                    <label class="radio-inline">
+                                        <input type="radio" name="lld_data" value="1" id="lld-yes" onchange="hideLLDFields();">Yes
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="lld_data" id="lld-no" value="0" onchange="hideLLDFields();">No
+                                    </label>
+                                </div>
+                                <div class="form-group" id="lld-quantity" style="display: none;">
                                     <label for="recipient-name" class="control-label">2nd last delivery quantity:</label>
                                     <input type="text" class="form-control" name="lld_quantity">
                                 </div>
-                                <div class="form-group">
+                                <div class="form-group" id="lld-invoice-avail" style="display: none;">
+                                    <p><b>Invoice availability</b></p>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="invoice_avalability" id="lld-invoice-yes" value="Yes" onchange="hideLLDInvoiceFields();"> Yes
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="invoice_avalability" id="lld-invoice-no" value="No" onchange="hideLLDInvoiceFields();"> No
+                                    </label>
+
+                                </div>
+                                <div class="form-group" id="lld-invoice" style="display: none;">
                                     <label for="recipient-name" class="control-label">2nd Last delivery invoice:</label>
                                     <input type="text" class="form-control" name="lld_invoice_no">
                                 </div>
-                                <p><label for="recipient-name" class="control-label">2nd Last delivery date:</label></p>
-                                <div class="input-group">
+                                
+                                <div class="input-group" id="lld-dates" style="display: none;">
+                                    <p><label for="recipient-name" class="control-label">2nd Last delivery date:</label></p>
                                     <div class="input-group">
                                         <input type="text" class="form-control mydatepicker" name="lld_date" placeholder="mm/dd/yyyy">
                                         <span class="input-group-addon"><i class="icon-calender"></i></span>
@@ -263,7 +304,7 @@
                         <div class="white-box">
                             <h3 class="box-title m-b-0">Beneficiary details confirmable</h3>
                                 <div class="form-group">
-                                    <p><b>MOH 510(CWC):</b></p>
+                                    <p><b>MOH 510(CWC):</b> <span class="break-text">*</span></p>
                                     <label class="radio-inline">
                                         <input type="radio" name="confirmable_cwc" value="0">0
                                     </label>
@@ -284,7 +325,7 @@
                                     </label>
                                 </div>
                                 <div class="form-group">
-                                    <p><b>MOH 405(ANC):</b></p>
+                                    <p><b>MOH 405(ANC):</b> <span class="break-text">*</span></p>
                                     <label class="radio-inline">
                                         <input type="radio" name="confirmable_anc" value="0">0
                                     </label>
@@ -309,22 +350,33 @@
                     <div class="col-md-12">
                         <div class="white-box">
                             <h3 class="box-title m-b-0">Storage details</h3>
-                                <div class="form-group">
+                                <!-- <div class="form-group">
                                     <label for="recipient-name" class="control-label">How are the nets stored:</label>
-                                    <input type="text" class="form-control" name="nets_stored_in">
+                                    <input type="text" class="form-control" name="nets_stored_in" placeholder="i.e. The storage structure e.g. brick house, mud hut">
+                                </div> -->
+                                <div class="form-group">
+                                    <p><b>Access to store:</b> <span class="break-text">*</span></p>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="store_access" value="1">Controlled
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="store_access" value="0">Not Controlled
+                                    </label>
                                 </div>
                                 <div class="form-group">
-                                    <label for="recipient-name" class="control-label">Type of store:</label>
+                                    <label for="recipient-name" class="control-label">Type of store: <span class="break-text">*</span></label>
                                     <select class="form-control" name="store_type">
                                         <option value="" disabled selected>--Select store type--</option>
                                         <option value="Pallets">Pallets</option>
                                         <option value="Naked floor">Naked floor</option>
                                         <option value="Shelves">Shelves</option>
                                         <option value="Improvised">Improvised</option>
+                                        <option value="Stored closed">Store closed</option>
+                                        <option value="Others">Others</option>
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <p><b>Stock control card availability</b></p>
+                                    <p><b>Stock control card availability</b> <span class="break-text">*</span></p>
                                     <label class="radio-inline">
                                         <input type="radio" name="stock_control_card" value="1">Available
                                     </label>
@@ -339,14 +391,18 @@
                                     </label>
                                 </div>
                                 <div class="form-group">
-                                    <label for="recipient-name" class="control-label">Access to store:</label>
-                                    <input type="text" class="form-control" name="store_access">
+                                    <p><b>Risk of rodents</b> <span class="break-text">*</span></p>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="pests_risk" value="Yes" id="risk-yes"> Yes
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="pests_risk" id="risk-no" value="No"> No
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="pests_risk" id="risk-other" value="Store closed"> Store closed
+                                    </label>
                                 </div>
-                                <div class="form-group">
-                                    <label for="recipient-name" class="control-label">Risk of rodents:</label>
-                                    <input type="text" class="form-control" name="pests_risk">
-                                </div>
-                                <p><b>Fire prevention mechanisms:</b></p>
+                                <p><b>Fire prevention mechanisms:</b> <span class="break-text">*</span></p>
                                 <div class="form-group">
                                     <label class="radio-inline">
                                         <input type="radio" name="fire_prevention" id="fire-prevention" value="1" onchange="showFirePreventionMech();">Yes
@@ -356,11 +412,11 @@
                                     </label>
                                 </div>
                                 <div class="form-group" id="fire-prevention-mechanism" style="display: none;">
-                                    <label for="recipient-name" class="control-label">Type of fire prevention mechanism:</label>
+                                    <label for="recipient-name" class="control-label">Type of fire prevention mechanism: <span class="break-text">*</span></label>
                                     <input type="text" class="form-control" name="fire_prevention_mechanism">
                                 </div>
                                 <div class="form-group">
-                                    <label for="recipient-name" class="control-label">Other remarks:</label>
+                                    <label class="control-label">Other remarks: <span class="break-text">*</span></label>
                                     <textarea class="form-control" rows="8" name="other_remarks"></textarea>
                                 </div>
                         </div>
@@ -496,7 +552,11 @@
             source: "/autocomplete/all-facilities/",
             minLength: 2,
         });
+
+        $(".form-control").removeAttr('readonly');
     });
+
+
     </script>
     <!--Style Switcher -->
     <script src="{% static 'plugins/bower_components/styleswitcher/jQuery.style.switcher.js' %}"></script>

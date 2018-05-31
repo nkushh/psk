@@ -66,10 +66,27 @@
 	color: #03a9f3;
 }
 
+.break-text{
+	display: block;
+	color: red;
+	font-size: 11px;
+}
+
 
 @media only screen and (max-width: 768px){
 		.ui-autocomplete{
 		left: 40px !important;
 		z-index: 2 !important;
+	}
+
+	.ui-autocomplete-input{
+		
+	}
+
+	.top-bar-btns .btn-group,
+	.top-bar-btns .btn{
+		display: block;
+		margin-bottom: 5px;
+		width: 100%;
 	}
 }

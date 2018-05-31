@@ -37,24 +37,26 @@
                     
                     <li> <a href="{% url 'visits:visits_index' %}" class="waves-effect"><i class="icon-folder p-r-10"></i> Facility visits</a>
                     </li>
+                    {% ifequal user.userprofile.usertype "Admin" %}
+                    <li> <a href="{% url 'distribution:warehouses' %}" class="waves-effect"><i class="fa fa-institution p-r-10"></i>  Warehouse</a>
+                    </li>
+                    {% endifequal %}
                     <li> <a href="" class="waves-effect"><i class="icon-chart p-r-10"></i> <span class="hide-menu"> Reports <span class="fa arrow"></span></span></a>
                         <ul class="nav nav-second-level">
-                            <li> <a href="#">monthly Report</a></li>
+                            <li> <a href="{% url 'reporting:monthly_index' %}">monthly Report</a></li>
                             <li> <a href="#">Quarterly Report</a></li>
                             <li> <a href="#">Annual Report</a></li>
                         </ul>
                     </li>
                     {% ifequal user.userprofile.usertype "Admin" %}
-                    <li> <a href="{% url 'facilities:psk_regions' %}" class="waves-effect"><i class="fa fa-map p-r-10"></i> Regions</a>
-                    </li>
-                    <li> <a href="{% url 'facilities:transmission_zones' %}" class="waves-effect"><i class="fa fa-exclamation-triangle p-r-10"></i> Transmission zones</a>
-                    </li>
-                    <li> <a href="{% url 'distribution:warehouses' %}" class="waves-effect"><i class="fa fa-institution p-r-10"></i>  Warehouse</a>
-                    </li>
                     <li> <a href="" class="waves-effect"><i class="icon-wrench p-r-10"></i> <span class="hide-menu"> Settings <span class="fa arrow"></span></span></a>
                         <ul class="nav nav-second-level">
                             <li> <a href="{% url 'facilities:facility_settings' %}">Facility settings</a></li>
                             <li> <a href="{% url 'authentication:accounts' %}" class="waves-effect">Accounts</a></li>
+                            <li> <a href="{% url 'facilities:psk_regions' %}" class="waves-effect">Regions</a>
+                            </li>
+                            <li> <a href="{% url 'facilities:transmission_zones' %}" class="waves-effect">Transmission zones</a>
+                            </li>
                             <li> <a href="#">Mail settings</a></li>
                             <li> <a href="#">Permissions</a></li>
                         </ul>

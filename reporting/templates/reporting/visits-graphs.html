@@ -1,0 +1,16 @@
+{% load static %}
+<!-- Monthly visits comparison bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'visits-bar',
+      data: [
+        { mwezi: 'Current', distributed: 100 },
+        { mwezi: 'Previous', distributed: 160 },
+      ],
+      xkey: 'mwezi',
+      ykeys: ['distributed'],
+      labels: ['Nets'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e']
+    });
+</script>

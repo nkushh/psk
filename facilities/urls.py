@@ -15,6 +15,8 @@ urlpatterns = [
 	path('facility-detail/<int:facility_pk>/', views.facility_details, name="facility_details"),
 	path('autocomplete/all-facilities/', views.facilities_autocomplete, name="autocomplete"),
 	path('search', views.facility_search, name='search_facility'),
+	path('download-facilities', views.download_facilities_excel, name="excel_facilities_download"),
+	path('update-facility/<int:facility_pk>/', views.update_facility, name="update_facility"),
 	path('delete-facilities', views.delete_all_facilities, name="delete_facilities"),
 	path('delete-facility/<int:facility_pk>/', views.delete_facility, name="delete_facility"),
 	# Regions
@@ -30,4 +32,6 @@ urlpatterns = [
 	# Settings
 	path('facility-settings', views.facility_settings, name="facility_settings"),
 	path('set-facilities-region/<str:psk_region>/', views.set_facility_region, name="set_facility_region"),
+	path('set-facilities-zone/<str:psk_zone>/', views.set_facility_zone, name="set_facility_zone"),
+	path('change-region-name', views.region_name_change, name="region_name_change"),
 ]

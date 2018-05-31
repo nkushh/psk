@@ -146,3 +146,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 LOGIN_REDIRECT_URL = '/'
+
+# Session timeouts
+SESSION_COOKIE_AGE = 7200 # expires in an hour

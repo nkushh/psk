@@ -89,7 +89,7 @@
                             <form class="form-horizontal" method="POST" action="{% url 'distribution:record_distribution' %}">{% csrf_token %}
                                 <div class="form-group ui-widget">
                                     <label for="recipient-name" class="control-label">Facility:</label>
-                                    <input type="text" class="form-control" name="facility" id="all-facilities">
+                                    <input type="text" class="form-control" name="facility" id="all-facilities" autocomplete="on" readonly="false">
                                     <!-- <select name="facility" class="form-control selectpicker" id="item-search" data-live-search="true" required>
                                       <option value="" disabled selected>--Pick facility--</option>
                                       {% for facility in facilities %}
@@ -280,6 +280,7 @@
             source: "/autocomplete/all-facilities/",
             minLength: 2,
         });
+        $(".form-control").removeAttr('readonly');
     });
     </script>
     <!--Style Switcher -->

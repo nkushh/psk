@@ -25,6 +25,82 @@ function hideNonComplianceReason() {
 	
 }
 
+function hideLDFields() {
+	var ld_quantity = document.getElementById("ld-quantity");
+	var ld_invoice_avail = document.getElementById("ld-invoice-avail")
+	var ld_dates = document.getElementById("ld-dates");
+	var ld_yes = document.getElementById("ld-yes");
+	var ld_no = document.getElementById("ld-no");
+
+	if(ld_no.checked){
+		ld_quantity.setAttribute("style", "display: none;");
+		ld_invoice_avail.setAttribute("style", "display: none;");
+		ld_dates.setAttribute("style", "display: none;");
+	}else if(ld_yes.checked){
+		ld_quantity.setAttribute("style", "display: block;");
+		ld_invoice_avail.setAttribute("style", "display: block;");
+		ld_dates.setAttribute("style", "display: block;");
+	}else{
+		ld_quantity.setAttribute("style", "display: none;");
+		ld_invoice_avail.setAttribute("style", "display: none;");
+		ld_dates.setAttribute("style", "display: none;");
+	}
+	
+}
+
+function hideLLDFields() {
+	var lld_quantity = document.getElementById("lld-quantity");
+	var lld_invoice_avail = document.getElementById("lld-invoice-avail");
+	var lld_dates = document.getElementById("lld-dates");
+	var lld_yes = document.getElementById("lld-yes");
+	var lld_no = document.getElementById("lld-no");
+
+	if(lld_no.checked){
+		lld_quantity.setAttribute("style", "display: none;");
+		lld_invoice_avail.setAttribute("style", "display: none;");
+		lld_dates.setAttribute("style", "display: none;");
+	}else if(lld_yes.checked){
+		lld_quantity.setAttribute("style", "display: block;");
+		lld_invoice_avail.setAttribute("style", "display: block;");
+		lld_dates.setAttribute("style", "display: block;");
+	}else{
+		lld_quantity.setAttribute("style", "display: none;");
+		lld_invoice_avail.setAttribute("style", "display: none;");
+		lld_dates.setAttribute("style", "display: none;");
+	}
+	
+}
+
+function hideInvoiceFields() {
+	var ld_invoice = document.getElementById("ld-invoice");
+	var invoice_yes = document.getElementById("invoice-yes");
+	var invoice_no = document.getElementById("invoice-no");
+
+	if(invoice_yes.checked){
+		ld_invoice.setAttribute("style", "display: block;");
+	}else if(invoice_no.checked){
+		ld_invoice.setAttribute("style", "display: none;");
+	}else{
+		ld_invoice.setAttribute("style", "display: none;");
+	}
+	
+}
+
+function hideLLDInvoiceFields() {
+	var lld_invoice = document.getElementById("lld-invoice");
+	var lld_invoice_yes = document.getElementById("lld-invoice-yes");
+	var lld_invoice_no = document.getElementById("lld-invoice-no");
+
+	if(lld_invoice_yes.checked){
+		lld_invoice.setAttribute("style", "display: block;");
+	}else if(lld_invoice_no.checked){
+		lld_invoice.setAttribute("style", "display: none;");
+	}else{
+		lld_invoice.setAttribute("style", "display: none;");
+	}
+	
+}
+
 function showFirePreventionMech() {
 	var fire_prevention_mechanism = document.getElementById("fire-prevention-mechanism");
 	var fire_prevention = document.getElementById("fire-prevention");
