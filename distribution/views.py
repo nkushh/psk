@@ -78,6 +78,7 @@ def delivery_by_county(request, county):
 	regions = Regions.objects.all()
 
 	recently_delivered = Nets_distributed.objects.filter(facility__county=county).order_by('-date_issued')
+	nets_delivered = Nets_distributed.objects.filter(facility__county=county).aggregate(total_nets=Sum('nets_issued'))
 	
 	
 
@@ -102,6 +103,7 @@ def delivery_by_county(request, county):
 	context = {
 		'recently_delivered' : recently_delivered,
 		'page_range' : page_range,
+		'nets_delivered' : nets_delivered,
 		'counties' : counties,
 		'regions' : regions
 	}
@@ -250,7 +252,6 @@ def record_nets_distributed_excel(request):
 				facility = get_object_or_404(Facilities, mfl_code=record['facility'])
 				dist_month = record['dist_month']
 				dist_year = record['dist_year']
-				bal_bf = record['bal_bf']
 				anc_nets = record['anc_nets']
 				cwc_nets = record['cwc_nets']
 				others_nets = record['others_nets']
@@ -261,8 +262,7 @@ def record_nets_distributed_excel(request):
 					distribution = Distribution_report(
 							facility=facility, 
 							dist_month=dist_month, 
-							dist_year=dist_year, 
-							bal_bf=bal_bf, 
+							dist_year=dist_year,
 							cwc_nets=cwc_nets, 
 							anc_nets=anc_nets, 
 							others_nets=others_nets,

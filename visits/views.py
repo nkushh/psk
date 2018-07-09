@@ -17,7 +17,7 @@ import datetime, calendar
 def visits_index(request):
 	account = request.user
 	account_profile = get_object_or_404(UserProfile, user=account)
-	if account_profile.usertype=="Coordinator":
+	if account_profile.usertype != "Admin":
 		recently_visited = Visit.objects.filter(supervisor=account).order_by('-date_recorded')
 		total_visits = Visit.objects.filter(supervisor=account).count()
 	else:

@@ -1,8 +1,8 @@
 function hideRegionSelect() {
 	var usertype = document.getElementById("usertype-input");
-	var psk_region = document.getElementById("div_id_psk_region");
+	var psk_region = document.getElementById("div-id-psk-region");
 
-	if(usertype.value == "Coordinator"){
+	if(usertype.value == "Coordinator" || usertype.value == "Field Assistant"){
 		psk_region.setAttribute("style", "display: block;");
 	}else{
 		psk_region.setAttribute("style", "display: none;");

@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load humanize %}
 
 {% block title %}Facilities{% endblock %}
 
 {% block content %}
 <div class="row bg-title">
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-        <h4 class="page-title">Facilities Registered</h4>
+        <h4 class="page-title">Facilities Registered {% if facility_count %}- {{ facility_count | intcomma }}{% endif %}</h4>
     </div>
     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
         <ol class="breadcrumb">
@@ -16,7 +17,6 @@
     <!-- /.col-lg-12 -->
 </div>
 <div class="row">
-    {{ facilities }}
     <div class="col-md-12">
         <div class="top-bar-btns">
             <div class="btn-group m-r-10">

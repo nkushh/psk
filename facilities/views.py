@@ -110,6 +110,7 @@ def county_facilities(request, county_name):
     context = {
         'counties' : counties,
         'facilities' : facilities,
+        'facility_count' : facility_count,
         'page_count' : page_count,
         'page_range' : page_range
     }
@@ -288,7 +289,7 @@ def facilities_autocomplete(request,*args,**kwargs):
         for hosi in facilities:
             hosi_json = {}
             hosi_json['id'] = hosi.id
-            hosi_json['label'] = hosi.facility_name
+            hosi_json['label'] = hosi.facility_name +" - "+hosi.sub_county
             hosi_json['value'] = hosi.facility_name
             results.append(hosi_json)
         data = json.dumps(results)

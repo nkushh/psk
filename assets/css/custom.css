@@ -72,6 +72,12 @@
 	font-size: 11px;
 }
 
+/* Span classes */
+.county-delivery{
+	color: #01c0c8;
+	font-size: 14px; 
+}
+
 
 @media only screen and (max-width: 768px){
 		.ui-autocomplete{
