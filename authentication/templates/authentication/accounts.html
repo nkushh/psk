@@ -17,7 +17,7 @@
 		{% endif %}
 		<div class="panel panel-default">
 			<div class="panel-heading">
-			<a href="{% url 'authentication:register_user' %}" class="pull-right btn btn-primary"><i class="mdi mdi-plus"></i> Account</a>
+			<a href="{% url 'authentication:register_user' %}" class="pull-right btn btn-primary"><i class="fa fa-plus"></i> Account</a>
 			<h3>Account details</h3>
 			</div>
 			<div class="panel-body">
@@ -34,7 +34,7 @@
 					<tbody>
 					{% for user in users %}
 						<tr>
-							<td><a href="#">{{ user.user.username }}</a></td>
+							<td><a href="{% url 'authentication:update_account' user.pk %}">{{ user.user.username }}</a></td>
 							<td>{{ user.user.email }}</td>
 							<td>{{ user.usertype }}</td>
 							<td>{{ user.psk_region }}</td>

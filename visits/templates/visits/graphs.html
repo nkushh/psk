@@ -1,0 +1,23 @@
+{% load static %}
+<script type="text/javascript">
+	new Morris.Bar({
+	  // ID of the element in which to draw the chart.
+	  element: 'monthly-visits-graph',
+	  // Chart data records -- each entry in this array corresponds to a point on
+	  // the chart.
+	  data: [
+	  {% for mwezi in monthly_visits %}
+	    { month: '{{ mwezi.month }}', value: {{ mwezi.visits_sum }} },
+	  {% endfor %}
+	  ],
+	  // The name of the data record attribute that contains x-values.
+	  xkey: 'month',
+	  // A list of names of data record attributes that contain y-values.
+	  ykeys: ['value'],
+	  // Labels for the ykeys -- will be displayed when you hover over the
+	  // chart.
+	  labels: ['Visits'],
+	  hideHover: 'auto',
+	  xLabelAngle: '40'
+	});
+</script>

@@ -34,19 +34,14 @@
 					<th>Total Visits</th>
 				</thead>
 				<tbody>
-					{% for profile in profiles %}
 					{% for visit in visits %}
-					{% ifequal visit.supervisor profile.pk %}
 					<tr>
-						<td>{{ profile.username }}</td>
+						<td>{{ visit.first_name }} {{ visit.last_name }}</td>
 						<td>{{ visit.total_visits }}</td>
-					</tr>
-					{% endifequal %}
 					{% empty %}
 					<tr>
 						<td colspan="2" class="text-center"><h3>No visits data to display!</h3></td>
 					</tr>
-					{% endfor %}
 					{% endfor %}
 				</tbody>
 			</table>

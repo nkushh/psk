@@ -23,6 +23,8 @@ def register_user(request):
 		form = UserRegistrationForm(request.POST)
 		if form.is_valid():
 			userObj = form.cleaned_data
+			first_name = userObj['first_name']
+			last_name = userObj['last_name']
 			username = userObj['username']
 			email = userObj['email']
 			password = userObj['password']
@@ -33,6 +35,9 @@ def register_user(request):
 
 			if not(User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists()):
 				user = User.objects.create_user(username, email, password)
+				user.first_name = first_name
+				user.last_name = last_name
+				user.save()
 
 				# Create a blank profile for the new user
 				UserProfile.objects.create(user=user, psk_region=psk_region, usertype=usertype, phone_no=phone_no)
@@ -77,11 +82,11 @@ def create_account(request):
 
 
 @login_required(login_url='login')
-def update_account(request):
-	account = request.user
-	getAcc = get_object_or_404(User, pk=account.pk)
+def update_account(request, account_pk):
+	account = get_object_or_404(User, pk=account_pk)
+	
 	if request.method=='POST':
-		form = UserUpdateForm(request.POST, instance=getAcc)
+		form = UserUpdateForm(request.POST, instance=account)
 		if form.is_valid():
 			acc = form.save()
 			acc.set_password(request.POST['password'])
@@ -89,10 +94,10 @@ def update_account(request):
 			acc.save()
 
 			messages.success(request, "Success! Account detail successfully updated.")
-			return redirect('user_profile:profile')
+			return redirect('authentication:accounts')
 
 	else:
-		form = UserUpdateForm(instance=getAcc)
+		form = UserUpdateForm(instance=account)
 	return render(request, 'authentication/edit-account.html', {'form' : form})
 
 @login_required(login_url='login')

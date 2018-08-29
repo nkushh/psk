@@ -8,6 +8,8 @@ class UserRegistrationForm(forms.Form):
 	USERTYPES = (('', '--Select usertype--',), ('Admin', 'Admin',), ('Coordinator', 'Coordinator',), ('Data clerk', 'Data clerk',), ('Field Assistant', 'Field Assistant',))
 	REGIONS = (('', '--Select region--',), ('Central', 'Central'), ('Central Nyanza', 'Central Nyanza'), ('Coast', 'Coast',), ('HQ', 'HQ',), ('Mountain', 'Mountain',), ('Nairobi 2', 'Nairobi 2',), ('North Rift', 'North Rift',), ('South Nyanza', 'South Nyanza',), ('South Rift', 'South Rift',), ('Western', 'Western'))
 
+	first_name = forms.CharField(required=True, label='Firstname', max_length=32)
+	last_name = forms.CharField(required=True, label='Lastname', max_length=32)
 	username = forms.CharField(required=True, label='Username', max_length=32)
 	email = forms.EmailField(required=True, label='Email', max_length=200)
 	usertype = forms.ChoiceField(widget=forms.Select(attrs={'id': 'usertype-input'}), choices=USERTYPES)

@@ -9,6 +9,7 @@ urlpatterns = [
 	path('', views.dashboard, name="dashboard"),
 	path('facilities/', views.facilities, name="facilities"),
 	path('county-facilities/<str:county_name>/', views.county_facilities, name="county_facilities"),
+	path('subcounty-facilities/<str:county_name>/<str:subcounty>/', views.subcounty_facilities, name="subcounty_facilities"),
 	path('add-facility', views.new_facility, name="new_facility"),
 	path('new-facilities', views.facilities_excel_upload, name="new_facilities"),
 	path('change-county-name', views.county_name_change, name="county_name_change"),

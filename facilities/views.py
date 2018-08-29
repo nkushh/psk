@@ -1,3 +1,4 @@
+from authentication.models import UserProfile
 from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -7,31 +8,46 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
-import pyexcel as pe
-import json, datetime, calendar
 from .models import Counties, Epidemiological_zones, Facilities, Regions
 from distribution.models import Nets_distributed, Distribution_report
 from visits.models import Visit
+import json, datetime, calendar, csv
+import pyexcel as pe
+
 
 # Create your views here.
 @login_required(login_url='login')
 def dashboard(request):
+    account = request.user
+    account_profile = get_object_or_404(UserProfile, user=account)
     today = datetime.datetime.now()
 
-    total_facilities = Facilities.objects.all().count()
+    
     accounts = User.objects.count()
-    nets_distributed = Nets_distributed.objects.aggregate(distributed_nets=Sum('nets_issued'))
+    
     nets_issued = Distribution_report.objects.aggregate(issued_nets=Sum('total_nets'))
+
+    if account_profile.usertype != "Admin":
+        nets_distributed = Nets_distributed.objects.filter(facility__psk_region=account_profile.psk_region).aggregate(distributed_nets=Sum('nets_issued'))
+        total_facilities = Facilities.objects.filter(psk_region=account_profile.psk_region).count()
+        total_visits = Visit.objects.filter(supervisor=account).count()
+    else:
+        nets_distributed = Nets_distributed.objects.aggregate(distributed_nets=Sum('nets_issued'))
+        total_facilities = Facilities.objects.count()
+        total_visits = Visit.objects.count()
     # nets_to_anc = Distribution_report.objects.filter(dist_month="", dist_year=today.year).aggregate(issued_nets=Sum('anc_nets'))
     # nets_to_cwc = Distribution_report.objects.filter().aggregate(issued_nets=Sum('total_nets'))
     facilities_by_county = Facilities.objects.values('county').annotate(county_facilities=Count('county')).order_by('-county_facilities')
+    facilities_by_ez = Facilities.objects.values('epidemiological_zone').annotate(ez_facilities=Count('epidemiological_zone')).order_by('-ez_facilities')
     
 
     context = {
         'accounts' : accounts,
+        'facilities_by_ez' : facilities_by_ez,
         'nets_distributed' : nets_distributed,
         'nets_issued' : nets_issued,
         'total_facilities' : total_facilities,
+        'total_visits' : total_visits,
         'facilities_by_county' : facilities_by_county
         }
 
@@ -76,18 +92,26 @@ def facilities(request):
 # Download them all
 @login_required(login_url='login')
 def download_facilities_excel(request):
-    facilities = Facilities.objects.all()
-    facilities = facilities.__dict__
-    # pe.save_as(records=facilities, dest_file_name="facilities.xls")
-    print(facilities)
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="facilities.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Region', 'MFL', 'Name', 'County', 'Sub county'])
+
+    facilities = Facilities.objects.all().values_list('psk_region', 'mfl_code', 'facility_name', 'county', 'sub_county')
+    for facility in facilities:
+        writer.writerow(facility)
+
+    return response
 
 # Fetch facilities by county
 @login_required(login_url='login')
 def county_facilities(request, county_name):
-    
+    county = county_name
     counties = Facilities.objects.values('county').distinct()
-    facilities = Facilities.objects.filter(county=county_name).order_by('facility_name')
-    facility_count = Facilities.objects.filter(county=county_name).count()
+    sub_counties = Facilities.objects.filter(county=county).values('sub_county').distinct()
+    facilities = Facilities.objects.filter(county=county).order_by('facility_name')
+    facility_count = Facilities.objects.filter(county=county).count()
     page_count = int(facility_count/50)
 
     page = request.GET.get('page', 1)
@@ -108,11 +132,51 @@ def county_facilities(request, county_name):
     page_range = paginator.page_range[start_index:end_index]
 
     context = {
+        'county' : county,
         'counties' : counties,
         'facilities' : facilities,
         'facility_count' : facility_count,
         'page_count' : page_count,
-        'page_range' : page_range
+        'page_range' : page_range,
+        'sub_counties' : sub_counties
+    }
+    template = "facilities/facilities.html"
+    return render(request, template, context)
+
+@login_required(login_url='login')
+def subcounty_facilities(request, county_name, subcounty):
+    county = county_name
+    counties = Facilities.objects.values('county').distinct()
+    sub_counties = Facilities.objects.filter(county=county).values('sub_county').distinct()
+    facilities = Facilities.objects.filter(sub_county=subcounty).order_by('facility_name')
+    facility_count = Facilities.objects.filter(sub_county=subcounty).count()
+    page_count = int(facility_count/50)
+
+    page = request.GET.get('page', 1)
+
+    paginator = Paginator(facilities, 50)
+
+    try:
+        facilities = paginator.page(page)
+    except PageNotAnInteger:
+        facilities = paginator.page(1)
+    except EmptyPage:
+        facilities = paginator.page(paginator.num_pages)
+
+    index = facilities.number - 1
+    max_index = len(paginator.page_range)
+    start_index = index - 5 if index >= 5 else 0
+    end_index = index + 5 if index <= max_index - 5 else max_index
+    page_range = paginator.page_range[start_index:end_index]
+
+    context = {
+        'county' : county_name,
+        'counties' : counties,
+        'facilities' : facilities,
+        'facility_count' : facility_count,
+        'page_count' : page_count,
+        'page_range' : page_range,
+        'sub_counties' : sub_counties
     }
     template = "facilities/facilities.html"
     return render(request, template, context)
@@ -284,13 +348,13 @@ def facilities_autocomplete(request,*args,**kwargs):
     data = request.GET
     facility = data.get("term")
     if facility:
-        facilities = Facilities.objects.filter(facility_name__startswith = facility)
+        facilities = Facilities.objects.filter(status=1, facility_name__startswith = facility)
         results = []
         for hosi in facilities:
             hosi_json = {}
             hosi_json['id'] = hosi.id
             hosi_json['label'] = hosi.facility_name +" - "+hosi.sub_county
-            hosi_json['value'] = hosi.facility_name
+            hosi_json['value'] = hosi.mfl_code
             results.append(hosi_json)
         data = json.dumps(results)
     else:
@@ -299,8 +363,8 @@ def facilities_autocomplete(request,*args,**kwargs):
         for hosi in facilities:
             hosi_json = {}
             hosi_json['id'] = hosi.id
-            hosi_json['label'] = hosi.facility_name
-            hosi_json['value'] = hosi.facility_name
+            hosi_json['label'] = hosi.facility_name +" - "+hosi.sub_county
+            hosi_json['value'] = hosi.mfl_code
             results.append(hosi_json)
         data = json.dumps(results)
     mimetype = 'application/json'

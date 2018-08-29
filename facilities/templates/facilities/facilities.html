@@ -31,6 +31,19 @@
                     <li><a href="#">Separated link</a></li>
                 </ul>
             </div>
+            {% if sub_counties %}
+            <div class="btn-group m-r-10">
+                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-info dropdown-toggle waves-effect waves-light" type="button">By Sub county <span class="caret"></span></button>
+                <ul role="menu" class="dropdown-menu">
+                    <li><a href="#">--Select sub county--</a></li>
+                    <li><a href="{% url 'facilities:facilities' %}">All facilities</a></li>
+                    {% for scounty in sub_counties %}
+                    <li><a href="{% url 'facilities:subcounty_facilities' county scounty.sub_county %}">{{ scounty.sub_county }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+            <a href="{% url 'facilities:excel_facilities_download' %}" class="btn btn-success" target="_blank"><i class="fa fa-download"></i> Excel download</a>
             <a class="btn btn-primary" href="{% url 'facilities:new_facility' %}"><i class="fa fa-plus"></i> New facility</a>
             {% if user.is_superuser %}
             <a class="btn btn-warning" href="{% url 'distribution:reset_nets_balance' %}"><i class="fa fa-refresh"></i> Reset balances</a>

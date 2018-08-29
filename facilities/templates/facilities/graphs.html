@@ -21,3 +21,26 @@
 	  xLabelAngle: '90'
 	});
 </script>
+
+<script type="text/javascript">
+	new Morris.Bar({
+	  // ID of the element in which to draw the chart.
+	  element: 'ez-facilities-graph',
+	  // Chart data records -- each entry in this array corresponds to a point on
+	  // the chart.
+	  data: [
+	  {% for zone in facilities_by_ez %}
+	    { label: '{{ zone.epidemiological_zone }}', value: {{ zone.ez_facilities }} },
+	  {% endfor %}
+	  ],
+	  // The name of the data record attribute that contains x-values.
+	  xkey: 'label',
+	  // A list of names of data record attributes that contain y-values.
+	  ykeys: ['value'],
+	  // Labels for the ykeys -- will be displayed when you hover over the
+	  // chart.
+	  labels: ['Facilities'],
+	  hideHover: 'auto'
+	  // xLabelAngle: '20'
+	});
+</script>

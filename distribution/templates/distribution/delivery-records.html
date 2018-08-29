@@ -56,7 +56,16 @@
         {% endfor %}
         {% endif %}
         <div class="white-box">
-            <h3 class="box-title m-b-0">Distribution details {% if nets_delivered.total_nets %}<span class="county-delivery">*{{ nets_delivered.total_nets | intcomma }}</span> nets delivered{% endif %}</h3>
+            {% if county %}
+            <h2>{{ county | upper }}</h2>
+            {% if nets_delivered.total_nets %}<h3 class="county-delivery">*{{ nets_delivered.total_nets | intcomma }} nets delivered</h3>{% endif %}
+            {% endif %}
+
+            {% if regionn %}
+            <h2>{{ regionn | upper }}</h2>
+            {% if nets_delivered.total_nets %}<h3 class="county-delivery">*{{ nets_delivered.total_nets | intcomma }} nets delivered</h3>{% endif %}
+            {% endif %}
+            <h3 class="box-title m-b-0">Distribution details </h3>
             <div class="table-responsive">
                 <table class="table">
                     <thead>

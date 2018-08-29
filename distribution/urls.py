@@ -6,7 +6,9 @@ app_name = 'distribution'
 
 urlpatterns = [
 	path('nets-distribution', views.distribution_index, name='nets_distribution'),
+	path('monthly-distribution/<int:mwezi>/', views.monthly_net_delivery, name='monthly_distribution'),
 	path('nets-issuance', views.record_nets_issued, name='issue_nets' ),
+	path('distribution-download/<int:mwezi>/', views.download_distribution_excel, name='distribution_download'),
 	path('excel-nets-issuance', views.record_nets_issued_excel, name='issue_nets_excel' ),
 	path('excel-nets-distribution', views.record_nets_distributed_excel, name='distribute_nets_excel' ),
 	path('counties-nets-issuance', views.nets_distributed_by_county, name='counties_issued_nets' ),

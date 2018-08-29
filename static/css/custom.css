@@ -5,6 +5,7 @@
 	display: none;
 }*/
 
+
 .form-group{
 	position: relative !important;
 }
@@ -17,6 +18,11 @@
 .form-btns{
 	margin-top: 3%;
 	padding: 10px;
+}
+
+input:invalid{
+  border-color: #900;
+  background-color: #FDD;
 }
 
 .top-bar-btns{
@@ -75,8 +81,23 @@
 /* Span classes */
 .county-delivery{
 	color: #01c0c8;
-	font-size: 14px; 
+	font-size: 20px; 
+	font-weight: bold;
 }
+
+/* H3 Classes*/
+.cordinator-name{
+	color: #01c0c8;
+	font-size: 22px; 
+	font-weight: bold;
+}
+
+.county-dropdown{
+	height: 200px;
+	overflow-y: scroll;
+}
+
+
 
 
 @media only screen and (max-width: 768px){

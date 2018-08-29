@@ -1,9 +1,10 @@
-import datetime, calendar
+import datetime, calendar, csv
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
@@ -21,14 +22,59 @@ def distribution_index(request):
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
 
-	facilities = Facilities.objects.all()  
-	recently_distributed = Nets_distributed.objects.filter(date_issued__month=today.month) 
+	county_distribution = Nets_distributed.objects.values('facility__county').annotate(county_total=Sum('nets_issued')).order_by('-county_total') 
+	distribution_by_ez = Nets_distributed.objects.values('facility__epidemiological_zone').annotate(ez_distribution=Sum('nets_issued')).order_by('-ez_distribution')
+	region_distribution = Nets_distributed.objects.values('facility__psk_region').annotate(region_total=Sum('nets_issued')).order_by('-region_total')
+	total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka).aggregate(nets=Sum('nets_issued'))
+	total_facilities_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka).annotate(Count('facility', distinct=True))
+	# Accompaniements
+	counties = Counties.objects.order_by('county_name')
+	regions = Regions.objects.order_by('region_name')
+
 	context = {
-		'facilities' : facilities,
-		'recently_distributed' : recently_distributed
+		'counties' : counties,
+		'county_distribution' : county_distribution,
+		'distribution_by_ez' : distribution_by_ez,
+		'months_choices' : months_choices,
+		'regions' : regions,
+		'region_distribution' : region_distribution,
+		'total_facilities_delivered' : total_facilities_delivered,
+		'total_nets_delivered' : total_nets_delivered
 	}
 	template = "distribution/index.html"
 	return render(request, template, context)
+
+# Fetch month nets delivery
+@login_required(login_url='login')
+def monthly_net_delivery(request, mwezi):
+	today = datetime.datetime.now()
+	mwaka = today.year
+	months_choices = []
+	for i in range(1,13):
+	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
+
+	county_distribution = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__county').annotate(county_total=Sum('nets_issued')).order_by('-county_total') 
+	region_distribution = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__psk_region').annotate(region_total=Sum('nets_issued')).order_by('-region_total')
+	total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).aggregate(nets=Sum('nets_issued'))
+	total_facilities_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).annotate(Count('facility', distinct=True))
+	# Accompaniements
+	counties = Counties.objects.order_by('county_name')
+	regions = Regions.objects.order_by('region_name')
+	query_month = calendar.month_name[int(mwezi)]
+
+	context = {
+		'counties' : counties,
+		'county_distribution' : county_distribution,
+		'months_choices' : months_choices,
+		'mwezi' : mwezi,
+		'query_month' : query_month,
+		'regions' : regions,
+		'region_distribution' : region_distribution,
+		'total_facilities_delivered' : total_facilities_delivered,
+		'total_nets_delivered' : total_nets_delivered
+	}
+	template = "distribution/index.html"
+	return render(request, template, context)	
 
 # Fetch nets issued to facilities month and year
 @login_required(login_url='login')
@@ -105,7 +151,8 @@ def delivery_by_county(request, county):
 		'page_range' : page_range,
 		'nets_delivered' : nets_delivered,
 		'counties' : counties,
-		'regions' : regions
+		'regions' : regions,
+		'county' : county
 	}
 	return render(request, template, context)
 
@@ -118,6 +165,7 @@ def delivery_by_region(request, region):
 	regions = Regions.objects.all()
 
 	recently_delivered = Nets_distributed.objects.filter(facility__psk_region=region).order_by('-date_issued')
+	nets_delivered = Nets_distributed.objects.filter(facility__psk_region=region).aggregate(total_nets=Sum('nets_issued'))
 	
 	
 
@@ -143,7 +191,9 @@ def delivery_by_region(request, region):
 		'recently_delivered' : recently_delivered,
 		'page_range' : page_range,
 		'counties' : counties,
-		'regions' : regions
+		'regions' : regions,
+		'nets_delivered' : nets_delivered,
+		'regionn' : region
 	}
 	return render(request, template, context)
 
@@ -151,7 +201,7 @@ def delivery_by_region(request, region):
 @login_required(login_url='login')
 def record_nets_issued(request):
 	if request.method=="POST":
-		facility = get_object_or_404(Facilities, facility_name=request.POST['facility'])
+		facility = get_object_or_404(Facilities, mfl_code=request.POST['facility'])
 		nets_issued = record['nets_issued']
 		donor = record['donor']
 		invoice_no = record['invoice_no']
@@ -207,6 +257,23 @@ def record_nets_issued_excel(request):
 		template = "distribution/excel-issuance.html"
 		context={}
 		return render(request, template, context)
+
+@login_required(login_url='login')
+def download_distribution_excel(request, mwezi):
+	today = datetime.datetime.now()
+	mwaka = today.year
+
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['County', 'Nets Issued'])
+
+	reports = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	for report in reports:
+	    writer.writerow(report)
+
+	return response
 
 # Delete all the net delivery records in the database.
 # Super admin only
@@ -328,7 +395,7 @@ def record_distribution(request):
 	today = datetime.datetime.now()
 
 	if request.method=="POST":
-		facility = get_object_or_404(Facilities, facility_name=request.POST['facility'])
+		facility = get_object_or_404(Facilities, mfl_code=request.POST['facility'])
 		dist_month = request.POST['dist_month']
 		dist_year = request.POST['dist_year']
 		bal_cf = request.POST['bal_cf']

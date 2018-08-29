@@ -10,6 +10,34 @@ function hideRegionSelect() {
 	
 }
 
+function visit_form_validator(){
+	// Report submission last three months
+	report_submit_one = document.getElementById('report-submit-one');
+	report_submit_two = document.getElementById('report-submit-two');
+	report_submit_three = document.getElementById('report-submit-three');
+	report_submit_four = document.getElementById('report-submit-four');
+	// Ordered last quarter
+	quarter_order_yes = document.getElementById('quarter-order-yes');
+	quarter_order_no = document.getElementById('quarter-order-no');
+	// OJT
+	ojt_done = document.getElementById('ojt-done');
+	ojt_not = document.getElementById('ojt-not');
+	ojt_yes = document.getElementById('ojt-yes');
+	ojt_no = document.getElementById('ojt-no');
+	formIssues = 0;
+}
+
+function verifyDates(){
+	var visit_date = document.getElementById('visiting-date').value;
+	var dateInput = new Date(visit_date);
+	var today = new Date();
+	today.setHours(0,0,0,0);
+
+	if(dateInput > today){
+		console.log(visit_date + "issa scam");
+	}
+}
+
 function hideNonComplianceReason() {
 	var noncompliance_reason = document.getElementById("noncompliance-reason");
 	var compliance_yes = document.getElementById("compliance-yes");
