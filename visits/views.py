@@ -92,6 +92,83 @@ def visits_index(request):
 	return render(request, template, context)
 
 @login_required(login_url='login')
+def list_view(request):
+	account = request.user
+	account_profile = get_object_or_404(UserProfile, user=account)
+
+	today = datetime.datetime.now()
+	this_mwaka = today.year
+	this_month = today.month
+	last_month = today.month - 1
+
+	months_choices = []
+	for i in range(1,13):
+	    months_choices.append((i, datetime.date(this_mwaka, i, 1).strftime('%B')))
+
+	if account_profile.usertype != "Admin":
+		recently_visited = Visit.objects.filter(supervisor=account).order_by('-date_recorded')
+		total_visits = Visit.objects.filter(supervisor=account).count()
+		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
+		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
+		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month, supervisor=account).count()
+	else:
+		recently_visited = Visit.objects.all().order_by('-date_recorded')
+		total_visits = Visit.objects.count()
+		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month).count()
+		monthly_visits = Visit.objects.filter(visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
+		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month).count()
+
+
+	mwezi_huu = calendar.month_name[int(this_month)]
+	mwezi_uliopita = calendar.month_name[int(last_month)]
+	coordinators = UserProfile.objects.filter(usertype="Coordinator")
+	field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
+	less_ten = Visit.objects.filter(months_of_stock__range=(0, 10)).count()
+	less_thirty = Visit.objects.filter(months_of_stock__range=(10, 30)).count()
+	less_sixty = Visit.objects.filter(months_of_stock__range=(30, 60)).count()
+	less_hundred = Visit.objects.filter(months_of_stock__range=(60, 100)).count()
+	try:
+	    page = request.GET.get('page', 1)
+	except:
+	    page = 1
+
+	paginator = Paginator(recently_visited, 50)
+
+	try:
+	    recently_visited = paginator.page(page)
+	except PageNotAnInteger:
+	    recently_visited = paginator.page(1)
+	except EmptyPage:
+	    recently_visited = paginator.page(paginator.num_pages)
+
+	index = recently_visited.number - 1
+	max_index = len(paginator.page_range)
+	start_index = index - 5 if index >= 5 else 0
+	end_index = index + 5 if index <= max_index - 5 else max_index
+	page_range = paginator.page_range[start_index:end_index]
+
+	context = {
+		'coordinators' : coordinators,
+		'current_month' : current_month,
+		'field_assistants' : field_assistants,
+		'months_choices' : months_choices,
+		'monthly_visits' : monthly_visits,
+		'mwezi_huu' : mwezi_huu,
+		'mwezi_uliopita' : mwezi_uliopita,
+		'previous_month' : previous_month,
+		'recently_visited' : recently_visited,
+		'total_visits' : total_visits,
+		'page_range' : page_range,
+		'less_ten' : less_ten,
+		'less_thirty' : less_thirty,
+		'less_sixty' : less_sixty,
+		'less_hundred' : less_hundred
+
+	}
+	template = "visits/list-view.html"
+	return render(request, template, context)
+
+@login_required(login_url='login')
 def risk_assessment(request):
 	less_ten = Visit.objects.filter(months_of_stock__range=(0, 10)).count()
 	less_thirty = Visit.objects.filter(months_of_stock__range=(10, 30)).count()

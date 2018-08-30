@@ -37,6 +37,8 @@ def dashboard(request):
         total_visits = Visit.objects.count()
     # nets_to_anc = Distribution_report.objects.filter(dist_month="", dist_year=today.year).aggregate(issued_nets=Sum('anc_nets'))
     # nets_to_cwc = Distribution_report.objects.filter().aggregate(issued_nets=Sum('total_nets'))
+    region_distribution = Nets_distributed.objects.values('facility__psk_region').annotate(region_total=Sum('nets_issued')).order_by('-region_total')
+    region_visits = Visit.objects.values('facility__psk_region').annotate(visits_total=Count('pk')).order_by('-visits_total')
     facilities_by_county = Facilities.objects.values('county').annotate(county_facilities=Count('county')).order_by('-county_facilities')
     facilities_by_ez = Facilities.objects.values('epidemiological_zone').annotate(ez_facilities=Count('epidemiological_zone')).order_by('-ez_facilities')
     
@@ -46,6 +48,8 @@ def dashboard(request):
         'facilities_by_ez' : facilities_by_ez,
         'nets_distributed' : nets_distributed,
         'nets_issued' : nets_issued,
+        'region_distribution' : region_distribution,
+        'region_visits' : region_visits,
         'total_facilities' : total_facilities,
         'total_visits' : total_visits,
         'facilities_by_county' : facilities_by_county

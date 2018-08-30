@@ -1,4 +1,53 @@
 {% load static %}
+<!-- Distribution graph -->
+<script type="text/javascript">
+	new Morris.Donut({
+	  // ID of the element in which to draw the chart.
+	  element: 'dashboard-distribution-graph',
+	  // Chart data records -- each entry in this array corresponds to a point on
+	  // the chart.
+	  data: [
+	  {% for region in region_distribution %}
+	    { label: '{{ region.facility__psk_region }}', value: {{ region.region_total }} },
+	  {% endfor %}
+	  ],
+	  // The name of the data record attribute that contains x-values.
+	  // xkey: 'region',
+	  // A list of names of data record attributes that contain y-values.
+	  // ykeys: ['value'],
+	  // Labels for the ykeys -- will be displayed when you hover over the
+	  // chart.
+	  hideHover: 'auto',
+	  colors: ['#00ff00', '#ffff66', '#ff9900', '#3399ff', '#ff3300', '#ccff66', '#800000'],
+	  xLabelAngle: '90'
+	});
+</script>
+
+<!-- Visits graph -->
+<script type="text/javascript">
+	new Morris.Bar({
+	  // ID of the element in which to draw the chart.
+	  element: 'dashboard-visit-graph',
+	  // Chart data records -- each entry in this array corresponds to a point on
+	  // the chart.
+	  data: [
+	  {% for visits in region_visits %}
+	    { label: '{{ visits.facility__psk_region }}', value: {{ visits.visits_total }} },
+	  {% endfor %}
+	  ],
+	  // The name of the data record attribute that contains x-values.
+	  xkey: 'label',
+	  // A list of names of data record attributes that contain y-values.
+	  ykeys: ['value'],
+	  // Labels for the ykeys -- will be displayed when you hover over the
+	  // chart.
+	  labels: ['Visits'],
+	  hideHover: 'auto',
+	  xLabelAngle: '90'
+	});
+</script>
+
+<!-- County facilities graph -->
 <script type="text/javascript">
 	new Morris.Bar({
 	  // ID of the element in which to draw the chart.

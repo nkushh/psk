@@ -55,7 +55,7 @@
             {% endifequal %}
             <a class="btn btn-danger" href="{% url 'visits:record_visit' %}"><i class="fa fa-plus"></i> Record visit</a>
             <a class="btn btn-success" href="{% url 'visits:coordinators_aggregate_visits' %}"><i class="fa fa-group"></i> Visits aggregate</a>
-            <a class="btn btn-primary" href="{% url 'visits:list_view' %}"><i class="fa fa-list-alt"></i> List view</a>
+            <a class="btn btn-primary" href="{% url 'visits:visits_index' %}"><i class="fa fa-bar-chart"></i> Graphical view</a>
             
         </div>
     </div>
@@ -103,33 +103,7 @@
     {% endif %}
 </div>
 <!-- End row -->
-<!-- <div class="row">
-    <div class="col-md-3">
-        <div class="white-box">
-            <h3>< 10</h3>
-            <p>{{ less_ten }}</p>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="white-box">
-            <h3>< 30</h3>
-            <p>{{ less_thirty }}</p>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="white-box">
-            <h3>< 60</h3>
-            <p>{{ less_sixty }}</p>
-        </div>
-    </div>
-    <div class="col-md-3">
-        <div class="white-box">
-            <h3>< 100</h3>
-            <p>{{ less_hundred }}</p>
-        </div>
-    </div>
-</div> -->
-<!--row -->
+
 
 <!-- /row -->
 <!-- messgae tags -->
@@ -145,16 +119,6 @@
     </div>
 </div>
 <!-- End messages -->
-<div class="row">
-    <div class="col-md-12">
-        <div class="white-box">
-            <h3 class="box-title">Monthly Visits</h3>
-            <div id="monthly-visits-graph"></div>
-        </div>
-        
-    </div>
-</div>
-<!--/row -->
 <div class="row">
     <div class="col-sm-12">
         <div class="white-box">

@@ -66,6 +66,28 @@
     </div>
 </div>
 <!--/row -->
+<!-- .row -->
+<div class="row">
+    <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="white-box">
+            {% if query_month %}
+             <a href="{% url 'distribution:distribution_download' mwezi %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
+            {% endif %}
+            <h3 class="box-title">Distribution By Region</h3>
+
+            <div id="dashboard-distribution-graph" class="minus-mar"></div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="white-box">
+            <h3 class="box-title">Visits By Region</h3>
+
+            <div id="dashboard-visit-graph" class="minus-mar"></div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+<!-- Row -->
 <div class="row">
     <div class="col-md-12">
         <div class="white-box">

@@ -29,12 +29,14 @@ function visit_form_validator(){
 
 function verifyDates(){
 	var visit_date = document.getElementById('visiting-date').value;
+	var error_div = document.getElementById('date-error');
 	var dateInput = new Date(visit_date);
 	var today = new Date();
 	today.setHours(0,0,0,0);
 
 	if(dateInput > today){
-		console.log(visit_date + "issa scam");
+		error_div.setAttribute("style", "display: block;");
+		error_div.innerHTML = "Error! Date entered is invalid. Kindly correct"
 	}
 }
 

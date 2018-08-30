@@ -30,6 +30,10 @@ input:invalid{
 	padding: 10px;
 }
 
+.top-bar-btns .btn{
+	border-radius: 5px;
+}
+
 #county-facilities-graph{
 	height: 400px;
 }
@@ -97,6 +101,13 @@ input:invalid{
 	overflow-y: scroll;
 }
 
+/* Error divs */
+#date-error{
+	border: 1px solid red;
+	color: red;
+	font-size: 14px;
+	padding: 10px;
+}
 
 
 
