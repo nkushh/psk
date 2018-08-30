@@ -54,6 +54,7 @@ def monthly_net_delivery(request, mwezi):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
 
 	county_distribution = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__county').annotate(county_total=Sum('nets_issued')).order_by('-county_total') 
+	distribution_by_ez = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__epidemiological_zone').annotate(ez_distribution=Sum('nets_issued')).order_by('-ez_distribution')
 	region_distribution = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__psk_region').annotate(region_total=Sum('nets_issued')).order_by('-region_total')
 	total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).aggregate(nets=Sum('nets_issued'))
 	total_facilities_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).annotate(Count('facility', distinct=True))
@@ -65,6 +66,7 @@ def monthly_net_delivery(request, mwezi):
 	context = {
 		'counties' : counties,
 		'county_distribution' : county_distribution,
+		'distribution_by_ez' : distribution_by_ez,
 		'months_choices' : months_choices,
 		'mwezi' : mwezi,
 		'query_month' : query_month,
