@@ -130,6 +130,7 @@
                         <tr>
                             <th>#</th>
                             <th>Facility</th>
+                            <th>Visited by</th>
                             <th>Visit date</th>
                             <th>ANC Missed opportunities</th>
                             <th>CWC Missed opportunities</th>
@@ -138,15 +139,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for issuance in recently_visited %}
+                        {% for visit in recently_visited %}
                         <tr>
-                            <td>{{ issuance.pk }}</td>
-                            <td>{{ issuance.facility.facility_name }}</td>
-                            <td>{{ issuance.visit_date }}</td>
-                            <td class="text-center">{{ issuance.nets_anc_variance }}</td>
-                            <td class="text-center">{{ issuance.nets_cwc_variance }}</td>
-                            <td class="text-center">{{ issuance.balance_variance }}</td>
-                            <td class="text-center">{{ issuance.months_of_stock | floatformat:2 }}</td>
+                            <td>{{ visit.pk }}</td>
+                            <td><a href="{% url 'visits:visit_details' visit.pk %}">{{ visit.facility.facility_name }}</a></td>
+                            <td>{{ visit.supervisor.username }}</td>
+                            <td>{{ visit.visit_date }}</td>
+                            <td class="text-center">{{ visit.nets_anc_variance }}</td>
+                            <td class="text-center">{{ visit.nets_cwc_variance }}</td>
+                            <td class="text-center">{{ visit.balance_variance }}</td>
+                            <td class="text-center">{{ visit.months_of_stock | floatformat:2 }}</td>
                         </tr>
                         {% empty %}
                         <tr>

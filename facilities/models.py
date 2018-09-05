@@ -56,7 +56,6 @@ class Facilities(models.Model):
 	net_balance = models.IntegerField(default=0)
 	system_net_balance = models.IntegerField(default=0)
 	date_added = models.DateTimeField(auto_now_add=True)
-	added_by = models.ForeignKey('auth.User', default=1, on_delete=models.CASCADE)
 	status = models.IntegerField(default=1)
 
 	def __str__(self):

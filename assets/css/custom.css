@@ -96,6 +96,18 @@ input:invalid{
 	font-weight: bold;
 }
 
+.white-box-header{
+	color: #01c0c8;
+	font-size: 22px; 
+	font-weight: bold;
+}
+
+/* H5 Classes */
+.white-box-header{
+	color: #01c0c8; 
+	font-weight: light;
+}
+
 .county-dropdown{
 	height: 200px;
 	overflow-y: scroll;
@@ -109,6 +121,31 @@ input:invalid{
 	padding: 10px;
 }
 
+.visit-details .col-md-4{
+	height:180px;
+	margin-bottom: 3%;
+}
+
+.visit-details td{
+	border: none;
+}
+
+.visit-detail-text{
+	font-size: 18px;
+	color: #000;
+}
+
+.visit-detail-text span{
+	font-size: 14px;
+	margin-right: 5px;
+}
+
+/* icons style */
+.visit-detail-text .fa{
+	font-size: 20px;
+	color: #01c0c8;
+	margin-left: 3px;
+}
 
 
 @media only screen and (max-width: 768px){

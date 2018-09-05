@@ -169,6 +169,16 @@ def list_view(request):
 	return render(request, template, context)
 
 @login_required(login_url='login')
+def visit_details(request, visit_id):
+	visit = get_object_or_404(Visit, pk=visit_id)
+	template = "visits/visit-details.html"
+	context = {
+		'visit' : visit
+	}
+
+	return render(request, template, context)
+
+@login_required(login_url='login')
 def risk_assessment(request):
 	less_ten = Visit.objects.filter(months_of_stock__range=(0, 10)).count()
 	less_thirty = Visit.objects.filter(months_of_stock__range=(10, 30)).count()

@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Visit Details{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Visit details</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+        	<li class="{% url 'visits:visits_index' %}">Visits Dashboard</li>
+            <li class="{% url 'visits:list_view' %}">Visits list</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- End row -->
+<!-- body content -->
+<div class="row">
+	<div class="col-md-12">
+		<div class="white-box">
+			<h3 class="white-box-header">{{ visit.facility }}</h3>
+			<h5 class="white-box-h5">Visit #{{ visit.pk }}</h5>
+			<div class="visit-details">
+				<div class="row">
+					<div class="col-md-4">
+						<p class="visit-detail-text"><span>Co-ordinator <i class="fa fa-user"></i> :</span> {{ visit.supervisor }}</p>
+						<p class="visit-detail-text"><span>Visit date <i class="fa fa-calendar"></i> :</span> {{ visit.visit_date }}</p>
+						<p class="visit-detail-text"><span>Issuance compliance <i class="fa fa-check"></i> :</span> {% ifequal visit.policy_compliance 1 %}Yes{% else %}No{% endifequal %}</p>
+						{% if visit.non_compliance_reason %}<p>{{ non_compliance_reason }}</p>{% endif %}
+					</div>
+					<div class="col-md-4">
+						<p class="visit-detail-text"><span>Report submission <i class="fa fa-file"></i> :</span> {{ visit.reporting_frequency }}/3</p>
+						<p class="visit-detail-text"><span>Ordered in last quarter <i class="fa fa-cart-plus"></i> :</span> {% ifequal visit.quarter_order 1 %}Yes{% else %}No{% endifequal %}</p>
+						<p class="visit-detail-text"><span>OJT Conducted <i class="fa fa-chalkboard-teacher"></i> :</span> {% ifequal visit.ojt_perfomed 1 %}Yes{% else %}No{% endifequal %}</p>
+					</div>
+					<div class="col-md-4">
+						<p class="visit-detail-text"><span>Book balance <i class="fa fa-book"></i> :</span> {{ visit.book_bal }}</p>
+						<p class="visit-detail-text"><span>Physical count <i class="fa fa-book-reader"></i> :</span> {{ visit.physical_count }}</p>
+						{% if balance_variance %}
+						<p class="visit-detail-text"><span>Nets Variance <i class="fa fa-user"></i> :</span> {{ visit.balance_variance }}</p>
+						<p class="visit-detail-text"><span>Variance Reason <i class="fa fa-calendar"></i> :</span> {{ visit.bal_variance_reason }}</p>
+						{% endif %}
+					</div>
+					<div class="col-md-4">
+						<h4>ANC Missed opportunities</h4>
+						<p class="visit-detail-text"><span>New ANC MOH711 <i class="fa fa-user"></i> :</span> {{ visit.new_anc_moh711 }}</p>
+						<p class="visit-detail-text"><span>ANC MOH711 Nets <i class="fa fa-box"></i> :</span> {{ visit.nets_anc_moh711 }}</p>
+						<p class="visit-detail-text"><span>Nets in ANC FNPRC <i class="fa fa-clipboard-list"></i> :</span> {{ visit.nets_anc_fnprc }}</p>
+						<p class="visit-detail-text"><span>ANC Nets Variance <i class="fa fa-exchange-alt"></i> :</span> {{ visit.nets_anc_variance }}</p>
+					</div>
+					<div class="col-md-4">
+						<h4>CWC Missed opportunities</h4>
+						<p class="visit-detail-text"><span>New CWC MOH711 <i class="fa fa-user"></i> :</span> {{ visit.new_cwc_moh710 }}</p>
+						<p class="visit-detail-text"><span>CWC MOH711 Nets <i class="fa fa-box"></i> :</span> {{ visit.nets_cwc_moh711 }}</p>
+						<p class="visit-detail-text"><span>Nets in CWC FNPRC <i class="fa fa-clipboard-list"></i> :</span> {{ visit.nets_cwc_fnprc }}</p>
+						<p class="visit-detail-text"><span>CWC Nets Variance <i class="fa fa-exchange-alt"></i> :</span> {{ visit.nets_cwc_variance }}</p>
+					</div>
+					<div class="col-md-4">
+						<p class="visit-detail-text"><span>Avg Monthly Consumption <i class="fa fa-user"></i> :</span> {{ visit.amc }}</p>
+						<p class="visit-detail-text"><span>Months of stock <i class="fa fa-boxes"></i> :</span> {{ visit.months_of_stock }}</p>
+						<p class="visit-detail-text"><span>Confirmable CWC <i class="fa fa-female"></i> :</span> {{ visit.confirmable_cwc }}</p>
+						<p class="visit-detail-text"><span>Confirmable ANC <i class="fa fa-child"></i> :</span> {{ visit.confirmable_anc }}</p>
+					</div>
+
+					<div class="col-md-6">
+						<p class="visit-detail-text"><span>Store Type <i class="fa fa-building"></i> :</span>{{ visit.store_type }}</p>
+						<p class="visit-detail-text"><span>Store Access <i class="fa fa-lock"></i> :</span>{{ visit.store_access }}</p>
+						<p class="visit-detail-text"><span>Stock Control Card <i class="fa fa-clipboard-check"></i> :</span>{% ifequal visit.stock_control_card 1 %} Available {% else %} Not Available {% endifequal %}</p>
+						<p class="visit-detail-text"><span>Risk of pests <i class="fa fa-bug"></i> :</span>{{ visit.pests_risk }}</p></td>
+						<p class="visit-detail-text"><span>Fire prevention mechanism <i class="fa fa-fire"></i> :</span>{% ifequal visit.fire_prevention 1 %}Yes({{ visit.fire_prevention_mechanism }}) {% else %}No{% endifequal %}</p>
+					</div>
+					<div class="col-md-6">
+						<p class="text-center">Other remarks :</p>
+						<p class="text-center">{% if visit.other_remarks %}{{ visit.other_remarks }}{% else %}None{% endif %}</p>
+					</div>
+				</div>
+						
+			</div>
+		</div>
+	</div>
+</div>
+<!-- End body content -->
+{% endblock %}
