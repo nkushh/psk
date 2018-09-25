@@ -140,6 +140,22 @@ input:invalid{
 	margin-right: 5px;
 }
 
+.variance-figure{
+	color: red;
+}
+
+.variance-figure .fa{
+	color: red;
+}
+
+.other-remarks{
+	font-size: 16px;
+}
+
+.remarks-box{
+	border: 1px solid #eee;
+}
+
 /* icons style */
 .visit-detail-text .fa{
 	font-size: 20px;

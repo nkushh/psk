@@ -192,8 +192,37 @@ def risk_assessment(request):
 def coordinators_aggregate_visits(request):
 	profiles = User.objects.all()
 	visits = User.objects.annotate(total_visits=Count('visit__id')).order_by('-total_visits')
+
+	today = datetime.datetime.now()
+	this_mwaka = today.year
+
+	months_choices = []
+	for i in range(1,13):
+	    months_choices.append((i, datetime.date(this_mwaka, i, 1).strftime('%B')))
+
 	template = "visits/coordinators-aggregate.html"
 	context = {
+		'months_choices' : months_choices,
+		'profiles' : profiles,
+		'visits' : visits
+	}
+
+	return render(request, template, context)
+
+@login_required(login_url='login')
+def monthly_coordinators_aggregate_visits(request, mwezi):
+	today = datetime.datetime.now()
+	this_mwaka = today.year
+
+	months_choices = []
+	for i in range(1,13):
+	    months_choices.append((i, datetime.date(this_mwaka, i, 1).strftime('%B')))
+
+	profiles = User.objects.all()
+	visits = User.objects.filter(visit__visit_date__year=this_mwaka, visit__visit_date__month=mwezi).annotate(total_visits=Count('visit__id')).order_by('-total_visits')
+	template = "visits/coordinators-aggregate.html"
+	context = {
+		'months_choices' : months_choices,
 		'profiles' : profiles,
 		'visits' : visits
 	}
