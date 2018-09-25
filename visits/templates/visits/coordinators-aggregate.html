@@ -9,6 +9,7 @@
     </div>
     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
         <ol class="breadcrumb">
+        	<li><a href="{% url 'visits:visits_index' %}">Visits dashboard</a></li>
             <li class="active">Coordinators aggregate</li>
         </ol>
     </div>
@@ -22,7 +23,7 @@
         <div class="top-bar-btns">
         	<div class="btn-group m-r-10">
 	            <button aria-expanded="false" data-toggle="dropdown" class="btn btn-primary dropdown-toggle waves-effect waves-light" type="button">By Month <span class="caret"></span></button>
-	            <ul role="menu" class="dropdown-menu">
+	            <ul role="menu" class="dropdown-menu county-dropdown">
 	                <li><a href="#">--Select Month--</a></li>
 	                {% for mwezi in months_choices %}
 	                <li><a href="{% url 'visits:monthly_coordinators_aggregate_visits' mwezi.0 %}">{{ mwezi.1 }}</a></li>
@@ -30,6 +31,7 @@
 	            </ul>
 	        </div>
             <a class="btn btn-primary" href="{% url 'visits:visits_index' %}"><i class="fa fa-list-alt"></i> Visits List</a>
+
         </div>
         
     </div>
@@ -38,6 +40,7 @@
 <div class="row">
 	<div class="col-md-12">
 		<div class="white-box">
+			{% if query_month %}<p class="cordinator-name">{{ query_month.capitalize }} Visits</p>{% endif %}
 			<table class="table table-bordered table-hover">
 				<thead>
 					<th>Coordinator</th>

@@ -28,24 +28,33 @@ def visits_index(request):
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(this_mwaka, i, 1).strftime('%B')))
 
-	if account_profile.usertype != "Admin":
+	if account_profile.usertype == "Field Assistant":
 		recently_visited = Visit.objects.filter(supervisor=account).order_by('-date_recorded')
 		total_visits = Visit.objects.filter(supervisor=account).count()
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
 		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month, supervisor=account).count()
-	else:
+
+	elif account_profile.usertype == "Coordinator":
+		recently_visited = Visit.objects.filter(supervisor=account).order_by('-date_recorded')
+		total_visits = Visit.objects.filter(supervisor=account).count()
+		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
+		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
+		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month, supervisor=account).count()
+		field_assistants = UserProfile.objects.filter(usertype="Field Assistant", psk_region=account_profile.psk_region)
+	elif account_profile.usertype == "Admin":
 		recently_visited = Visit.objects.all().order_by('-date_recorded')
 		total_visits = Visit.objects.count()
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month).count()
 		monthly_visits = Visit.objects.filter(visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month).count()
+		field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
+		coordinators = UserProfile.objects.filter(usertype="Coordinator")
 
 
 	mwezi_huu = calendar.month_name[int(this_month)]
 	mwezi_uliopita = calendar.month_name[int(last_month)]
 	coordinators = UserProfile.objects.filter(usertype="Coordinator")
-	field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
 	less_ten = Visit.objects.filter(months_of_stock__range=(0, 10)).count()
 	less_thirty = Visit.objects.filter(months_of_stock__range=(10, 30)).count()
 	less_sixty = Visit.objects.filter(months_of_stock__range=(30, 60)).count()
@@ -105,24 +114,34 @@ def list_view(request):
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(this_mwaka, i, 1).strftime('%B')))
 
-	if account_profile.usertype != "Admin":
+	if account_profile.usertype == "Field Assistant":
 		recently_visited = Visit.objects.filter(supervisor=account).order_by('-date_recorded')
 		total_visits = Visit.objects.filter(supervisor=account).count()
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
 		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month, supervisor=account).count()
-	else:
+
+	elif account_profile.usertype == "Coordinator":
+		recently_visited = Visit.objects.filter(supervisor=account).order_by('-date_recorded')
+		total_visits = Visit.objects.filter(supervisor=account).count()
+		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
+		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
+		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month, supervisor=account).count()
+		field_assistants = UserProfile.objects.filter(usertype="Field Assistant", psk_region=account_profile.psk_region)
+	elif account_profile.usertype == "Admin":
 		recently_visited = Visit.objects.all().order_by('-date_recorded')
 		total_visits = Visit.objects.count()
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month).count()
 		monthly_visits = Visit.objects.filter(visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month).count()
+		field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
+		
 
 
 	mwezi_huu = calendar.month_name[int(this_month)]
 	mwezi_uliopita = calendar.month_name[int(last_month)]
 	coordinators = UserProfile.objects.filter(usertype="Coordinator")
-	field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
+	
 	less_ten = Visit.objects.filter(months_of_stock__range=(0, 10)).count()
 	less_thirty = Visit.objects.filter(months_of_stock__range=(10, 30)).count()
 	less_sixty = Visit.objects.filter(months_of_stock__range=(30, 60)).count()
@@ -217,6 +236,7 @@ def monthly_coordinators_aggregate_visits(request, mwezi):
 	months_choices = []
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(this_mwaka, i, 1).strftime('%B')))
+	query_month = calendar.month_name[int(mwezi)]
 
 	profiles = User.objects.all()
 	visits = User.objects.filter(visit__visit_date__year=this_mwaka, visit__visit_date__month=mwezi).annotate(total_visits=Count('visit__id')).order_by('-total_visits')
@@ -224,6 +244,7 @@ def monthly_coordinators_aggregate_visits(request, mwezi):
 	context = {
 		'months_choices' : months_choices,
 		'profiles' : profiles,
+		'query_month' : query_month,
 		'visits' : visits
 	}
 

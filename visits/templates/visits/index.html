@@ -22,10 +22,10 @@
 <div class="row">
     <div class="col-md-12">
         <div class="top-bar-btns">
-            {% ifequal user.userprofile.usertype "Admin" %}
+            
             <div class="btn-group m-r-10">
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-info dropdown-toggle waves-effect waves-light" type="button">By Field Asst. <span class="caret"></span></button>
-                <ul role="menu" class="dropdown-menu">
+                <ul role="menu" class="dropdown-menu county-dropdown">
                     <li><a href="#">--Select Field Asst--</a></li>
                     <li><a href="{% url 'visits:visits_index' %}">All Field Assts.</a></li>
                     {% for cordinator in field_assistants %}
@@ -33,9 +33,10 @@
                     {% endfor %}
                 </ul>
             </div>
+            {% ifequal user.userprofile.usertype "Admin" %}
             <div class="btn-group m-r-10">
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-info dropdown-toggle waves-effect waves-light" type="button">By Coordinator <span class="caret"></span></button>
-                <ul role="menu" class="dropdown-menu">
+                <ul role="menu" class="dropdown-menu county-dropdown">
                     <li><a href="#">--Select coordinator--</a></li>
                     <li><a href="{% url 'visits:visits_index' %}">All coordinators</a></li>
                     {% for coordinator in coordinators %}
@@ -45,7 +46,7 @@
             </div>
             <div class="btn-group m-r-10">
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-primary dropdown-toggle waves-effect waves-light" type="button">By Month <span class="caret"></span></button>
-                <ul role="menu" class="dropdown-menu">
+                <ul role="menu" class="dropdown-menu county-dropdown">
                     <li><a href="#">--Select Month--</a></li>
                     {% for mwezi in months_choices %}
                     <li><a href="{% url 'visits:month_visits' mwezi.0 %}">{{ mwezi.1 }}</a></li>
