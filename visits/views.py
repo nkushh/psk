@@ -34,6 +34,7 @@ def visits_index(request):
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
 		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month, supervisor=account).count()
+		field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
 
 	elif account_profile.usertype == "Coordinator":
 		recently_visited = Visit.objects.filter(supervisor=account).order_by('-date_recorded')
@@ -120,6 +121,7 @@ def list_view(request):
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
 		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month, supervisor=account).count()
+		field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
 
 	elif account_profile.usertype == "Coordinator":
 		recently_visited = Visit.objects.filter(supervisor=account).order_by('-date_recorded')
