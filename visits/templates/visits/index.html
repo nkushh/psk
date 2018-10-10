@@ -147,10 +147,17 @@
 </div>
 <!-- End messages -->
 <div class="row">
-    <div class="col-md-12">
+    <div class="col-md-6">
         <div class="white-box">
             <h3 class="box-title">Monthly Visits</h3>
             <div id="monthly-visits-graph"></div>
+        </div>
+        
+    </div>
+    <div class="col-md-6">
+        <div class="white-box">
+            <h3 class="box-title">Risk Status</h3>
+            <div id="risk-status-graph"></div>
         </div>
         
     </div>
@@ -185,9 +192,9 @@
                             <td class="text-center">{{ visit.nets_anc_variance }}</td>
                             <td class="text-center">{{ visit.nets_cwc_variance }}</td>
                             <td class="text-center">{{ visit.balance_variance }}</td>
-                            <td class="text-center">{{ visit.amc }}</td>
+                            <td class="text-center">{{ visit.amc | floatformat:1 }}</td>
                             <td class="text-center">{{ visit.months_of_stock | floatformat:2 }}</td>
-                            <td class="text-center">{{ visit.risk_level }}</td>
+                            <td class="text-center{% ifequal visit.risk_level 'High' %} variance-figure{% endifequal %}">{{ visit.risk_level }}</td>
                         </tr>
                         {% empty %}
                         <tr>

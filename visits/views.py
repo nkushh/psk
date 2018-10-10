@@ -33,6 +33,7 @@ def visits_index(request):
 		total_visits = Visit.objects.filter(supervisor=account).count()
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
 		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
+		risk_status = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).values('risk_level').annotate(status_count=Count('id'))
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month, supervisor=account).count()
 		field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
 
@@ -41,6 +42,7 @@ def visits_index(request):
 		total_visits = Visit.objects.filter(supervisor=account).count()
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
 		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
+		risk_status = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).values('risk_level').annotate(status_count=Count('id'))
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month, supervisor=account).count()
 		field_assistants = UserProfile.objects.filter(usertype="Field Assistant", psk_region=account_profile.psk_region)
 	elif account_profile.usertype == "Admin":
@@ -48,6 +50,7 @@ def visits_index(request):
 		total_visits = Visit.objects.count()
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month).count()
 		monthly_visits = Visit.objects.filter(visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
+		risk_status = Visit.objects.filter(visit_date__year=this_mwaka).values('risk_level').annotate(status_count=Count('id'))
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month).count()
 		field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
 		coordinators = UserProfile.objects.filter(usertype="Coordinator")
@@ -90,6 +93,7 @@ def visits_index(request):
 		'mwezi_uliopita' : mwezi_uliopita,
 		'previous_month' : previous_month,
 		'recently_visited' : recently_visited,
+		'risk_status' : risk_status,
 		'total_visits' : total_visits,
 		'page_range' : page_range,
 		'less_ten' : less_ten,
