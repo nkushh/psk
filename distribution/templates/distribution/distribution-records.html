@@ -47,7 +47,6 @@
                             <th>ANC</th>
                             <th>Others</th>
                             <th>Total</th>
-                            <th>Bal B/F</th>
                             <th>Bal C/F</th>
                         </tr>
                     </thead>
@@ -61,7 +60,6 @@
                             <td>{{ record.anc_nets }}</td>
                             <td>{{ record.others_nets }}</td>
                             <td>{{ record.total_nets }}</td>
-                            <td>{{ record.bal_bf }}</td>
                             <td>{{ record.bal_cf }}</td>
                         </tr>
                         {% empty %}
@@ -71,6 +69,28 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                {% if records.has_other_pages %}
+                <ul class="pagination pagination-split">
+                    {% if records.has_previous %}
+                      <li><a class="page-link" href="?page={{ records.previous_page_number }}">Previous</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in page_range %}
+                      {% if records.number == i %}
+                        <li class="active"><a href="#">{{ i }}</a></li>
+                      {% else %}
+                        <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                      {% endif %}
+                    {% endfor %}
+
+                    {% if records.has_next %}
+                      <li><a class="page-link" href="?page={{ records.next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                </ul>
+                {% endif %}
             </div>
         </div>
     </div>

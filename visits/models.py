@@ -43,6 +43,7 @@ class Visit(models.Model):
 	fire_prevention_mechanism = models.CharField(max_length=200)
 	other_remarks = models.TextField(null=True)
 	date_recorded = models.DateTimeField(auto_now_add=True)
+	risk_level = models.CharField(max_length=10, default="Low")
 	status = models.IntegerField(default=0)
 
 	def __str__(self):

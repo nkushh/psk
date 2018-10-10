@@ -14,4 +14,6 @@ urlpatterns = [
 	path('monthly-visits/<int:mwezi>/', views.month_visits, name="month_visits"),
 	path('record-visit', views.record_visit, name="record_visit"),
 	path('email-sender', views.email_sender, name="send_mail"),
+	path('set-amc', views.set_amc, name="set_amc"),
+	path('update-risk-level', views.update_risk_level, name="update_risk_level")
 ]

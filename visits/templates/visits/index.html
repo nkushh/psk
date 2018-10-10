@@ -171,7 +171,9 @@
                             <th>ANC Missed opportunities</th>
                             <th>CWC Missed opportunities</th>
                             <th>Nets Variance</th>
+                            <th>AMC</th>
                             <th>Stock status</th>
+                            <th>Risk</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -183,7 +185,9 @@
                             <td class="text-center">{{ visit.nets_anc_variance }}</td>
                             <td class="text-center">{{ visit.nets_cwc_variance }}</td>
                             <td class="text-center">{{ visit.balance_variance }}</td>
+                            <td class="text-center">{{ visit.amc }}</td>
                             <td class="text-center">{{ visit.months_of_stock | floatformat:2 }}</td>
+                            <td class="text-center">{{ visit.risk_level }}</td>
                         </tr>
                         {% empty %}
                         <tr>

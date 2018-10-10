@@ -204,16 +204,16 @@ def delivery_by_region(request, region):
 def record_nets_issued(request):
 	if request.method=="POST":
 		facility = get_object_or_404(Facilities, mfl_code=request.POST['facility'])
-		nets_issued = record['nets_issued']
-		donor = record['donor']
-		invoice_no = record['invoice_no']
-		warehouse = record['warehouse']
-		date_issued = record['date_issued']
-		invoice_no = record['invoice_no']
+		nets_issued = request.POST['nets_issued']
+		donor = request.POST['donor']
+		invoice_no = request.POST['invoice_no']
+		warehouse = request.POST['warehouse']
+		date_issued = request.POST['date_issued']
+		invoice_no = request.POST['invoice_no']
 		# request_id = request.POST['request_id']
 		# transporter = request.POST['transporter']
 
-		issued = Nets_distributed(facility=facility, invoice_no=invoice_no, nets_issued=nets_issued, donor=donor, date_issued=date_issued).save()
+		issued = Nets_distributed(facility=facility, invoice_no=invoice_no, nets_issued=nets_issued, donor_code=donor, date_issued=date_issued).save()
 		facility.net_balance = int(nets_issued) + int(facility.net_balance)
 		facility.save()
 		messages.success(request, "Success! Nets issuance to {} successfully recorded.".format(facility.facility_name))
@@ -259,6 +259,23 @@ def record_nets_issued_excel(request):
 		template = "distribution/excel-issuance.html"
 		context={}
 		return render(request, template, context)
+
+@login_required(login_url='login')
+def download_all_distribution_excel(request):
+	today = datetime.datetime.now()
+	mwaka = today.year
+
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['County', 'Nets Issued'])
+
+	reports = Nets_distributed.objects.filter(date_issued__year=mwaka).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	for report in reports:
+	    writer.writerow(report)
+
+	return response
 
 @login_required(login_url='login')
 def download_distribution_excel(request, mwezi):
@@ -321,31 +338,32 @@ def record_nets_distributed_excel(request):
 				facility = get_object_or_404(Facilities, mfl_code=record['facility'])
 				dist_month = record['dist_month']
 				dist_year = record['dist_year']
-				anc_nets = record['anc_nets']
-				cwc_nets = record['cwc_nets']
-				others_nets = record['others_nets']
-				total_nets = int(anc_nets)+int(cwc_nets)+int(others_nets)
-				bal_cf = record['bal_cf']
+				anc_nets = int(record['anc_nets'])
+				cwc_nets = int(record['cwc_nets'])
+				others_nets = int(record['others_nets'])
 
-				if confirm_nets_issuance(total_nets, facility.net_balance, facility.system_net_balance):
-					distribution = Distribution_report(
-							facility=facility, 
-							dist_month=dist_month, 
-							dist_year=dist_year,
-							cwc_nets=cwc_nets, 
-							anc_nets=anc_nets, 
-							others_nets=others_nets,
-							total_nets=total_nets,
-							bal_cf=bal_cf
-							).save()
+				total_nets = anc_nets + cwc_nets + others_nets
+				bal_cf = int(record['bal_cf'])
 
-					facility.net_balance = bal_cf
-					facility.system_net_balance = facility.system_net_balance - total_nets
-					facility.save()
+				# if confirm_nets_issuance(total_nets, facility.net_balance, facility.system_net_balance):
+				distribution = Distribution_report(
+						facility=facility, 
+						dist_month=dist_month, 
+						dist_year=dist_year,
+						cwc_nets=cwc_nets, 
+						anc_nets=anc_nets, 
+						others_nets=others_nets,
+						total_nets=total_nets,
+						bal_cf=bal_cf
+						).save()
 
-				else:
-					messages.error(request, "Error! Nets issued for {}, exceed the remaining balance!".format(facility))
-					return redirect("distribution:record_distribution")
+				facility.net_balance = bal_cf
+				facility.system_net_balance = facility.system_net_balance - total_nets
+				facility.save()
+
+				# else:
+				# 	messages.error(request, "Error! Nets issued for {}, exceed the remaining balance!".format(facility))
+				# 	return redirect("distribution:record_distribution")
 			else:
 				missing_facilities.append(record['facility'])
 				continue
@@ -365,9 +383,26 @@ def nets_distributed(request):
 	account = request.user
 	account_profile = get_object_or_404(UserProfile, user=account)
 	if account_profile.usertype=="Coordinator":
-		records = Distribution_report.objects.filter(facility__psk_region=account_profile.psk_region)
+		records = Distribution_report.objects.filter(facility__psk_region=account_profile.psk_region).order_by('-dist_month')
 	else:
-		records = Distribution_report.objects.all()
+		records = Distribution_report.objects.all().order_by('-dist_month')
+
+	page = request.GET.get('page', 1)
+
+	paginator = Paginator(records, 50)
+
+	try:
+		records = paginator.page(page)
+	except PageNotAnInteger:
+		records = paginator.page(1)
+	except EmptyPage:
+		records = paginator.page(paginator.num_pages)
+
+	index = records.number - 1
+	max_index = len(paginator.page_range)
+	start_index = index - 5 if index >= 5 else 0
+	end_index = index + 5 if index <= max_index - 5 else max_index
+	page_range = paginator.page_range[start_index:end_index]
 	
 	# facility = get_object_or_404(Facilities, pk=34)
 	# amc = Distribution_report.objects.filter(facility=facility).values('facility').aggregate(totalnets=Sum('total_nets'))
@@ -375,6 +410,7 @@ def nets_distributed(request):
 
 	template = "distribution/distribution-records.html"
 	context = {
+		'page_range' : page_range,
 		'records' : records
 	}
 	return render(request, template, context)
@@ -391,7 +427,7 @@ def nets_distributed_by_county(request):
 	}
 	return render(request, template, context)
 
-# Record the monthly net issuance report from facilities
+# Record the monthly net issuance report for single facilities
 @login_required(login_url='login')
 def record_distribution(request):
 	today = datetime.datetime.now()
@@ -401,35 +437,33 @@ def record_distribution(request):
 		dist_month = request.POST['dist_month']
 		dist_year = request.POST['dist_year']
 		bal_cf = request.POST['bal_cf']
-		bal_bf = request.POST['bal_bf']
 		anc_nets = request.POST['anc_nets']
 		cwc_nets = request.POST['cwc_nets']
 		others_nets = request.POST['others_nets']
 
 		total_nets = int(anc_nets)+int(cwc_nets)+int(others_nets)
 
-		if confirm_nets_issuance(total_nets, facility.net_balance, facility.system_net_balance):
+		# if confirm_nets_issuance(total_nets, facility.net_balance, facility.system_net_balance):
 
-			distribution = Distribution_report(
-					facility=facility, 
-					dist_month=dist_month, 
-					dist_year=dist_year, 
-					bal_bf=bal_bf, 
-					cwc_nets=cwc_nets, 
-					anc_nets=anc_nets, 
-					others_nets=others_nets,
-					total_nets=total_nets,
-					bal_cf=bal_cf
-					).save()
+		distribution = Distribution_report(
+				facility=facility, 
+				dist_month=dist_month, 
+				dist_year=dist_year, 
+				cwc_nets=cwc_nets, 
+				anc_nets=anc_nets, 
+				others_nets=others_nets,
+				total_nets=total_nets,
+				bal_cf=bal_cf
+				).save()
 
-			facility.net_balance = bal_cf
-			facility.system_net_balance = facility.system_net_balance - total_nets
-			facility.save()
-			messages.success(request, "Success! Nets distribution for {} {} successfully recorded.".format(facility.facility_name, dist_month))
-			return redirect('distribution:nets_distributed')
-		else:
-			messages.error(request, "Error! Nets issued exceed the remaining balance!")
-			return redirect("distribution:record_distribution")
+		facility.net_balance = bal_cf
+		facility.system_net_balance = facility.system_net_balance - total_nets
+		facility.save()
+		messages.success(request, "Success! Nets distribution for {} {} successfully recorded.".format(facility.facility_name, dist_month))
+		return redirect('distribution:nets_distributed')
+		# else:
+		# 	messages.error(request, "Error! Nets issued exceed the remaining balance!")
+		# 	return redirect("distribution:record_distribution")
 	else:
 		today = datetime.datetime.now()
 		mwaka = today.year
@@ -453,6 +487,10 @@ def confirm_nets_issuance(total_nets, net_balance, system_net_balance):
 		return True
 
 
+
+
+
+###############################################################################################################################
 # WAREHOUSE
 @login_required(login_url='login')
 def all_warehouses(request):

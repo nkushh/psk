@@ -396,8 +396,7 @@ def delete_all_facilities(request):
 @login_required(login_url='login')
 def delete_facility(request, facility_pk):
     facility = get_object_or_404(Facilities, pk=facility_pk)
-    facility.status = 0
-    facility.save()
+    facility.delete()
     messages.success(request, "Success! Facility details deleted.")
     return redirect("facilities:facilities")
 

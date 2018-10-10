@@ -44,7 +44,6 @@ class Distribution_report(models.Model):
 	facility = models.ForeignKey(Facilities, on_delete=models.CASCADE)
 	dist_month = models.IntegerField()
 	dist_year = models.CharField(max_length=5)
-	bal_bf = models.IntegerField(default=0)
 	cwc_nets = models.IntegerField(default=0)
 	anc_nets = models.IntegerField(default=0)
 	others_nets = models.IntegerField(default=0)

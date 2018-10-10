@@ -368,7 +368,79 @@ def get_balance_variance(book_bal, physical_count):
 		return False
 
 
+# Set average monthly consumption on visit details that already exist
+# as well as setting the months of stock
+def set_amc(request):
+	visits = Visit.objects.all()
+	for visit in visits:
+		hosi = get_object_or_404(Facilities, pk=visit.facility.pk)
+		total_nets = Distribution_report.objects.filter(facility=hosi).order_by('-id')[:7]
+		totalnets = 0
+		for net in total_nets:
+			totalnets = totalnets+net.total_nets
 
+		if total_nets.count() > 5:
+			amc = int(totalnets/6)
+			visit.amc = amc
+
+			if visit.amc < 1:
+				stock_status = float(visit.physical_count/1)
+			else:
+				stock_status = float(visit.physical_count/visit.amc)
+			visit.months_of_stock = stock_status
+			visit.save()
+
+		elif total_nets.count() < 1:
+			amc = 1
+			visit.amc = amc
+			if visit.amc < 1:
+				stock_status = float(visit.physical_count/1)
+			else:
+				stock_status = float(visit.physical_count/visit.amc)
+			visit.months_of_stock = stock_status
+			visit.save()
+		else:
+			amc = int(totalnets/total_nets.count())
+			visit.amc = amc
+
+			if visit.amc < 1:
+				stock_status = float(visit.physical_count/1)
+			else:
+				stock_status = float(visit.physical_count/visit.amc)
+			visit.months_of_stock = stock_status
+			visit.save()
+
+	return redirect('visits:visits_index')
+
+# Set risk status for all the visits if the data had already been populated.
+def update_risk_level(request):
+	visits = Visit.objects.all()
+	for visit in visits:
+		if(visit.balance_variance > 10 or visit.balance_variance < -10) or (visit.months_of_stock < 1) or (visit.balance_variance < 0 and visit.balance_variance < visit.amc):
+			risk = "High"
+			visit.risk_level = risk
+			visit.save()
+		elif((5 < visit.balance_variance < 10) or (-5 > visit.balance_variance > -10)) or (1 < visit.months_of_stock < 3):
+			risk = "Medium"
+			visit.risk_level = risk
+			visit.save()
+		else:
+			risk = "Low"
+			visit.risk_level = risk
+			visit.save()
+
+	return redirect('visits:visits_index')
+
+# Set risk status			
+def set_risk_status(amc, variance, stock_status):
+	if(variance > 10 or variance < -10) or (stock_status < 1) or (variance < 0 and variance < amc):
+		return "High"
+	elif((5 < variance < 10) or (-5 > variance > -10)) or (1 < stock_status < 3):
+		return "Medium"
+	else:
+		return "Low"
+
+#Fetch cordinators email address
 def coordinator_email(account):
 	coordinator = get_object_or_404(UserProfile, user=account)
 	email = User.objects.filter(pk=coordinator.user.pk).values('email')
@@ -454,6 +526,7 @@ def record_visit(request):
 				fire_prevention = request.POST['fire_prevention']
 				fire_prevention_mechanism = request.POST['fire_prevention_mechanism']
 				other_remarks = request.POST['other_remarks']
+				risk_level = set_risk_status(amc, balance_variance, months_of_stock)
 
 			except:
 				messages.error(request, "Error! Facility {} details were not added. Check all required fields are not blank.".format(request.POST['facility']))
@@ -502,7 +575,8 @@ def record_visit(request):
 						pests_risk = pests_risk,
 						fire_prevention = fire_prevention,
 						fire_prevention_mechanism = fire_prevention_mechanism,
-						other_remarks = other_remarks
+						other_remarks = other_remarks,
+						risk_level = risk_level
 					).save()
 
 				if get_balance_variance(book_bal,physical_count):
