@@ -25,14 +25,16 @@ def dashboard(request):
     
     accounts = User.objects.count()
     
-    nets_issued = Distribution_report.objects.aggregate(issued_nets=Sum('total_nets'))
+    
 
     if account_profile.usertype != "Admin":
         nets_distributed = Nets_distributed.objects.filter(facility__psk_region=account_profile.psk_region).aggregate(distributed_nets=Sum('nets_issued'))
+        nets_issued = Distribution_report.objects.filter(facility__psk_region=account_profile.psk_region).aggregate(issued_nets=Sum('total_nets'))
         total_facilities = Facilities.objects.filter(psk_region=account_profile.psk_region).count()
         total_visits = Visit.objects.filter(supervisor=account).count()
     else:
         nets_distributed = Nets_distributed.objects.aggregate(distributed_nets=Sum('nets_issued'))
+        nets_issued = Distribution_report.objects.aggregate(issued_nets=Sum('total_nets'))
         total_facilities = Facilities.objects.count()
         total_visits = Visit.objects.count()
     # nets_to_anc = Distribution_report.objects.filter(dist_month="", dist_year=today.year).aggregate(issued_nets=Sum('anc_nets'))
