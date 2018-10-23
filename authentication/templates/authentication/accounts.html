@@ -45,9 +45,9 @@
 								{% if user.is_active %}
 								<a href="{% url 'authentication:deactivate-account' user.pk %}" onclick="return confirm('This action is irreversible. Are you sure?');"><i class="fa fa-hand-stop-o"></i></a> &nbsp
 								{% else %}
-								<a href="{% url 'authentication:activate-account' user.pk %}"><i class="fa fa-thumbs-o-up" style="color:#4ac18e;"></i></a>
+								<a href="{% url 'authentication:activate-account' user.pk %}"><i class="fa fa-thumbs-up" style="color:#4ac18e;"></i></a>
 								{% endif %}
-								<a href="{% url 'authentication:delete-account' user.pk %}" onclick="return confirm('This action is irreversible. Are you sure?');"><i class="fa fa-trash-o" style="color:red;"></i></a> &nbsp
+								<a href="{% url 'authentication:delete-account' user.pk %}" onclick="return confirm('This action is irreversible. Are you sure?');"><i class="fa fa-trash" style="color:red;"></i></a> &nbsp
 							</td>
 						</tr>
 					{% empty %}

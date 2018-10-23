@@ -11,9 +11,11 @@ urlpatterns = [
 	path('distribution-download-all', views.download_all_distribution_excel, name='all_distribution_download'),
 	path('distribution-download/<int:mwezi>/', views.download_distribution_excel, name='distribution_download'),
 	path('excel-nets-issuance', views.record_nets_issued_excel, name='issue_nets_excel' ),
+	path('excel-nets-donation', views.record_nets_donated_excel, name='donate_nets_excel' ),
 	path('excel-nets-distribution', views.record_nets_distributed_excel, name='distribute_nets_excel' ),
 	path('counties-nets-issuance', views.nets_distributed_by_county, name='counties_issued_nets' ),
 	path('nets-to-facilities', views.nets_issued_to_facilities, name='nets_to_facilities' ),
+	path('nets-donated', views.nets_donated, name='nets_donated' ),
 	path('delivery-by-county/<str:county>/', views.delivery_by_county, name='delivery_by_county'),
 	path('delivery-by-region/<str:region>/', views.delivery_by_region, name='delivery_by_region'),
 	path('record-distribution', views.record_distribution, name="record_distribution"),
@@ -25,4 +27,5 @@ urlpatterns = [
 	path('delete-delivery/<int:delivery_pk>/', views.delete_delivery, name="delete_delivery"),
 	path('delete-deliveries', views.delete_all_deliveries, name="delete_deliveries"),
 	path('reset-balances', views.reset_nets_balance, name="reset_nets_balance"),
+	path('quarter-report-download', views.download_qdistribution_excel, name="quarter_report_download")
 ]

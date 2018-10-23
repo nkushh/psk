@@ -10,7 +10,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import pyexcel as pe
 from authentication.models import UserProfile
-from .models import Nets_distributed, Distribution_report, Warehouse, Stocking_history
+from .models import Distribution_report, Nets_distributed, Nets_donated, Stocking_history, Warehouse
 from facilities.models import Counties, Epidemiological_zones, Facilities, Regions
 
 # Loads distribution dashboard template
@@ -110,6 +110,45 @@ def nets_issued_to_facilities(request):
 	page_range = paginator.page_range[start_index:end_index]
 
 	template = "distribution/delivery-records.html"
+	context = {
+		'recently_delivered' : recently_delivered,
+		'page_range' : page_range,
+		'counties' : counties,
+		'regions' : regions
+	}
+	return render(request, template, context)
+
+@login_required(login_url='login')
+def nets_donated(request):
+	account = request.user
+	account_profile = get_object_or_404(UserProfile, user=account)
+	counties = Facilities.objects.values('county').distinct()
+	regions = Regions.objects.all()
+	if account_profile.usertype=="Coordinator":
+		recently_delivered = Nets_donated.objects.filter(facility__psk_region=account_profile.psk_region)
+	else:
+		recently_delivered = Nets_donated.objects.order_by('-date_issued')
+	
+	
+
+	page = request.GET.get('page', 1)
+
+	paginator = Paginator(recently_delivered, 50)
+
+	try:
+		recently_delivered = paginator.page(page)
+	except PageNotAnInteger:
+		recently_delivered = paginator.page(1)
+	except EmptyPage:
+		recently_delivered = paginator.page(paginator.num_pages)
+
+	index = recently_delivered.number - 1
+	max_index = len(paginator.page_range)
+	start_index = index - 5 if index >= 5 else 0
+	end_index = index + 5 if index <= max_index - 5 else max_index
+	page_range = paginator.page_range[start_index:end_index]
+
+	template = "distribution/donations-records.html"
 	context = {
 		'recently_delivered' : recently_delivered,
 		'page_range' : page_range,
@@ -261,6 +300,37 @@ def record_nets_issued_excel(request):
 		return render(request, template, context)
 
 @login_required(login_url='login')
+def record_nets_donated_excel(request):
+	if request.method=='POST' and request.FILES['excel_file']:
+		myfile = request.FILES['excel_file']
+		fs = FileSystemStorage()
+		filename = fs.save(myfile.name, myfile)
+		uploaded_file_url = fs.url(filename)
+
+		missing_facilities = []
+
+		records = pe.get_records(file_name=settings.BASE_DIR+uploaded_file_url)
+		for record in records:
+			beneficiary =record['beneficiary']
+			invoice_no = record['invoice']
+			warehouse = record['warehouse']
+			nets_issued = record['nets']
+			donor = record['donor']
+			date_issued = record['date_issued']
+			if Nets_donated.objects.filter(invoice_no=invoice_no).exists():
+				continue
+
+			issued = Nets_donated(beneficiary=beneficiary, invoice_no=invoice_no, nets_issued=nets_issued, donor_code=donor, date_issued=date_issued).save()
+
+
+		messages.success(request, "Success! Nets donated records successfully saved.")
+		return redirect('distribution:nets_donated')
+	else:
+		template = "distribution/excel-donation.html"
+		context={}
+		return render(request, template, context)
+
+@login_required(login_url='login')
 def download_all_distribution_excel(request):
 	today = datetime.datetime.now()
 	mwaka = today.year
@@ -293,6 +363,22 @@ def download_distribution_excel(request, mwezi):
 	    writer.writerow(report)
 
 	return response
+
+def download_qdistribution_excel(request):
+	today = datetime.datetime.now()
+	mwaka = today.year
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['County', 'Nets Issued'])
+
+	quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=7, date_issued__year__lte=mwaka, date_issued__month__lte=9).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	for report in quarter_dist:
+	    writer.writerow(report)
+
+	return response
+	
 
 # Delete all the net delivery records in the database.
 # Super admin only

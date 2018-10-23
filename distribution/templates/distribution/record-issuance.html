@@ -76,7 +76,10 @@
                         {% endfor %}
                         {% endif %}
                         <div class="white-box">
-                            <h3 class="box-title m-b-0">Issuance details | <a href="{% url 'distribution:issue_nets_excel' %}">Upload excel</a></h3>
+                            <h3 class="box-title m-b-0">
+                                Issuance details | <a href="{% url 'distribution:issue_nets_excel' %}">Upload issuance excel</a>
+                                 | <a href="{% url 'distribution:donate_nets_excel' %}">Upload donated excel</a>
+                            </h3>
 
                             <form class="form-horizontal" method="POST" action="{% url 'distribution:issue_nets' %}">{% csrf_token %}
                                 <div class="form-group">

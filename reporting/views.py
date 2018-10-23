@@ -1,10 +1,12 @@
+from distribution.models import Nets_distributed, Distribution_report, Warehouse, Stocking_history
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Sum
+from django.http import HttpResponse
 from django.shortcuts import render
-from distribution.models import Nets_distributed, Distribution_report, Warehouse, Stocking_history
 from facilities.models import Counties, Epidemiological_zones, Facilities, Regions
 from visits.models import Visit
 import datetime, calendar
+
 
 
 # Create your views here.
@@ -217,6 +219,63 @@ def region_monthly_distribution(request):
 
 	return render(request, template, context)
 
+def quarters_report(request):
+	today = datetime.datetime.now()
+	mwaka = today.year
+	# Quarter one
+	q1_distribution = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=1, date_issued__year__lte=mwaka, date_issued__month__lte=3)
+	q1_issuance = Distribution_report.objects.filter(dist_year__gte=mwaka, dist_month__gte=1, dist_year__lte=mwaka, dist_month__lte=3)
+	q1_visits = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=1, visit_date__year__lte=mwaka, visit_date__month__lte=3)
+	# Quarter two
+	q2_distribution = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=4, date_issued__year__lte=mwaka, date_issued__month__lte=6)
+	q2_issuance = Distribution_report.objects.filter(dist_year__gte=mwaka, dist_month__gte=4, dist_year__lte=mwaka, dist_month__lte=6)
+	q2_visits = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=4, visit_date__year__lte=mwaka, visit_date__month__lte=6)
+	# Quarter three
+	q3_distribution = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=7, date_issued__year__lte=mwaka, date_issued__month__lte=9)
+	q3_issuance = Distribution_report.objects.filter(dist_year__gte=mwaka, dist_month__gte=7, dist_year__lte=mwaka, dist_month__lte=9)
+	q3_visits = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=7, visit_date__year__lte=mwaka, visit_date__month__lte=9)
+	# Quarter four
+	q4_distribution = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=10, date_issued__year__lte=mwaka, date_issued__month__lte=12)
+	q4_issuance = Distribution_report.objects.filter(dist_year__gte=mwaka, dist_month__gte=10, dist_year__lte=mwaka, dist_month__lte=12)
+	q4_visits = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=10, visit_date__year__lte=mwaka, visit_date__month__lte=12)
+
+@login_required(login_url='login')
+def get_quarter_report(request, quarter, mwaka):
+	today = datetime.datetime.now()
+	current_year = today.year
+
+	records = Distribution_report.objects.values('facility__county').annotate(Sum('total_nets')).distinct()
+	if quarter == "first":
+		q_report = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=1, visit_date__year__lte=mwaka, visit_date__month__lte=3)
+	elif quarter == "second":
+		q_report = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=4, visit_date__year__lte=mwaka, visit_date__month__lte=6)
+	elif quarter == "third":
+		q_report = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=7, visit_date__year__lte=mwaka, visit_date__month__lte=9)
+	elif quarter == "fourth":
+		q_report = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=10, visit_date__year__lte=mwaka, visit_date__month__lte=12)
+	else:
+		q_report = Visit.objects.filter(visit_date__year__gte=current_year)
+
+	template = "distribution/counties-issuance.html"
+	context = {
+		'records' : records
+	}
+	return render(request, template, context)
 
 
+
+def download_qdistribution_excel(request):
+	today = datetime.datetime.now()
+	mwaka = today.year
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['County', 'Nets Issued'])
+
+	quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=7, date_issued__year__lte=mwaka, date_issued__month__lte=9).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	for report in quarter_dist:
+	    writer.writerow(report)
+
+	return response
 
