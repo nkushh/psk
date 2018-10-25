@@ -26,8 +26,10 @@ def distribution_index(request):
 	distribution_by_ez = Nets_distributed.objects.values('facility__epidemiological_zone').annotate(ez_distribution=Sum('nets_issued')).order_by('-ez_distribution')
 	region_distribution = Nets_distributed.objects.values('facility__psk_region').annotate(region_total=Sum('nets_issued')).order_by('-region_total')
 	total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka).aggregate(nets=Sum('nets_issued'))
-	total_facilities_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka).annotate(Count('facility', distinct=True))
-	# Accompaniements
+	total_facilities_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka).values('facility').annotate(Count('facility')).distinct()
+	total_nets_issued = Distribution_report.objects.aggregate(issued_nets=Sum('total_nets'))
+	total_nets_donated = Nets_donated.objects.aggregate(donated_nets=Sum('nets_issued'))
+	# Filters
 	counties = Counties.objects.order_by('county_name')
 	regions = Regions.objects.order_by('region_name')
 
@@ -39,7 +41,9 @@ def distribution_index(request):
 		'regions' : regions,
 		'region_distribution' : region_distribution,
 		'total_facilities_delivered' : total_facilities_delivered,
-		'total_nets_delivered' : total_nets_delivered
+		'total_nets_delivered' : total_nets_delivered,
+		'total_nets_donated' : total_nets_donated,
+		'total_nets_issued' : total_nets_issued
 	}
 	template = "distribution/index.html"
 	return render(request, template, context)
@@ -468,7 +472,7 @@ def record_nets_distributed_excel(request):
 def nets_distributed(request):
 	account = request.user
 	account_profile = get_object_or_404(UserProfile, user=account)
-	if account_profile.usertype=="Coordinator":
+	if account_profile.usertype!="Admin":
 		records = Distribution_report.objects.filter(facility__psk_region=account_profile.psk_region).order_by('-dist_month')
 	else:
 		records = Distribution_report.objects.all().order_by('-dist_month')
@@ -489,10 +493,6 @@ def nets_distributed(request):
 	start_index = index - 5 if index >= 5 else 0
 	end_index = index + 5 if index <= max_index - 5 else max_index
 	page_range = paginator.page_range[start_index:end_index]
-	
-	# facility = get_object_or_404(Facilities, pk=34)
-	# amc = Distribution_report.objects.filter(facility=facility).values('facility').aggregate(totalnets=Sum('total_nets'))
-	# sc_recently_distributed = Nets_distributed.objects.filter(facility__sub_county="Kajiado Central")
 
 	template = "distribution/distribution-records.html"
 	context = {
@@ -501,11 +501,11 @@ def nets_distributed(request):
 	}
 	return render(request, template, context)
 
-# Fetch nets issued to cwc and anc for current month and year
+# Fetch nets issued to cwc and anc per county
 @login_required(login_url='login')
 def nets_distributed_by_county(request):
 	today = datetime.datetime.now()
-	records = Distribution_report.objects.values('facility__county').annotate(Sum('total_nets')).distinct()
+	records = Distribution_report.objects.values('facility__county').annotate(total_issued=Sum('total_nets')).order_by('-total_issued')
 
 	template = "distribution/counties-issuance.html"
 	context = {

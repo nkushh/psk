@@ -73,7 +73,7 @@
                 <i class="ti-shopping-cart bg-info"></i>
                 <div class="bodystate">
                     <h4>{{ total_nets_delivered.nets | intcomma }}</h4>
-                    <span class="text-muted">Total Nets</span>
+                    <span class="text-muted">Nets delivered</span>
                 </div>
             </div>
         </div>
@@ -85,8 +85,8 @@
             <div class="r-icon-stats">
                 <i class="ti-plus bg-info"></i>
                 <div class="bodystate">
-                    <h4>New</h4>
-                    <span class="text-muted">Issuance</span>
+                    <h4>{{ total_nets_issued.issued_nets | intcomma }}</h4>
+                    <span class="text-muted">Nets issued</span>
                 </div>
             </div>
         </div>
@@ -98,8 +98,8 @@
             <div class="r-icon-stats">
                 <i class="ti-plus bg-inverse"></i>
                 <div class="bodystate">
-                    <h4>New</h4>
-                    <span class="text-muted">Distribution</span>
+                    <h4>{{total_nets_donated.donated_nets | intcomma}}</h4>
+                    <span class="text-muted">Nets donated</span>
                 </div>
             </div>
         </div>

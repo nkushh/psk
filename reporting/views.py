@@ -244,7 +244,7 @@ def get_quarter_report(request, quarter, mwaka):
 	today = datetime.datetime.now()
 	current_year = today.year
 
-	records = Distribution_report.objects.values('facility__county').annotate(Sum('total_nets')).distinct()
+	# records = Distribution_report.objects.values('facility__county').annotate(Sum('total_nets')).distinct()
 	if quarter == "first":
 		q_report = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=1, visit_date__year__lte=mwaka, visit_date__month__lte=3)
 	elif quarter == "second":
@@ -258,7 +258,7 @@ def get_quarter_report(request, quarter, mwaka):
 
 	template = "distribution/counties-issuance.html"
 	context = {
-		'records' : records
+		'q_report' : q_report
 	}
 	return render(request, template, context)
 
