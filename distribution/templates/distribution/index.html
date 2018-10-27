@@ -80,10 +80,10 @@
         </a>
     </div>
     <div class="col-md-3 col-sm-6">
-        <a href="{% url 'distribution:issue_nets' %}">
+        <a href="{% url 'distribution:nets_distributed' %}">
         <div class="white-box">
             <div class="r-icon-stats">
-                <i class="ti-plus bg-info"></i>
+                <i class="fa fa-hands"></i>
                 <div class="bodystate">
                     <h4>{{ total_nets_issued.issued_nets | intcomma }}</h4>
                     <span class="text-muted">Nets issued</span>
@@ -93,10 +93,10 @@
         </a>
     </div>
     <div class="col-md-3 col-sm-6">
-        <a href="{% url 'distribution:record_distribution' %}">
+        <a href="{% url 'distribution:nets_donated' %}">
         <div class="white-box">
             <div class="r-icon-stats">
-                <i class="ti-plus bg-inverse"></i>
+                <i class="fa fa-hand-holding-heart"></i>
                 <div class="bodystate">
                     <h4>{{total_nets_donated.donated_nets | intcomma}}</h4>
                     <span class="text-muted">Nets donated</span>

@@ -16,6 +16,25 @@
     });
 </script>
 
+<!-- Monthly issuance comparison bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'quarterly-issuance-bar',
+      data: [
+        { quarter: 'Q 1', issued:{% if q1_issuance.q1_issued %} {{ q1_issuance.q1_issued }}{% else %}0{% endif %} },
+        { quarter: 'Q 2', issued:{% if q2_issuance.q2_issued %} {{ q2_issuance.q2_issued }}{% else %}0{% endif %} },
+        { quarter: 'Q 3', issued:{% if q3_issuance.q3_issued %} {{ q3_issuance.q3_issued }}{% else %}0{% endif %} },
+        { quarter: 'Q 4', issued:{% if q4_issuance.q4_issued %} {{ q4_issuance.q4_issued }}{% else %}0{% endif %} },
+      ],
+      xkey: 'quarter',
+      ykeys: ['issued'],
+      labels: ['Nets'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e'],
+      xLabelAngle: '40'
+    });
+</script>
+
 <!-- Monthly anc issuance comparison bar graph -->
 <script type="text/javascript">
     new Morris.Bar({

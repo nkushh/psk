@@ -4,14 +4,33 @@
     new Morris.Bar({
       element: 'delivery-bar',
       data: [
-        { mwezi: 'Current', distributed: 150000 },
-        { mwezi: 'Previous', distributed: 160000 },
+        { mwezi: 'Quater One', distributed: 100 },
+        { mwezi: 'Quarter Two', distributed: 200 },
       ],
       xkey: 'mwezi',
       ykeys: ['distributed'],
       labels: ['Nets'],
       hideHover: 'auto',
       barColors: ['#4ac18e']
+    });
+</script>
+
+<!-- Quarterly delivery comparison bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'quarterly-delivery-bar',
+      data: [
+        { quarter: 'Q 1', distributed:{% if q1_distribution.q1_deliverd %} {{ q1_distribution.q1_deliverd }}{% else %}0{% endif %} },
+        { quarter: 'Q 2', distributed:{% if q2_distribution.q2_deliverd %} {{ q2_distribution.q2_deliverd }}{% else %}0{% endif %} },
+        { quarter: 'Q 3', distributed:{% if q3_distribution.q3_deliverd %} {{ q3_distribution.q3_deliverd }}{% else %}0{% endif %} },
+        { quarter: 'Q 4', distributed:{% if q4_distribution.q4_deliverd %} {{ q4_distribution.q4_deliverd }}{% else %}0{% endif %} }
+      ],
+      xkey: 'quarter',
+      ykeys: ['distributed'],
+      labels: ['Nets'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e'],
+      xLabelAngle: '40'
     });
 </script>
 

@@ -14,3 +14,22 @@
       barColors: ['#4ac18e']
     });
 </script>
+
+<!-- Quarterly visits comparison bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'quarterly-visits-bar',
+      data: [
+        { quarter: 'Q 1', visits: {% if q1_visits %} {{ q1_visits }}{% else %}0{% endif %} },
+        { quarter: 'Q 2', visits: {% if q2_visits %} {{ q2_visits }}{% else %}0{% endif %} },
+        { quarter: 'Q 3', visits: {% if q3_visits %} {{ q3_visits }}{% else %}0{% endif %} },
+        { quarter: 'Q 4', visits: {% if q4_visits %} {{ q4_visits }}{% else %}0{% endif %} }
+      ],
+      xkey: 'quarter',
+      ykeys: ['visits'],
+      labels: ['Visits'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e'],
+      xLabelAngle: '40'
+    });
+</script>

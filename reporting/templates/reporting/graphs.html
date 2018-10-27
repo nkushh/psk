@@ -1,0 +1,18 @@
+{% load static %}
+<!-- Monthly delivery comparison bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'delivery-bar',
+      data: [
+        { quarter: 'Quater One', distributed: {{ q1_distributed }} },
+        { quarter: 'Quarter Two', distributed: {{ q2_distributed }} },
+        { quarter: 'Quater Three', distributed: {{ q3_distributed }} },
+        { quarter: 'Quarter Four', distributed: {{ q4_distributed }} },
+      ],
+      xkey: 'quarter',
+      ykeys: ['distributed'],
+      labels: ['Nets'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e']
+    });
+</script>
