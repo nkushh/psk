@@ -9,14 +9,6 @@
         <h4 class="page-title">{% now 'M, Y' %} Report</h4>
     </div>
     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
-    	<button aria-expanded="false" data-toggle="dropdown" class="btn btn-success dropdown-toggle waves-effect waves-light" type="button">By Month <span class="caret"></span></button>
-        <ul role="menu" class="dropdown-menu">
-            <li><a href="#">--Select month--</a></li>
-            {% for month in months_choices %}
-            <li><a href="#">{{ month }}</a></li>
-            {% endfor %}
-        </ul>
-        <a class="btn btn-primary" href="{% url 'reporting:region_distribution' %}">By Region</a>
         <ol class="breadcrumb">
             <li><a href="#">Reports</a></li>
             <li class="active">Dashboard</li>
@@ -26,49 +18,46 @@
 </div>
 <!--row -->
 <div class="row">
-    <div class="col-md-3 col-sm-6">
+    <div class="col-md-4 col-sm-6">
+        <a href="">
         <div class="white-box">
-            <div class="r-icon-stats">
-                <i class="ti-user bg-megna"></i>
-                <div class="bodystate">
-                    <h4>{% if new_facilities %}{{ new_facilities | intcomma }}{% else %}0{% endif %}</h4>
-                    <span class="text-muted">New Facilities</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3 col-sm-6">
-        <div class="white-box">
+            <a alt="default" data-toggle="modal" data-target="#responsive-modal" />
             <div class="r-icon-stats">
                 <i class="ti-truck bg-info"></i>
                 <div class="bodystate">
-                    <h4>{% if nets_delivered.total_delivered %}{{ nets_delivered.total_delivered | intcomma }}{% else %}0{% endif %}</h4>
-                    <span class="text-muted">Delivered</span>
+                    
+                    <span class="text-muted">Filter Nets Delivered</span>
                 </div>
             </div>
+            </a>
         </div>
+        </a>
     </div>
-    <div class="col-md-3 col-sm-6">
+    <div class="col-md-4 col-sm-6">
+        <a href="#">
         <div class="white-box">
             <div class="r-icon-stats">
                 <i class="ti-package bg-success"></i>
                 <div class="bodystate">
-                    <h4>{% if nets_issued.total_issued %}{{ nets_issued.total_issued | intcomma }}{% else %}0{% endif %}</h4>
-                    <span class="text-muted">Nets Issued</span>
+                    
+                    <span class="text-muted">Filter Nets Issued</span>
                 </div>
             </div>
         </div>
+        </a>
     </div>
-    <div class="col-md-3 col-sm-6">
+    <div class="col-md-4 col-sm-6">
+        <a href="#">
         <div class="white-box">
             <div class="r-icon-stats">
-                <i class="ti-info-alt bg-inverse"></i>
+                <i class="fa fa-hospital"></i>
                 <div class="bodystate">
-                    <h4>{% if visits %}{{ visits | intcomma }}{% else %}0{% endif %}</h4>
-                    <span class="text-muted">Total Visits</span>
+                    
+                    <span class="text-muted">Filter Facility Visits</span>
                 </div>
             </div>
         </div>
+        </a>
     </div>
 </div>
 <!--/row -->
