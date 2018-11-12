@@ -26,6 +26,8 @@ def monthly_index(request):
 	new_facilities = Facilities.objects.filter(date_added__year=mwaka, date_added__month=today.month).count()
 	nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=today.month).aggregate(total_delivered=Sum('nets_issued'))
 	nets_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=today.month).aggregate(total_issued=Sum('total_nets'))
+	counties = Facilities.objects.values('county').distinct()
+	miaka = range(2010,mwaka+1)
 
 	# Previous month and current year
 	prev_month_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=last_month).aggregate(prev_delivered=Sum('nets_issued'))
@@ -41,7 +43,9 @@ def monthly_index(request):
 	
 	visits = Visit.objects.filter(date_recorded__year=mwaka, date_recorded__month=today.month).count()
 	context = {
+		'counties' : counties,
 		'months_choices' : months_choices,
+		'miaka' : miaka,
 		'nets_delivered' : nets_delivered,
 		'new_facilities' : new_facilities,
 		'nets_issued' : nets_issued,
@@ -71,6 +75,7 @@ def monthly_report(request, user_year, user_month):
 	new_facilities = Facilities.objects.filter(date_added__year=mwaka, date_added__month=user_month).count()
 	nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=user_month).aggregate(total_delivered=Sum('nets_issued'))
 	nets_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=user_month).aggregate(total_issued=Sum('total_nets'))
+	counties = Facilities.objects.values('county').distinct()
 
 	# Previous month and current year
 	prev_month_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=last_month).aggregate(prev_delivered=Sum('nets_issued'))
@@ -88,6 +93,7 @@ def monthly_report(request, user_year, user_month):
 	prev_month_visits = Visit.objects.filter(date_recorded__year=mwaka, date_recorded__month=last_month).count()
 
 	context = {
+		'counties' : counties,
 		'months_choices' : months_choices,
 		'nets_delivered' : nets_delivered,
 		'new_facilities' : new_facilities,
@@ -238,9 +244,11 @@ def quarters_index(request):
 	q4_distribution = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=10, date_issued__year__lte=mwaka, date_issued__month__lte=12).aggregate(q4_deliverd = Sum('nets_issued'))
 	q4_issuance = Distribution_report.objects.filter(dist_year__gte=mwaka, dist_month__gte=10, dist_year__lte=mwaka, dist_month__lte=12).aggregate(q4_issued = Sum('total_nets'))
 	q4_visits = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=10, visit_date__year__lte=mwaka, visit_date__month__lte=12).count()
-
+	counties = Facilities.objects.values('county').distinct()
+	
 	template = "reporting/quarter-index.html"
 	context = {
+		'counties' : counties,
 		'q1_distribution' : q1_distribution,
 		'q1_issuance' : q1_issuance,
 		'q1_visits' : q1_visits,

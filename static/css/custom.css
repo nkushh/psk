@@ -15,6 +15,10 @@
  	position: absolute !important;
 }
 
+.pulldown{
+	margin-top: 4%;
+}
+
 .form-btns{
 	margin-top: 3%;
 	padding: 10px;
@@ -150,6 +154,10 @@ input:invalid{
 
 .other-remarks{
 	font-size: 16px;
+}
+
+.remarks-box{
+	border: 1px solid #eee;
 }
 
 /* icons style */

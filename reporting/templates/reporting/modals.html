@@ -3,24 +3,74 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h4 class="modal-title">Modal Content is Responsive</h4>
+                <h4 class="modal-title">Filter nets distribution by date range</h4>
             </div>
             <div class="modal-body">
                 <form>
                     <div class="col-md-6"><div class="input-group date">
-                        <h5 class="box-title">Start date</h5>
                         <input type="text" name="start_date" autocomplete="off" id="visiting-date" onblur="verifyDates();" class="form-control mydatepicker" placeholder="Start Date" required>
                         <span class="input-group-addon"><i class="icon-calender"></i></span> 
                     </div></div>
                     <div class="col-md-6"><div class="input-group date">
-                        <h5 class="box-title">End date</h5>
                         <input type="text" name="end_date" autocomplete="off" id="visiting-date" onblur="verifyDates();" class="form-control mydatepicker" placeholder="End Date" required>
                         <span class="input-group-addon"><i class="icon-calender"></i></span> 
                     </div></div>
-                    <p></p>
+                    <div class="col-md-12 form-group pulldown">
+                        <label for="message-text" class="control-label">County:</label>
+                        <select class="form-control">
+                            {% for county in counties %}
+                            <option value="{{ county.county }}">{{ county.county }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Search</button>
+                <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="monthly-modal-one" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Filter nets delivery by month</h4>
+            </div>
+            <div class="modal-body">
+                <form>
                     <div class="form-group">
-                        <label for="message-text" class="control-label">Message:</label>
-                        <textarea class="form-control" id="message-text"></textarea>
+                        <label>Month</label>
+                        <select class="form-control" name="mwezi">
+                            <option disabled selected>--Select month--</option>
+                            {% for mwezi in months_choices %}
+                            <option value="{{ mwezi.0 }}">{{ mwezi.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <p>{{ miaka }}</p>
+                    <div class="form-group">
+                        <label>Year</label>
+                        <select class="form-control" name="mwaka">
+                            <option disabled selected>--Select year--</option>
+                            {% for mwaka in miaka %}
+                            <option value="{{ mwaka }}">{{ mwaka }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-12 form-group">
+                        <label for="message-text" class="control-label">County:</label>
+                        <select class="form-control">
+                            <option disabled selected>--Select county--</option>
+                            {% for county in counties %}
+                            <option value="{{ county.county }}">{{ county.county }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </form>
             </div>
