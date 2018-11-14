@@ -1,5 +1,6 @@
 from distribution.models import Nets_distributed, Distribution_report, Warehouse, Stocking_history
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.db.models import Count, Sum
 from django.http import HttpResponse
 from django.shortcuts import render
@@ -317,4 +318,108 @@ def download_qdistribution_excel(request, quarter, mwaka):
 	    writer.writerow(report)
 
 	return response
+
+# Monthly reporting filters
+# 
+# 
+# 
+def month_dist_filter(request):
+	if request.method=="POST":
+		mwezi = request.POST['mwezi']
+		mwaka = request.POST['mwaka']
+		county = request.POST.get('county', False)
+		template = "reporting/month_dist.html"
+		if county:
+			distribution = Nets_distributed.objects.filter(date_issued__month=mwezi, date_issued__year=mwaka, facility__county=county).values('facility__facility_name').annotate(total_dist=Sum('nets_issued')).order_by('-total_dist')
+			total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi, facility__county=county).aggregate(total_nets=Sum('nets_issued'))
+			template = "reporting/county_month_dist.html"
+		else:
+			distribution =  Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__county').annotate(total_dist=Sum('nets_issued')).order_by('-total_dist')
+			total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).aggregate(total_nets=Sum('nets_issued'))
+			
+
+		counties = Counties.objects.order_by('county_name')
+		regions = Regions.objects.order_by('region_name')
+		query_month = calendar.month_name[int(mwezi)]
+
+
+		page = request.GET.get('page', 1)
+
+		paginator = Paginator(distribution, 50)
+
+		try:
+			distribution = paginator.page(page)
+		except PageNotAnInteger:
+			distribution = paginator.page(1)
+		except EmptyPage:
+			distribution = paginator.page(paginator.num_pages)
+
+		index = distribution.number - 1
+		max_index = len(paginator.page_range)
+		start_index = index - 5 if index >= 5 else 0
+		end_index = index + 5 if index <= max_index - 5 else max_index
+		page_range = paginator.page_range[start_index:end_index]
+
+		context = {
+			'counties' : counties,
+			'county' : county,
+			'distribution' : distribution,
+			'mwaka' : mwaka,
+			'mwezi' : mwezi,
+			'query_month' : query_month,
+			'regions' : regions,
+			'total_nets_delivered' : total_nets_delivered
+		}
+
+	return render(request, template, context)
+
+def month_issuance_filter(request):
+	if request.method=="POST":
+		mwezi = request.POST['mwezi']
+		mwaka = request.POST['mwaka']
+		county = request.POST.get('county', False)
+		template = "reporting/month_issuance.html"
+		if county:
+			distribution = Distribution_report.objects.filter(dist_month=mwezi, dist_year=mwaka, facility__county=county).values('facility__facility_name').annotate(total_dist=Sum('total_nets')).order_by('-total_dist')
+			total_nets_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=mwezi, facility__county=county).aggregate(total_nets=Sum('total_nets'))
+			template = "reporting/county_month_issuance.html"
+		else:
+			distribution =  Distribution_report.objects.filter(dist_year=mwaka, dist_month=mwezi).values('facility__county').annotate(total_dist=Sum('total_nets')).order_by('-total_dist')
+			total_nets_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=mwezi).aggregate(total_nets=Sum('total_nets'))
+			
+
+		counties = Counties.objects.order_by('county_name')
+		regions = Regions.objects.order_by('region_name')
+		query_month = calendar.month_name[int(mwezi)]
+
+
+		page = request.GET.get('page', 1)
+
+		paginator = Paginator(distribution, 50)
+
+		try:
+			distribution = paginator.page(page)
+		except PageNotAnInteger:
+			distribution = paginator.page(1)
+		except EmptyPage:
+			distribution = paginator.page(paginator.num_pages)
+
+		index = distribution.number - 1
+		max_index = len(paginator.page_range)
+		start_index = index - 5 if index >= 5 else 0
+		end_index = index + 5 if index <= max_index - 5 else max_index
+		page_range = paginator.page_range[start_index:end_index]
+
+		context = {
+			'counties' : counties,
+			'county' : county,
+			'distribution' : distribution,
+			'mwaka' : mwaka,
+			'mwezi' : mwezi,
+			'query_month' : query_month,
+			'regions' : regions,
+			'total_nets_issued' : total_nets_issued
+		}
+
+	return render(request, template, context)
 

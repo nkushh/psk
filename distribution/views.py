@@ -368,6 +368,22 @@ def download_distribution_excel(request, mwezi):
 
 	return response
 
+@login_required(login_url='login')
+def download_issuance_excel(request, mwezi, mwaka):
+	today = datetime.datetime.now()
+
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="nets_issued.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['County', 'Nets Issued'])
+
+	reports = Distribution_report.objects.filter(dist_year=mwaka, dist_month=mwezi).values_list('facility__county').annotate(totalnets=Sum('total_nets')).order_by('-totalnets')
+	for report in reports:
+	    writer.writerow(report)
+
+	return response
+
 def download_qdistribution_excel(request):
 	today = datetime.datetime.now()
 	mwaka = today.year

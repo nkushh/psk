@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block title %}Net Distribution Records{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Net issuance records</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'reporting:monthly_index' %}">Reports Dashboard</a></li>
+            <li class="active">Monthly delivery</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a href="{% url 'distribution:distribution_download' mwezi %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
+        </div>
+    </div>
+</div>
+<!-- Row -->
+
+<!-- Row -->
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="white-box">
+            {% if total_nets_delivered.total_nets %}
+            <h2>All counties {{ query_month }} {{ mwaka }}</h2>
+            {% if total_nets_delivered.total_nets %}<h3 class="county-delivery">*{{ total_nets_delivered.total_nets | intcomma }} nets delivered</h3>{% endif %}
+            {% endif %}
+            <h3 class="box-title m-b-0">Distribution details </h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <th>County</th>
+                        <th>Nets issued</th>
+                    </thead>
+                    <tbody>
+                        {% for record in distribution %}
+                        <tr>
+                            <td>{{ record.facility__county }}</td>
+                            <td>{{ record.total_dist | intcomma }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center"><h3>No nets delivery records yet!</h3></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% if distribution.has_other_pages %}
+                <ul class="pagination pagination-split">
+                    {% if distribution.has_previous %}
+                      <li><a class="page-link" href="?page={{ distribution.previous_page_number }}">Previous</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in page_range %}
+                      {% if distribution.number == i %}
+                        <li class="active"><a href="#">{{ i }}</a></li>
+                      {% else %}
+                        <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                      {% endif %}
+                    {% endfor %}
+
+                    {% if recently_delivered.has_next %}
+                      <li><a class="page-link" href="?page={{ distribution.next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                </ul>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+{% endblock %}
