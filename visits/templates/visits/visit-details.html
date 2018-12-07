@@ -70,7 +70,7 @@
 					<div class="col-md-6">
 						<p class="visit-detail-text"><span>Store Type <i class="fa fa-building"></i> :</span>{{ visit.store_type }}</p>
 						<p class="visit-detail-text"><span>Store Access <i class="fa fa-lock"></i> :</span>{{ visit.store_access }}</p>
-						<p class="visit-detail-text"><span>Stock Control Card <i class="fa fa-clipboard-check"></i> :</span>{% ifequal visit.stock_control_card 1 %} Available {% else %} Not Available {% endifequal %}</p>
+						<p class="visit-detail-text"><span>Stock Control Card <i class="fa fa-clipboard-check"></i> :</span>{% if visit.stock_control_card == 1 %} Available {% elif visit.stock_control_card == 0 %} Not Available {% elif visit.stock_control_card == 2 %} Not updated correctly {% elif visit.stock_control_card == 3 %} Availbale & updated {% else %} N/A {% endif %}</p>
 						<p class="visit-detail-text"><span>Risk of pests <i class="fa fa-bug"></i> :</span>{{ visit.pests_risk }}</p></td>
 						<p class="visit-detail-text"><span>Fire prevention mechanism <i class="fa fa-fire"></i> :</span>{% ifequal visit.fire_prevention 1 %}Yes({{ visit.fire_prevention_mechanism }}) {% else %}No{% endifequal %}</p>
 					</div>
