@@ -64,34 +64,45 @@ def monthly_index(request):
 
 # DYNAMIC MONTHLY REPORT
 @login_required(login_url="login")
-def monthly_report(request, user_year, user_month):
+def monthly_report(request):
 	today = datetime.datetime.now()
-	mwaka = user_year
-	last_month = user_month - 1
+	mwaka = today.year
+	mwezi = today.month
+	
+
+	if request.method == "POST":
+		user_year = request.POST['mwaka']
+		user_month = request.POST['mwezi']
+		last_month = int(user_month) - 1
+	else:
+		user_year = mwaka
+		user_month = mwezi
+		last_month = mwezi - 1
+	
 
 	months_choices = []
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
 
-	new_facilities = Facilities.objects.filter(date_added__year=mwaka, date_added__month=user_month).count()
-	nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=user_month).aggregate(total_delivered=Sum('nets_issued'))
-	nets_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=user_month).aggregate(total_issued=Sum('total_nets'))
+	new_facilities = Facilities.objects.filter(date_added__year=user_year, date_added__month=user_month).count()
+	nets_delivered = Nets_distributed.objects.filter(date_issued__year=user_year, date_issued__month=user_month).aggregate(total_delivered=Sum('nets_issued'))
+	nets_issued = Distribution_report.objects.filter(dist_year=user_year, dist_month=user_month).aggregate(total_issued=Sum('total_nets'))
 	counties = Facilities.objects.values('county').distinct()
 
 	# Previous month and current year
-	prev_month_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=last_month).aggregate(prev_delivered=Sum('nets_issued'))
-	prev_month_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=last_month).aggregate(prev_issued=Sum('total_nets'))
+	prev_month_delivered = Nets_distributed.objects.filter(date_issued__year=user_year, date_issued__month=last_month).aggregate(prev_delivered=Sum('nets_issued'))
+	prev_month_issued = Distribution_report.objects.filter(dist_year=user_year, dist_month=last_month).aggregate(prev_issued=Sum('total_nets'))
 	
 	# Current month and year
-	nets_to_anc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=user_month).aggregate(total_anc=Sum('anc_nets'))
-	nets_to_cwc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=user_month).aggregate(total_cwc=Sum('cwc_nets'))
+	nets_to_anc = Distribution_report.objects.filter(dist_year=user_year, dist_month=user_month).aggregate(total_anc=Sum('anc_nets'))
+	nets_to_cwc = Distribution_report.objects.filter(dist_year=user_year, dist_month=user_month).aggregate(total_cwc=Sum('cwc_nets'))
 	
 	# Previous month and current year
-	prev_month_anc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=last_month).aggregate(prev_anc=Sum('anc_nets'))
-	prev_month_cwc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=last_month).aggregate(prev_cwc=Sum('cwc_nets'))
+	prev_month_anc = Distribution_report.objects.filter(dist_year=user_year, dist_month=last_month).aggregate(prev_anc=Sum('anc_nets'))
+	prev_month_cwc = Distribution_report.objects.filter(dist_year=user_year, dist_month=last_month).aggregate(prev_cwc=Sum('cwc_nets'))
 	
-	visits = Visit.objects.filter(date_recorded__year=mwaka, date_recorded__month=user_month).count()
-	prev_month_visits = Visit.objects.filter(date_recorded__year=mwaka, date_recorded__month=last_month).count()
+	visits = Visit.objects.filter(date_recorded__year=user_year, date_recorded__month=user_month).count()
+	prev_month_visits = Visit.objects.filter(date_recorded__year=user_year, date_recorded__month=last_month).count()
 
 	context = {
 		'counties' : counties,
