@@ -28,5 +28,6 @@ urlpatterns = [
 	path('delete-delivery/<int:delivery_pk>/', views.delete_delivery, name="delete_delivery"),
 	path('delete-deliveries', views.delete_all_deliveries, name="delete_deliveries"),
 	path('reset-balances', views.reset_nets_balance, name="reset_nets_balance"),
-	path('quarter-report-download', views.download_qdistribution_excel, name="quarter_report_download")
+	path('quarter-report-download', views.download_qdistribution_excel, name="quarter_report_download"),
+	path('issuance-index', views.issuance_index, name="issuance_index")
 ]

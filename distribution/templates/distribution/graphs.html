@@ -67,3 +67,73 @@
 	  // xLabelAngle: '20'
 	});
 </script>
+
+<!-- ISSUANCE INDEX GRAPHS -->
+<script type="text/javascript">
+	new Morris.Bar({
+	  // ID of the element in which to draw the chart.
+	  element: 'county-issuance-graph',
+	  // Chart data records -- each entry in this array corresponds to a point on
+	  // the chart.
+	  data: [
+	  {% for county in county_issuance %}
+	    { county: '{{ county.facility__county }}', value: {{ county.county_total }} },
+	  {% endfor %}
+	  ],
+	  // The name of the data record attribute that contains x-values.
+	  xkey: 'county',
+	  // A list of names of data record attributes that contain y-values.
+	  ykeys: ['value'],
+	  // Labels for the ykeys -- will be displayed when you hover over the
+	  // chart.
+	  labels: ['Nets'],
+	  hideHover: 'auto',
+	  xLabelAngle: '90'
+	});
+</script>
+
+<script type="text/javascript">
+	new Morris.Donut({
+	  // ID of the element in which to draw the chart.
+	  element: 'region-issuance-graph',
+	  // Chart data records -- each entry in this array corresponds to a point on
+	  // the chart.
+	  data: [
+	  {% for region in region_issuance %}
+	    { label: '{{ region.facility__psk_region }}', value: {{ region.region_total }} },
+	  {% endfor %}
+	  ],
+	  // The name of the data record attribute that contains x-values.
+	  // xkey: 'region',
+	  // A list of names of data record attributes that contain y-values.
+	  // ykeys: ['value'],
+	  // Labels for the ykeys -- will be displayed when you hover over the
+	  // chart.
+	  hideHover: 'auto',
+	  colors: ['#00ff00', '#ffff66', '#ff9900', '#3399ff', '#ff3300', '#ccff66', '#800000'],
+	  xLabelAngle: '90'
+	});
+</script>
+
+<script type="text/javascript">
+	new Morris.Bar({
+	  // ID of the element in which to draw the chart.
+	  element: 'ez-issuance-graph',
+	  // Chart data records -- each entry in this array corresponds to a point on
+	  // the chart.
+	  data: [
+	  {% for zone in issuance_by_ez %}
+	    { label: '{{ zone.facility__epidemiological_zone }}', value: {{ zone.ez_issuance }} },
+	  {% endfor %}
+	  ],
+	  // The name of the data record attribute that contains x-values.
+	  xkey: 'label',
+	  // A list of names of data record attributes that contain y-values.
+	  ykeys: ['value'],
+	  // Labels for the ykeys -- will be displayed when you hover over the
+	  // chart.
+	  labels: ['Facilities'],
+	  hideHover: 'auto'
+	  // xLabelAngle: '20'
+	});
+</script>

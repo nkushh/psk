@@ -427,6 +427,39 @@ def reset_nets_balance(request):
 
 
 # NETS DISTRIBUTION TO TARGET GROUP REPORT MODULE
+# Loads issuance dashboard template
+@login_required(login_url='login')
+def issuance_index(request):
+	today = datetime.datetime.now()
+	mwaka = today.year
+	months_choices = []
+	for i in range(1,13):
+	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
+
+	county_issuance = Distribution_report.objects.values('facility__county').annotate(county_total=Sum('total_nets')).order_by('-county_total') 
+	issuance_by_ez = Distribution_report.objects.values('facility__epidemiological_zone').annotate(ez_issuance=Sum('total_nets')).order_by('-ez_issuance')
+	region_issuance = Distribution_report.objects.values('facility__psk_region').annotate(region_total=Sum('total_nets')).order_by('-region_total')
+	total_nets_issued = Distribution_report.objects.filter(dist_year=mwaka).aggregate(nets=Sum('total_nets'))
+	total_facilities_issued = Distribution_report.objects.filter(dist_year=mwaka).values('facility').annotate(Count('facility')).distinct()
+	# total_nets_issued = Distribution_report.objects.aggregate(issued_nets=Sum('total_nets'))
+	total_nets_donated = Nets_donated.objects.aggregate(donated_nets=Sum('nets_issued'))
+	# Filters
+	counties = Counties.objects.order_by('county_name')
+	regions = Regions.objects.order_by('region_name')
+
+	context = {
+		'counties' : counties,
+		'county_issuance' : county_issuance,
+		'issuance_by_ez' : issuance_by_ez,
+		'months_choices' : months_choices,
+		'regions' : regions,
+		'region_issuance' : region_issuance,
+		'total_facilities_issued' : total_facilities_issued,
+		'total_nets_issued' : total_nets_issued,
+		'total_nets_donated' : total_nets_donated
+	}
+	template = "distribution/index2.html"
+	return render(request, template, context)
 # record nets issued to pregnant women and children under one year upload
 @login_required(login_url='login')
 def record_nets_distributed_excel(request):

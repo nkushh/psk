@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Nets Issuance{% endblock %}
+
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">{% if query_month %}{{ query_month }}{% endif %} Issuance Dashboard</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li class="active">Dashboard</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- Filters row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a class="btn btn-primary" href="{% url 'distribution:issue_nets' %}"><i class="fa fa-plus"></i> Nets delivery</a>
+            <div class="btn-group m-r-10">
+                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-success dropdown-toggle waves-effect waves-light" type="button">By Region <span class="caret"></span></button>
+                <ul role="menu" class="dropdown-menu county-dropdown">
+                    <li><a href="{% url 'distribution:nets_to_facilities' %}">All regions</a></li>
+                    {% for region in regions %}
+                    <li><a href="#">{{ region.region_name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="btn-group m-r-10">
+                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-success dropdown-toggle waves-effect waves-light" type="button">By County <span class="caret"></span></button>
+                <ul role="menu" class="dropdown-menu county-dropdown">
+                    <li><a href="{% url 'distribution:nets_to_facilities' %}">All counties</a></li>
+                    {% for county in counties %}
+                    <li><a href="#">{{ county.county_name }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="btn-group m-r-10">
+                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-success dropdown-toggle waves-effect waves-light" type="button">By Month <span class="caret"></span></button>
+                <ul role="menu" class="dropdown-menu county-dropdown">
+                    <li><a href="{% url 'distribution:nets_to_facilities' %}">All months</a></li>
+                    {% for month in months_choices %}
+                    <li><a href="{% url 'distribution:monthly_distribution' month.0 %}">{{ month.1 }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End filters -->
+<!--row -->
+<div class="row">
+    <div class="col-md-4 col-sm-6">
+        <div class="white-box">
+            <div class="r-icon-stats">
+                <i class="fa fa-hospital-o bg-megna"></i>
+                <div class="bodystate">
+                    <h4>{{ total_facilities_issued.count|intcomma }}</h4>
+                    <span class="text-muted">Total Facilities</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div class="col-md-3 col-sm-6">
+        <a href="{% url 'distribution:nets_distributed' %}">
+        <div class="white-box">
+            <div class="r-icon-stats">
+                <i class="ti-shopping-cart bg-info"></i>
+                <div class="bodystate">
+                    <h4>{{ total_nets_issued.nets | intcomma }}</h4>
+                    <span class="text-muted">Nets delivered</span>
+                </div>
+            </div>
+        </div>
+        </a>
+    </div> -->
+    <div class="col-md-4 col-sm-6">
+        <a href="{% url 'distribution:nets_distributed' %}">
+        <div class="white-box">
+            <div class="r-icon-stats">
+                <i class="fa fa-hands"></i>
+                <div class="bodystate">
+                    <h4>{{ total_nets_issued.nets | intcomma }}</h4>
+                    <span class="text-muted">Nets issued</span>
+                </div>
+            </div>
+        </div>
+        </a>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <a href="{% url 'distribution:nets_donated' %}">
+        <div class="white-box">
+            <div class="r-icon-stats">
+                <i class="fa fa-hand-holding-heart"></i>
+                <div class="bodystate">
+                    <h4>{{total_nets_donated.donated_nets | intcomma}}</h4>
+                    <span class="text-muted">Nets donated</span>
+                </div>
+            </div>
+        </div>
+        </a>
+    </div>
+</div>
+<!--/row -->
+<!-- .row -->
+<div class="row">
+    <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="white-box">
+            {% if query_month %}
+             <a href="{% url 'distribution:distribution_download' mwezi %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
+            {% else %}
+            <a href="{% url 'distribution:all_distribution_download' %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
+            <!-- <a href="{% url 'distribution:quarter_report_download' %}" class="btn btn-primary pull-right" target="_blank"><i class="fa fa-download"></i> Quarter report</a> -->
+            {% endif %}
+            <h3 class="box-title"> County Issuance</h3>
+            
+            <!-- <div class="stats-row">
+                <div class="stat-item">
+                    <h6>Overall</h6>
+                    <b>80.40%</b></div>
+                <div class="stat-item">
+                    <h6>Montly</h6>
+                    <b>15.40%</b></div>
+                <div class="stat-item">
+                    <h6>Day</h6>
+                    <b>5.50%</b></div>
+            </div> -->
+            <div id="county-issuance-graph" class="minus-mar"></div>
+        </div>
+    </div>
+    <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="white-box">
+            <h3 class="box-title">Region Issuance</h3>
+            <!-- <div class="stats-row">
+                <div class="stat-item">
+                    <h6>Overall</h6>
+                    <b>80.40%</b></div>
+                <div class="stat-item">
+                    <h6>Montly</h6>
+                    <b>15.40%</b></div>
+                <div class="stat-item">
+                    <h6>Day</h6>
+                    <b>5.50%</b></div>
+            </div> -->
+            <div id="region-issuance-graph" class="minus-mar"></div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+<!--/row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="white-box">
+            <h3 class="box-title">Epidemiological Issuance Count</h3>
+            <div id="ez-issuance-graph"></div>
+        </div>
+        
+    </div>
+</div>
+<!--/row -->
+
+<!-- /row -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Recent Nets Issuance</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Facility</th>
+                            <th>Nets issued</th>
+                            <th>Date issued</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for issuance in recently_distributed %}
+                        <tr>
+                            <td>{{ issuance.pk }}</td>
+                            <td>{{ issuance.facility.facility_name }}</td>
+                            <td>{{ issuance.nets_issued }}</td>
+                            <td>{{ issuance.date_issued }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center"><h3>No nets issued yet!</h3></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+
+<div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Issue nets to facility</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'distribution:issue_nets' %}">{% csrf_token %}
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label">Facility:</label>
+                        <select name="facility" class="form-control selectpicker" id="item-search" data-live-search="true" required>
+                          <option value="" disabled selected>--Pick facility--</option>
+                          {% for facility in facilities %}
+                          <option value="{{ facility.pk }}">{{ facility.facility_name }}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-name" class="control-label">Nets quantity:</label>
+                        <input type="text" class="form-control" name="nets_issued">
+                    </div>
+                    <p><label for="recipient-name" class="control-label">Date issued:</label></p>
+                    <div class="input-group">
+                        <input type="text" name="date_issued" class="form-control mydatepicker" placeholder="dd/mm/yyyy">
+                        <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                    </div>
+                
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger waves-effect waves-light">Issue nets</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
