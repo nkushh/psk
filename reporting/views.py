@@ -434,3 +434,52 @@ def month_issuance_filter(request):
 
 	return render(request, template, context)
 
+def month_visits_filter(request):
+	if request.method == "POST":
+		mwaka = request.POST['mwaka']
+		mwezi = request.POST['mwezi']
+		county = request.POST.get('county', False)
+		template = 'reporting/month_visits.html'
+		if county:
+			visits = Visit.objects.filter(visit_date__year=mwaka, visit_date__month=mwezi, facility__county=county).values('facility__facility_name').annotate(total_visits=Sum('id'))
+			visits_sum = Visit.objects.filter(visit_date__year=mwaka, visit_date__month=mwezi, facility__county=county).count()
+			template = 'reporting/county_month_visits.html'
+		else:
+			visits = Visit.objects.filter(visit_date__year=mwaka, visit_date__month=mwezi).values('facility__county').annotate(total_visits=Sum('id'))
+			visits_sum = Visit.objects.filter(visit_date__year=mwaka, visit_date__month=mwezi).count()
+
+		counties = Counties.objects.order_by('county_name')
+		regions = Regions.objects.order_by('region_name')
+		query_month = calendar.month_name[int(mwezi)]
+
+
+		page = request.GET.get('page', 1)
+
+		paginator = Paginator(visits, 50)
+
+		try:
+			visits = paginator.page(page)
+		except PageNotAnInteger:
+			visits = paginator.page(1)
+		except EmptyPage:
+			visits = paginator.page(paginator.num_pages)
+
+		index = visits.number - 1
+		max_index = len(paginator.page_range)
+		start_index = index - 5 if index >= 5 else 0
+		end_index = index + 5 if index <= max_index - 5 else max_index
+		page_range = paginator.page_range[start_index:end_index]
+
+		context = {
+			'counties' : counties,
+			'county' : county,
+			'mwaka' : mwaka,
+			'mwezi' : mwezi,
+			'query_month' : query_month,
+			'regions' : regions,
+			'visits' : visits,
+			'visits_sum' : visits_sum
+		}
+
+	return render(request, template, context)	
+

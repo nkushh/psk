@@ -13,4 +13,5 @@ urlpatterns = [
 	path('region-distribution', views.region_monthly_distribution, name='region_distribution'),
 	path('monthly-distribution', views.month_dist_filter, name="month_dist_filter"),
 	path('monthly-issuance', views.month_issuance_filter, name="month_issuance_filter"),
+	path('monthly-visits', views.month_visits_filter, name="month_visits_filter"),
 ]
