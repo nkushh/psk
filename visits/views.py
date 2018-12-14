@@ -416,11 +416,11 @@ def set_amc(request):
 
 	return redirect('visits:visits_index')
 
-# Set risk status for all the visits if the data had already been populated.
+# Update risk status for all the visits if the data had already been populated.
 def update_risk_level(request):
 	visits = Visit.objects.all()
 	for visit in visits:
-		if(visit.balance_variance > 10 or visit.balance_variance < -10) or (visit.months_of_stock < 1) or (visit.balance_variance < 0 and visit.balance_variance < visit.amc):
+		if(visit.balance_variance > 10 or visit.balance_variance < -10) or (visit.balance_variance < 0 and visit.balance_variance < visit.amc):
 			risk = "High"
 			visit.risk_level = risk
 			visit.save()
