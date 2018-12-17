@@ -147,11 +147,14 @@
 	  // Chart data records -- each entry in this array corresponds to a point on
 	  // the chart.
 	  data: [
-	  {% for record in targets %}
+
+	  	{% for record in targets %}
 	  	{% for data in achieved %}
-	    { mwezi: '{{ record.target_month }}', a: {% if record %}{{ record.target }}{% else %}0{% endif %}, b: {% if data %}{{ data.total_achieved }}{% else %}0{% endif %} },
+	  	{% ifequal data.mwezi record.target_month %}
+	    { mwezi: '{{ data.mwezi }}', a: {% if data.total_achieved %}{{ data.total_achieved }}{% else %}0{% endif %}, b: {% if record.target %}{{ record.target }}{% else %}0{% endif %}},
+	    {% endifequal %}
 	    {% endfor %}
-	  {% endfor %}
+	    {% endfor %}
 	  ],
 	  // The name of the data record attribute that contains x-values.
 	  xkey: 'mwezi',
@@ -159,7 +162,8 @@
 	  ykeys: ['a', 'b'],
 	  // Labels for the ykeys -- will be displayed when you hover over the
 	  // chart.
-	  labels: ['target','achieved'],
+	  labels: ['achieved','target'],
+	  barColors: ['#00ff00', '#ff3300'],
 	  hideHover: 'auto',
 	  // xLabelAngle: '90'
 	});

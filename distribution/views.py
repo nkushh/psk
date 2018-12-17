@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
-from django.db.models.functions import Extract
+from django.db.models.functions import Extract, TruncMonth
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
@@ -661,11 +661,13 @@ def fetch_targets(request):
 	today = datetime.datetime.now()
 	mwaka = today.year
 
-	targets = Distribution_target.objects.filter(target_year=mwaka).order_by('target_month')
-	achieved = Nets_distributed.objects.filter(date_issued__year=mwaka).annotate(mwezi=Extract('date_issued', 'month')).values('mwezi').annotate(total_achieved=Sum('nets_issued')).order_by('mwezi')
+	targets = Distribution_target.objects.filter(target_year=mwaka).values('target_month', 'target').order_by('target_month')
+	achieved = Nets_distributed.objects.filter(date_issued__year=mwaka, donor_code='USAID').annotate(mwezi=Extract('date_issued', 'month')).values('mwezi').annotate(total_achieved=Sum('nets_issued')).order_by('mwezi')
 	# Cnvert month to string
 	for i in targets:
-		i.target_month = calendar.month_abbr[i.target_month]
+		i['target_month'] = calendar.month_abbr[i['target_month']]
+	for m in achieved:
+		m['mwezi'] = calendar.month_abbr[m['mwezi']]
 
 	context = {
 		'achieved' : achieved,

@@ -55,9 +55,6 @@
                         <th>Period</th>
                         <th>Donor</th>
                         <th>Target</th>
-                        {% ifequal user.userprofile.usertype "Admin" %}
-                        <th class="text-center">Action</th>
-                        {% endifequal %}
                     </thead>
                     <tbody>
                         {% for record in targets %}
@@ -66,9 +63,6 @@
                             <td>{{ record.target_month }}, {{ record.target_year }}</td>
                             <td>{{ record.donor }}</td>
                             <td>{{ record.target | intcomma }}</td>
-                            {% ifequal user.userprofile.usertype "Admin" %}
-                            <td class="text-center"><a href="{% url 'distribution:delete_delivery' record.pk %}" onclick="return confirm('This action is irreversible. Are you sure?');"><i class="fa fa-trash-o"></i> Delete</a></td>
-                            {% endifequal %}
                         </tr>
                         {% empty %}
                         <tr>
