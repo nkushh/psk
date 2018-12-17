@@ -25,7 +25,7 @@
 </div>
 
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-4">
 		{% if messages %}
         {% for message in messages %}
         <div class="alert alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}">
@@ -38,16 +38,15 @@
 			<p><span class="text text-info">* Click on any region to update its information on related facilities. *</span></p>
 			<ul class="list-inline">
 				{% for region in regions %}
-				<li class="list-inline-item"><a href="{% url 'facilities:set_facility_region' region.region_name %}">{{ region.region_name }}</a></li> | 
+				<li class="list-inline-item settings-ul"><a href="{% url 'facilities:set_facility_region' region.region_name %}">{{ region.region_name }}</a></li> | 
 				{% empty %}
 				<li class="list-inline-item"><span class="text text-info">No regions saved yet!</span></li>
 				{% endfor %}
 			</ul>
 		</div>
 	</div>
-</div>
-<div class="row">
-    <div class="col-md-12">
+
+    <div class="col-md-4">
         <div class="white-box">
             <h4>Change facility county name</h4>
             <p><span class="text text-info">* Enter new county name for the related facilities *</span></p>
@@ -67,9 +66,8 @@
             </form>
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
+
+    <div class="col-md-4">
         <div class="white-box">
             <h4>Change facility region name</h4>
             <p><span class="text text-info">* Enter new region name for the related facilities *</span></p>
@@ -89,9 +87,8 @@
             </form>
         </div>
     </div>
-</div>
-<div class="row">
-    <div class="col-md-12">
+
+    <div class="col-md-4">
         <div class="white-box">
             <h4>Set facility visit Average Monthly Consumption</h4>
             <p><a href="{% url 'visits:set_amc' %}">Set AMC</a></p>

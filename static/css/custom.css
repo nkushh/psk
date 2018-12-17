@@ -5,6 +5,15 @@
 	display: none;
 }*/
 
+/* List styles */
+.list-inline-item.settings-list a{
+	margin-bottom: 5px;
+}
+
+.list-inline-item.settings-list a:hover{
+	font-weight: bold;
+}
+
 
 .form-group{
 	position: relative !important;

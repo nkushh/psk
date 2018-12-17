@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block title %}Nets Delivery Targets{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Delivery targets records</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'distribution:nets_distribution' %}">Distribution Dashboard</a></li>
+            <li class="active">Delivery targets</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a class="btn btn-danger" href="{% url 'distribution:create_target' %}"><i class="fa fa-bar-chart"></i> Add Delivery targets</a>
+        </div>
+    </div>
+</div>
+
+<!--/row -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="white-box">
+            <h3 class="box-title">graphing</h3>
+            <div id="distribution-targets"></div>
+        </div>
+        
+    </div>
+</div>
+<!--/row -->
+<!-- Row -->
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Distribution targets </h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <th>#</th>
+                        <th>Period</th>
+                        <th>Donor</th>
+                        <th>Target</th>
+                        {% ifequal user.userprofile.usertype "Admin" %}
+                        <th class="text-center">Action</th>
+                        {% endifequal %}
+                    </thead>
+                    <tbody>
+                        {% for record in targets %}
+                        <tr>
+                            <td>{{ record.pk }}</td>
+                            <td>{{ record.target_month }}, {{ record.target_year }}</td>
+                            <td>{{ record.donor }}</td>
+                            <td>{{ record.target | intcomma }}</td>
+                            {% ifequal user.userprofile.usertype "Admin" %}
+                            <td class="text-center"><a href="{% url 'distribution:delete_delivery' record.pk %}" onclick="return confirm('This action is irreversible. Are you sure?');"><i class="fa fa-trash-o"></i> Delete</a></td>
+                            {% endifequal %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center"><h3>No delivery targets records yet!</h3></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+<!--                 {% if targets.has_other_pages %}
+                <ul class="pagination pagination-split">
+                    {% if targets.has_previous %}
+                      <li><a class="page-link" href="?page={{ targets.previous_page_number }}">Previous</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in page_range %}
+                      {% if targets.number == i %}
+                        <li class="active"><a href="#">{{ i }}</a></li>
+                      {% else %}
+                        <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                      {% endif %}
+                    {% endfor %}
+
+                    {% if targets.has_next %}
+                      <li><a class="page-link" href="?page={{ targets.next_page_number }}">&raquo;</a></li>
+                    {% else %}
+                      <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                </ul>
+                {% endif %} -->
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+{% endblock %}

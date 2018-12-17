@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Add Distribution Target{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Create New Target</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'facilities:dashboard' %}">Dashboard</a></li>
+            <li class="active">Add target</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- Top bar actions -->
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a class="btn btn-primary" href="{% url 'distribution:fetch_targets' %}"><i class="fa fa-list"></i> Targets list</a>
+        </div>
+    </div>
+</div>
+
+<!-- Form area -->
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Target details</h3>
+            <form method="POST" action="{% url 'distribution:create_target' %}">{% csrf_token %}
+                <div class="form-group">
+                    <label>Month</label>
+                    <select class="form-control" name="target_month">
+                        <option selected disabled>-- Select month --</option>
+                        {% for mwezi in months_choices %}
+                        <option value="{{ mwezi.0 }}">{{ mwezi.1 }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Year</label>
+                    <select class="form-control" name="target_year">
+                        <option selected disabled>-- Select year --</option>
+                        {% for mwaka in miaka %}
+                        <option value="{{ mwaka }}">{{ mwaka }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Donor</label>
+                    <input type="text" class="form-control" name="donor" placeholder="E.g. USAID, DFID">
+                </div>
+                <div class="form-group">
+                    <label>Target</label>
+                    <input type="text" class="form-control" name="target">
+                </div>
+                <div class="form-btns">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    <button type="reset" class="btn btn-danger">Cancel</button>
+                </div>
+            </form>
+          
+        </div>
+    </div>
+    
+</div>
+{% endblock %}

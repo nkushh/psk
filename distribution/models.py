@@ -78,5 +78,16 @@ class Nets_donated(models.Model):
 	def __str__(self):
 		return self.beneficiary
 
+# Distribution targets
+class Distribution_target(models.Model):
+	target_month = models.IntegerField()
+	target_year = models.CharField(max_length=5)
+	donor = models.CharField(max_length=255)
+	target = models.IntegerField()
+	date_created = models.DateTimeField(auto_now_add=True)
+
+	def __str__(self):
+		return self.donor
+
 
 

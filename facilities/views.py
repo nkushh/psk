@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 from .models import Counties, Epidemiological_zones, Facilities, Regions
-from distribution.models import Nets_distributed, Distribution_report
+from distribution.models import Nets_distributed, Distribution_report, Distribution_target
 from visits.models import Visit
 import json, datetime, calendar, csv
 import pyexcel as pe
@@ -558,8 +558,7 @@ def delete_zone(request, zone_pk):
     messages.success(request, "Success! {} zone details have been permanently deleted.".format(zone_name))
     return redirect('facilities:transmission_zones')
 
-
-# SUPER FUNCTIONS
+# SUPER FUNCTIONS (Settings section)
 @login_required(login_url='login')
 def county_name_change(request):
     if request.method=="POST":

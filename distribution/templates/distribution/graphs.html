@@ -137,3 +137,30 @@
 	  // xLabelAngle: '20'
 	});
 </script>
+
+<!-- Targets graphs -->
+{% load static %}
+<script type="text/javascript">
+	new Morris.Bar({
+	  // ID of the element in which to draw the chart.
+	  element: 'distribution-targets',
+	  // Chart data records -- each entry in this array corresponds to a point on
+	  // the chart.
+	  data: [
+	  {% for record in targets %}
+	  	{% for data in achieved %}
+	    { mwezi: '{{ record.target_month }}', a: {% if record %}{{ record.target }}{% else %}0{% endif %}, b: {% if data %}{{ data.total_achieved }}{% else %}0{% endif %} },
+	    {% endfor %}
+	  {% endfor %}
+	  ],
+	  // The name of the data record attribute that contains x-values.
+	  xkey: 'mwezi',
+	  // A list of names of data record attributes that contain y-values.
+	  ykeys: ['a', 'b'],
+	  // Labels for the ykeys -- will be displayed when you hover over the
+	  // chart.
+	  labels: ['target','achieved'],
+	  hideHover: 'auto',
+	  // xLabelAngle: '90'
+	});
+</script>

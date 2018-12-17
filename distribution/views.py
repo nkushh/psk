@@ -4,13 +4,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count
+from django.db.models.functions import Extract
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import pyexcel as pe
 from authentication.models import UserProfile
-from .models import Distribution_report, Nets_distributed, Nets_donated, Stocking_history, Warehouse
+from .models import Distribution_report, Distribution_target, Nets_distributed, Nets_donated, Stocking_history, Warehouse
 from facilities.models import Counties, Epidemiological_zones, Facilities, Regions
 
 # Loads distribution dashboard template
@@ -620,6 +621,59 @@ def confirm_nets_issuance(total_nets, net_balance, system_net_balance):
 		return False
 	else:
 		return True
+
+
+###############################################################################################################################
+# CRUD functions for distribution targets
+@login_required(login_url='login')
+def create_target(request):
+    if request.method == "POST":
+        target_month = request.POST['target_month']
+        target_year = request.POST['target_year']
+        donor = request.POST['donor'].upper()
+        target = request.POST['target']
+        
+        if Distribution_target.objects.filter(target_month=target_month, target_year=target_year, donor=donor).exists():
+            messages.error(request, "Target details were not saved. That target exists. Try again!")
+            return redirect("distribution:create_target")
+        else:
+        	set_target = Distribution_target(target_month=target_month, target_year=target_year, donor=donor, target=target).save()
+        	messages.success(request, "Target added successfully!")
+        	return redirect("distribution:fetch_targets")
+    else:
+    	today = datetime.datetime.now()
+    	mwaka = today.year
+    	months_choices = []
+    	for i in range(1,13):
+    		months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
+
+    	context = {
+    		'months_choices' : months_choices,
+    		'miaka' : range(mwaka, mwaka+2)
+    	}
+
+    	template = "distribution/distribution-target.html"
+
+    	return render(request, template, context)
+
+@login_required(login_url='login')
+def fetch_targets(request):
+	today = datetime.datetime.now()
+	mwaka = today.year
+
+	targets = Distribution_target.objects.filter(target_year=mwaka).order_by('target_month')
+	achieved = Nets_distributed.objects.filter(date_issued__year=mwaka).annotate(mwezi=Extract('date_issued', 'month')).values('mwezi').annotate(total_achieved=Sum('nets_issued')).order_by('mwezi')
+	# Cnvert month to string
+	for i in targets:
+		i.target_month = calendar.month_abbr[i.target_month]
+
+	context = {
+		'achieved' : achieved,
+		'targets' : targets
+	}
+
+	template = "distribution/targets.html"
+	return render(request, template, context)
 
 
 
