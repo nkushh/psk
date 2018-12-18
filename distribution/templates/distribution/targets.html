@@ -32,7 +32,9 @@
     <div class="col-md-12">
         <div class="white-box">
             <h3 class="box-title">Targets vs Achieved</h3>
+            
             <div id="distribution-targets"></div>
+            <p><span class="badge badge-danger pull-left">Target</span> <span class="badge badge-success pull-left">Achieved</span></p>
         </div>
         
     </div>
@@ -57,19 +59,27 @@
                         <th>Period</th>
                         <th>Donor</th>
                         <th>Target</th>
+                        <th>Achieved</th>
+                        <th>Status</th>
                     </thead>
                     <tbody>
                         {% for record in targets %}
+                        {% for data in achieved %}
+                        {% ifequal data.mwezi record.target_month %}
                         <tr>
                             <td>{{ record.pk }}</td>
                             <td>{{ record.target_month }}, {{ record.target_year }}</td>
                             <td>{{ record.donor }}</td>
                             <td>{{ record.target | intcomma }}</td>
+                            <td style="color:green;">{{ data.total_achieved | intcomma }}</td>
+                            <td style="color:red;">{% if data.total_achieved > record.target %}Higher{% else %}Lower{% endif %}</td>
                         </tr>
+                        {% endifequal%}
                         {% empty %}
                         <tr>
                             <td colspan="4" class="text-center"><h3>No delivery targets records yet!</h3></td>
                         </tr>
+                        {% endfor%}
                         {% endfor %}
                     </tbody>
                 </table>
