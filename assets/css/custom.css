@@ -14,6 +14,26 @@
 	font-weight: bold;
 }
 
+/* Target numbers styling */
+.achieved-percent-green{
+	color: #33cc33;
+	font-weight: bold;
+}
+
+.achieved-percent-red{
+	color: #ff3300;
+	font-weight: bold;
+}
+
+.target-total{
+	font-weight: bold;
+	color: #0066ff;
+}
+
+.achieved-distribution{
+	font-weight: bold;
+	color: #339933;
+}
 
 .form-group{
 	position: relative !important;

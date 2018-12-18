@@ -661,10 +661,13 @@ def fetch_targets(request):
 	today = datetime.datetime.now()
 	mwaka = today.year
 
+	overall_achieved = Nets_distributed.objects.filter(date_issued__year=mwaka, donor_code='USAID').aggregate(total_distributed=Sum('nets_issued'))
+	overall_target = Distribution_target.objects.filter(target_year=mwaka).aggregate(target_total=Sum('target'))
 	targets = Distribution_target.objects.filter(target_year=mwaka).order_by('target_month')
 	targets_graph = Distribution_target.objects.filter(target_year=mwaka).values('target_month', 'target').order_by('target_month')
 	achieved = Nets_distributed.objects.filter(date_issued__year=mwaka, donor_code='USAID').annotate(mwezi=Extract('date_issued', 'month')).values('mwezi').annotate(total_achieved=Sum('nets_issued')).order_by('mwezi')
-	# Cnvert month to string
+	
+	# Convert month to string
 	for i in targets:
 		i.target_month = calendar.month_abbr[i.target_month]
 	for i in targets_graph:
@@ -672,8 +675,14 @@ def fetch_targets(request):
 	for m in achieved:
 		m['mwezi'] = calendar.month_abbr[m['mwezi']]
 
+	# Achieved target percentage
+	achieved_percentage = (overall_achieved['total_distributed']*100)/overall_target['target_total']
+
 	context = {
 		'achieved' : achieved,
+		'achieved_percentage' : achieved_percentage,
+		'overall_achieved' : overall_achieved,
+		'overall_target' : overall_target,
 		'targets' : targets,
 		'targets_graph' : targets_graph
 	}
