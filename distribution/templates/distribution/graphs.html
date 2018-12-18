@@ -148,7 +148,7 @@
 	  // the chart.
 	  data: [
 
-	  	{% for record in targets %}
+	  	{% for record in targets_graph %}
 	  	{% for data in achieved %}
 	  	{% ifequal data.mwezi record.target_month %}
 	    { mwezi: '{{ data.mwezi }}', a: {% if data.total_achieved %}{{ data.total_achieved }}{% else %}0{% endif %}, b: {% if record.target %}{{ record.target }}{% else %}0{% endif %}},

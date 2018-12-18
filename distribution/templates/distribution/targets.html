@@ -20,7 +20,9 @@
 <div class="row">
     <div class="col-md-12">
         <div class="top-bar-btns">
+            {% ifequal user.userprofile.usertype "Admin" %}
             <a class="btn btn-danger" href="{% url 'distribution:create_target' %}"><i class="fa fa-bar-chart"></i> Add Delivery targets</a>
+            {% endifequal %}
         </div>
     </div>
 </div>
@@ -29,7 +31,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="white-box">
-            <h3 class="box-title">graphing</h3>
+            <h3 class="box-title">Targets vs Achieved</h3>
             <div id="distribution-targets"></div>
         </div>
         
