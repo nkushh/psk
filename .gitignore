@@ -4,3 +4,4 @@
 __pycache__
 /venv_psk
 .DS_Store
+db.sqlite3
