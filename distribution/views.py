@@ -659,7 +659,10 @@ def create_target(request):
 @login_required(login_url='login')
 def fetch_targets(request):
 	today = datetime.datetime.now()
-	mwaka = today.year
+	if today.month==1 and today.day < 15:
+		mwaka = today.year - 1
+	else:
+		mwaka = today.year
 
 	overall_achieved = Nets_distributed.objects.filter(date_issued__year=mwaka, donor_code='USAID').aggregate(total_distributed=Sum('nets_issued'))
 	overall_target = Distribution_target.objects.filter(target_year=mwaka).aggregate(target_total=Sum('target'))
@@ -681,6 +684,7 @@ def fetch_targets(request):
 	context = {
 		'achieved' : achieved,
 		'achieved_percentage' : achieved_percentage,
+		'mwaka' : mwaka,
 		'overall_achieved' : overall_achieved,
 		'overall_target' : overall_target,
 		'targets' : targets,

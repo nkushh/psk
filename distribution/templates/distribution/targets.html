@@ -32,7 +32,7 @@
     <div class="col-md-12">
         <div class="white-box">
             
-            <h3 class="box-title">Targets vs Achieved</h3>
+            <h3 class="box-title">Targets vs Achieved <span class="target-total">{% if mwaka %}{{ mwaka }}{% endif %}</span></h3>
             <h3>Overall target <span class="target-total">{{ overall_target.target_total | intcomma }}</span></h3>
             <h3>Achieved distribution <span class="achieved-distribution">{{ overall_achieved.total_distributed | intcomma }}</span></h3>
             <h3 {% if achieved_percentage < 100 %} class="achieved-percent-red" {% else %} class="achieved-percent-green" {% endif %}>{{ achieved_percentage | floatformat:'2' }}%</h3>
