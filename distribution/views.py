@@ -18,7 +18,12 @@ from facilities.models import Counties, Epidemiological_zones, Facilities, Regio
 @login_required(login_url='login')
 def distribution_index(request):
 	today = datetime.datetime.now()
-	mwaka = today.year
+
+	if today.month < 2:
+		mwaka = today.year - 1
+	else:
+		mwaka = today.year
+
 	months_choices = []
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
@@ -53,7 +58,12 @@ def distribution_index(request):
 @login_required(login_url='login')
 def monthly_net_delivery(request, mwezi):
 	today = datetime.datetime.now()
-	mwaka = today.year
+
+	if today.month < 2:
+		mwaka = today.year - 1
+	else:
+		mwaka = today.year
+
 	months_choices = []
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
@@ -74,6 +84,7 @@ def monthly_net_delivery(request, mwezi):
 		'distribution_by_ez' : distribution_by_ez,
 		'months_choices' : months_choices,
 		'mwezi' : mwezi,
+		'mwaka' : mwaka,
 		'query_month' : query_month,
 		'regions' : regions,
 		'region_distribution' : region_distribution,
@@ -355,7 +366,11 @@ def download_all_distribution_excel(request):
 @login_required(login_url='login')
 def download_distribution_excel(request, mwezi):
 	today = datetime.datetime.now()
-	mwaka = today.year
+
+	if today.month < 3 and today.day < 5:
+		mwaka = today.year - 1
+	else:
+		mwaka = today.year
 
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
@@ -387,7 +402,12 @@ def download_issuance_excel(request, mwezi, mwaka):
 
 def download_qdistribution_excel(request):
 	today = datetime.datetime.now()
-	mwaka = today.year
+
+	if today.month < 3 and today.day < 5:
+		mwaka = today.year - 1
+	else:
+		mwaka = today.year
+
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
 
@@ -427,12 +447,17 @@ def reset_nets_balance(request):
 	return redirect("facilities:facilities")
 
 
-# NETS DISTRIBUTION TO TARGET GROUP REPORT MODULE
+# NETS ISSUED TO TARGET GROUP REPORT MODULE
 # Loads issuance dashboard template
 @login_required(login_url='login')
 def issuance_index(request):
 	today = datetime.datetime.now()
-	mwaka = today.year
+	
+	if today.month < 3 and today.day < 5:
+		mwaka = today.year - 1
+	else:
+		mwaka = today.year
+
 	months_choices = []
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
