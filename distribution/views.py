@@ -73,6 +73,8 @@ def monthly_net_delivery(request, mwezi):
 	region_distribution = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__psk_region').annotate(region_total=Sum('nets_issued')).order_by('-region_total')
 	total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).aggregate(nets=Sum('nets_issued'))
 	total_facilities_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).annotate(Count('facility', distinct=True))
+	total_nets_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=mwezi).aggregate(issued_nets=Sum('total_nets'))
+	total_nets_donated = Nets_donated.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).aggregate(donated_nets=Sum('nets_issued'))
 	# Accompaniements
 	counties = Counties.objects.order_by('county_name')
 	regions = Regions.objects.order_by('region_name')
@@ -89,7 +91,10 @@ def monthly_net_delivery(request, mwezi):
 		'regions' : regions,
 		'region_distribution' : region_distribution,
 		'total_facilities_delivered' : total_facilities_delivered,
-		'total_nets_delivered' : total_nets_delivered
+		'total_nets_delivered' : total_nets_delivered,
+		'total_nets_issued' : total_nets_issued,
+		'total_nets_donated' : total_nets_donated
+
 	}
 	template = "distribution/index.html"
 	return render(request, template, context)	
@@ -453,7 +458,7 @@ def reset_nets_balance(request):
 def issuance_index(request):
 	today = datetime.datetime.now()
 	
-	if today.month < 3 and today.day < 5:
+	if today.month < 2:
 		mwaka = today.year - 1
 	else:
 		mwaka = today.year
