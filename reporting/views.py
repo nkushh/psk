@@ -240,6 +240,7 @@ def region_monthly_distribution(request):
 def quarters_index(request):
 	today = datetime.datetime.now()
 	mwaka = today.year
+	miaka = range(2018,mwaka+1)
 	# Quarter one
 	q1_distribution = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=1, date_issued__year__lte=mwaka, date_issued__month__lte=3).aggregate(q1_deliverd = Sum('nets_issued'))
 	q1_issuance = Distribution_report.objects.filter(dist_year__gte=mwaka, dist_month__gte=1, dist_year__lte=mwaka, dist_month__lte=3).aggregate(q1_issued = Sum('total_nets'))
@@ -261,6 +262,7 @@ def quarters_index(request):
 	template = "reporting/quarter-index.html"
 	context = {
 		'counties' : counties,
+		'miaka' : miaka,
 		'q1_distribution' : q1_distribution,
 		'q1_issuance' : q1_issuance,
 		'q1_visits' : q1_visits,
@@ -482,4 +484,32 @@ def month_visits_filter(request):
 		}
 
 	return render(request, template, context)	
+
+
+# Quarter reporting filters
+@login_required(login_url='login')
+def quarter_distribution_report(request):
+	today = datetime.datetime.now()
+
+	if request.method == "POST":
+		quarter = request.POST['quarter']
+		mwaka = request.POST['mwaka']
+
+		if quarter == "One":
+			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=1, date_issued__year__lte=mwaka, date_issued__month__lte=3).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+		elif quarter == "Two":
+			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=4, date_issued__year__lte=mwaka, date_issued__month__lte=6).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+		elif quarter == "Three":
+			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=7, date_issued__year__lte=mwaka, date_issued__month__lte=9).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+		elif quarter == "Four":
+			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=10, date_issued__year__lte=mwaka, date_issued__month__lte=12).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+
+		context = {
+			'mwaka' : mwaka,
+			'quarter' : quarter,
+			'quarter_dist' : quarter_dist
+		}
+		template = "reporting/quarter-distribution.html"
+
+	return render(request, template, context)
 
