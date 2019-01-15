@@ -14,6 +14,7 @@ urlpatterns = [
 	path('new-facilities', views.facilities_excel_upload, name="new_facilities"),
 	path('change-county-name', views.county_name_change, name="county_name_change"),
 	path('facility-detail/<int:facility_pk>/', views.facility_details, name="facility_details"),
+	# Autocomplete
 	path('autocomplete/all-facilities/', views.facilities_autocomplete, name="autocomplete"),
 	path('search', views.facility_search, name='search_facility'),
 	path('download-facilities', views.download_facilities_excel, name="excel_facilities_download"),

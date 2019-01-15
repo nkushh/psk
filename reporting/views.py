@@ -43,6 +43,7 @@ def monthly_index(request):
 	prev_month_cwc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=last_month).aggregate(prev_cwc=Sum('cwc_nets'))
 	
 	visits = Visit.objects.filter(date_recorded__year=mwaka, date_recorded__month=today.month).count()
+	sub_counties = Facilities.objects.values('sub_county').distinct()
 	context = {
 		'counties' : counties,
 		'months_choices' : months_choices,
@@ -56,6 +57,7 @@ def monthly_index(request):
 		'prev_month_cwc' : prev_month_cwc,
 		'prev_month_delivered' : prev_month_delivered,
 		'prev_month_issued' : prev_month_issued,
+		'sub_counties' : sub_counties,
 		'visits' : visits
 	}
 	template = "reporting/monthly-index.html"
@@ -512,4 +514,50 @@ def quarter_distribution_report(request):
 		template = "reporting/quarter-distribution.html"
 
 	return render(request, template, context)
+
+
+# check facility by county distribution
+@login_required(login_url='login')
+def county_facility_distribution(request, county, mwezi, mwaka):
+	county = county
+	mwezi = mwezi
+	mwaka = mwaka
+
+	facilities = Nets_distributed.objects.filter(facility__county=county, date_issued__year=mwaka, date_issued__month=mwezi).order_by('nets_issued')
+	total_nets_delivered = Nets_distributed.objects.filter(facility__county=county, date_issued__year=mwaka, date_issued__month=mwezi).aggregate(Sum('nets_issued'))
+	template = "reporting/county-facility-dist.html"
+
+	context = {
+		'facilities' : facilities,
+		'mwezi' : mwezi,
+		'total_nets_delivered' : total_nets_delivered
+	}
+
+	return render(request, template, context)
+
+
+# AUTOCOMPLETE
+# Sub county live search
+@login_required(login_url='login')
+def subcounty_autocomplete(request,*args,**kwargs):
+    data = request.GET
+    sub_county = data.get("term")
+    if sub_county:
+        sub_counties = Facilities.objects.filter(status=1, facility_name__startswith = facility).values('sub_county').distinct()
+        results = []
+        for s_county in sub_counties:
+            s_county_json = {}
+            s_county_json['label'] = s_county.sub_county
+            results.append(s_county_json)
+        data = json.dumps(results)
+    else:
+        facilities = Facilities.objects.values('sub_county').distinct()
+        results = []
+        for s_county in sub_counties:
+            hosi_json = {}
+            hosi_json['label'] = s_county.sub_county
+            results.append(hosi_json)
+        data = json.dumps(results)
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
 

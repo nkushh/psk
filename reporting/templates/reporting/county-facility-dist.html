@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block title %}Net Distribution Records{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Net issuance records</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'reporting:monthly_index' %}">Reports Dashboard</a></li>
+            <li class="active">Monthly delivery</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            <a href="{% url 'distribution:distribution_download' mwezi %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
+        </div>
+    </div>
+</div>
+<!-- Row -->
+
+<!-- Row -->
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="white-box">
+            <h3 class="box-title m-b-0">Distribution details </h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <th>Facility</th>
+                        <th>Nets issued</th>
+                    </thead>
+                    <tbody>
+                        {% for record in facilities %}
+                        <tr>
+                            <td><a href="">{{ record.facility }}</a></td>
+                            <td>{{ record.nets_issued | intcomma }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center"><h3>No nets delivery records yet!</h3></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+{% endblock %}

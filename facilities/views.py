@@ -700,7 +700,6 @@ def set_facility_zone(request, psk_zone):
             return render(request, template)
 
 
-
 # @login_required(login_url='login')
 # def excel_uploaddd(request):
 #     if request.method == 'POST' and request.FILES['excel_file']:
