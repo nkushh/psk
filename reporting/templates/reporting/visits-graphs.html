@@ -4,12 +4,12 @@
     new Morris.Bar({
       element: 'visits-bar',
       data: [
-        { mwezi: 'Current', distributed: 100 },
-        { mwezi: 'Previous', distributed: 160 },
+        { mwezi: '{{ current_month }}', distributed: {% if visits %}{{ visits }}{% else %}0{% endif %} },
+        { mwezi: '{{ prev_month }}', distributed: {% if prev_month_visits %}{{ prev_month_visits }}{% else %}0{% endif %} },
       ],
       xkey: 'mwezi',
       ykeys: ['distributed'],
-      labels: ['Nets'],
+      labels: ['Visits'],
       hideHover: 'auto',
       barColors: ['#4ac18e']
     });

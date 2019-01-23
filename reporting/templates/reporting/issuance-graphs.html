@@ -5,8 +5,8 @@
     new Morris.Bar({
       element: 'issuance-bar',
       data: [
-        { mwezi: 'Current', issued: 120000 },
-        { mwezi: 'Previous', issued: 100000 },
+        { mwezi: '{{ current_month }}', issued: {% if nets_issued.total_issued %}{{ nets_issued.total_issued }}{% else %}0{% endif %} },
+        { mwezi: '{{ prev_month }}', issued: {% if prev_month_issued.prev_issued %}{{ prev_month_issued.prev_issued }}{% else %}0{% endif %} },
       ],
       xkey: 'mwezi',
       ykeys: ['issued'],

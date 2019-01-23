@@ -4,8 +4,8 @@
     new Morris.Bar({
       element: 'delivery-bar',
       data: [
-        { mwezi: 'Quater One', distributed: 100 },
-        { mwezi: 'Quarter Two', distributed: 200 },
+        { mwezi: '{{ current_month }}', distributed: {% if nets_delivered.total_delivered %}{{ nets_delivered.total_delivered }}{% else %}0 {% endif %} },
+        { mwezi: '{{ prev_month }}', distributed: {% if prev_month_delivered.prev_delivered %}{{ prev_month_delivered.prev_delivered }}{% else %}0{% endif %} },
       ],
       xkey: 'mwezi',
       ykeys: ['distributed'],

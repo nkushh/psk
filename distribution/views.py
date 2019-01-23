@@ -354,7 +354,11 @@ def record_nets_donated_excel(request):
 @login_required(login_url='login')
 def download_all_distribution_excel(request):
 	today = datetime.datetime.now()
-	mwaka = today.year
+
+	if today.month < 2:
+		mwaka = today.year - 1
+	else:
+		mwaka = today.year
 
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
@@ -369,13 +373,8 @@ def download_all_distribution_excel(request):
 	return response
 
 @login_required(login_url='login')
-def download_distribution_excel(request, mwezi):
+def download_distribution_excel(request, mwaka, mwezi):
 	today = datetime.datetime.now()
-
-	if today.month < 3 and today.day < 5:
-		mwaka = today.year - 1
-	else:
-		mwaka = today.year
 
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'

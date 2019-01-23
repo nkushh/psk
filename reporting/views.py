@@ -18,34 +18,57 @@ import datetime, calendar
 def monthly_index(request):
 	today = datetime.datetime.now()
 	mwaka = today.year
-	last_month = today.month - 1
+	last_year = mwaka - 1
+
+	if today.month == 1:
+		last_month = 12
+		# Previous month and current year
+		prev_month_delivered = Nets_distributed.objects.filter(date_issued__year=last_year, date_issued__month=last_month).aggregate(prev_delivered=Sum('nets_issued'))
+		prev_month_issued = Distribution_report.objects.filter(dist_year=last_year, dist_month=last_month).aggregate(prev_issued=Sum('total_nets'))
+		# Current month and year
+		nets_to_anc = Distribution_report.objects.filter(dist_year=last_year, dist_month=today.month).aggregate(total_anc=Sum('anc_nets'))
+		nets_to_cwc = Distribution_report.objects.filter(dist_year=last_year, dist_month=today.month).aggregate(total_cwc=Sum('cwc_nets'))
+		
+		# Previous month and current year
+		prev_month_anc = Distribution_report.objects.filter(dist_year=last_year, dist_month=last_month).aggregate(prev_anc=Sum('anc_nets'))
+		prev_month_cwc = Distribution_report.objects.filter(dist_year=last_year, dist_month=last_month).aggregate(prev_cwc=Sum('cwc_nets'))
+		
+		# Previous month visits
+		prev_month_visits = Visit.objects.filter(date_recorded__year=last_year, date_recorded__month=last_month).count()
+	else:
+		last_month = today.month - 1
+		# Previous month and current year
+		prev_month_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=last_month).aggregate(prev_delivered=Sum('nets_issued'))
+		prev_month_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=last_month).aggregate(prev_issued=Sum('total_nets'))
+		# Current month and year
+		nets_to_anc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=today.month).aggregate(total_anc=Sum('anc_nets'))
+		nets_to_cwc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=today.month).aggregate(total_cwc=Sum('cwc_nets'))
+		
+		# Previous month and current year
+		prev_month_anc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=last_month).aggregate(prev_anc=Sum('anc_nets'))
+		prev_month_cwc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=last_month).aggregate(prev_cwc=Sum('cwc_nets'))
+		
+		# Previous month visits
+		prev_month_visits = Visit.objects.filter(date_recorded__year=mwaka, date_recorded__month=last_month).count()
 
 	months_choices = []
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
 
+	prev_month = calendar.month_abbr[last_month]
+	current_month = calendar.month_abbr[today.month]
+
 	new_facilities = Facilities.objects.filter(date_added__year=mwaka, date_added__month=today.month).count()
 	nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=today.month).aggregate(total_delivered=Sum('nets_issued'))
 	nets_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=today.month).aggregate(total_issued=Sum('total_nets'))
 	counties = Facilities.objects.values('county').distinct()
+	visits = Visit.objects.filter(date_recorded__year=mwaka, date_recorded__month=today.month).count()
 	miaka = range(2010,mwaka+1)
 
-	# Previous month and current year
-	prev_month_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=last_month).aggregate(prev_delivered=Sum('nets_issued'))
-	prev_month_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=last_month).aggregate(prev_issued=Sum('total_nets'))
-	
-	# Current month and year
-	nets_to_anc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=today.month).aggregate(total_anc=Sum('anc_nets'))
-	nets_to_cwc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=today.month).aggregate(total_cwc=Sum('cwc_nets'))
-	
-	# Previous month and current year
-	prev_month_anc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=last_month).aggregate(prev_anc=Sum('anc_nets'))
-	prev_month_cwc = Distribution_report.objects.filter(dist_year=mwaka, dist_month=last_month).aggregate(prev_cwc=Sum('cwc_nets'))
-	
-	visits = Visit.objects.filter(date_recorded__year=mwaka, date_recorded__month=today.month).count()
 	sub_counties = Facilities.objects.values('sub_county').distinct()
 	context = {
 		'counties' : counties,
+		'current_month' : current_month,
 		'months_choices' : months_choices,
 		'miaka' : miaka,
 		'nets_delivered' : nets_delivered,
@@ -53,6 +76,7 @@ def monthly_index(request):
 		'nets_issued' : nets_issued,
 		'nets_to_anc' : nets_to_anc,
 		'nets_to_cwc' : nets_to_anc,
+		'prev_month' : prev_month,
 		'prev_month_anc' : prev_month_anc,
 		'prev_month_cwc' : prev_month_cwc,
 		'prev_month_delivered' : prev_month_delivered,
@@ -285,6 +309,7 @@ def quarters_index(request):
 def get_quarter_report(request, quarter, mwaka):
 	today = datetime.datetime.now()
 	current_year = today.year
+	miaka = range(2018, current_year+1)
 
 	# records = Distribution_report.objects.values('facility__county').annotate(Sum('total_nets')).distinct()
 	if quarter == "first":
@@ -300,6 +325,7 @@ def get_quarter_report(request, quarter, mwaka):
 
 	template = "distribution/counties-issuance.html"
 	context = {
+		'miaka' : miaka,
 		'q_report' : q_report
 	}
 	return render(request, template, context)
@@ -492,6 +518,7 @@ def month_visits_filter(request):
 @login_required(login_url='login')
 def quarter_distribution_report(request):
 	today = datetime.datetime.now()
+	miaka = range(2018, today.year+1)
 
 	if request.method == "POST":
 		quarter = request.POST['quarter']
@@ -507,6 +534,7 @@ def quarter_distribution_report(request):
 			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=10, date_issued__year__lte=mwaka, date_issued__month__lte=12).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
 
 		context = {
+			'miaka' : miaka,
 			'mwaka' : mwaka,
 			'quarter' : quarter,
 			'quarter_dist' : quarter_dist
@@ -530,6 +558,7 @@ def county_facility_distribution(request, county, mwezi, mwaka):
 	context = {
 		'facilities' : facilities,
 		'mwezi' : mwezi,
+		'mwaka' : mwaka,
 		'total_nets_delivered' : total_nets_delivered
 	}
 
