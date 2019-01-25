@@ -45,7 +45,7 @@
                 <ul role="menu" class="dropdown-menu county-dropdown">
                     <li><a href="{% url 'distribution:nets_to_facilities' %}">All months</a></li>
                     {% for month in months_choices %}
-                    <li><a href="{% url 'distribution:monthly_distribution' month.0 %}">{{ month.1 }}</a></li>
+                    <li><a href="{% url 'distribution:monthly_issuance' month.0 %}">{{ month.1 }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -112,7 +112,7 @@
     <div class="col-md-6 col-sm-12 col-xs-12">
         <div class="white-box">
             {% if query_month %}
-             <a href="{% url 'distribution:distribution_download' mwezi %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
+             <a href="{% url 'distribution:distribution_download' mwezi mwaka %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
             {% else %}
             <a href="{% url 'distribution:all_distribution_download' %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
             <!-- <a href="{% url 'distribution:quarter_report_download' %}" class="btn btn-primary pull-right" target="_blank"><i class="fa fa-download"></i> Quarter report</a> -->

@@ -15,12 +15,12 @@
 }
 
 /* Target numbers styling */
-.achieved-percentage-green{
+.achieved-percent-green{
 	color: #33cc33;
 	font-weight: bold;
 }
 
-.achieved-percentage-red{
+.achieved-percent-red{
 	color: #ff3300;
 	font-weight: bold;
 }

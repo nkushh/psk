@@ -8,6 +8,7 @@ urlpatterns = [
 	path('nets-distribution', views.distribution_index, name='nets_distribution'),
 	path('monthly-distribution/<int:mwezi>/', views.monthly_net_delivery, name='monthly_distribution'),
 	path('nets-issuance', views.record_nets_issued, name='issue_nets' ),
+	path('monthly-issuance/<int:mwezi>/', views.monthly_issuance_index, name='monthly_issuance'),
 	path('distribution-download-all', views.download_all_distribution_excel, name='all_distribution_download'),
 	path('distribution-download/<int:mwezi>/<int:mwaka>/', views.download_distribution_excel, name='distribution_download'),
 	path('excel-nets-issuance', views.record_nets_issued_excel, name='issue_nets_excel' ),
