@@ -15,5 +15,6 @@ urlpatterns = [
 	path('record-visit', views.record_visit, name="record_visit"),
 	path('email-sender', views.email_sender, name="send_mail"),
 	path('set-amc', views.set_amc, name="set_amc"),
-	path('update-risk-level', views.update_risk_level, name="update_risk_level")
+	path('update-risk-level', views.update_risk_level, name="update_risk_level"),
+	path('duplicate-visits/<int:mwezi>/', views.get_duplicate_visits, name="monthly_duplicate_visits"),
 ]

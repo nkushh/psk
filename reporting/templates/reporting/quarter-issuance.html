@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block title %}Net Issuance Records{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Net issuance records</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+        <ol class="breadcrumb">
+            <li><a href="{% url 'reporting:monthly_index' %}">Reports Dashboard</a></li>
+            <li class="active">Issuance records</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+
+            <div class="col-md-4 col-sm-6">
+                <div class="white-box">
+                    <div class="r-icon-stats">
+                        <i class="fa fa-cubes bg-info"></i>
+                        <div class="bodystate">
+                            <h4>{{ quarter_issuance_total.total_nets|intcomma }}</h4>
+                            <span class="text-muted">Nets Issued</span>
+                            <p>Quarter {{ quarter }}, {{ mwaka }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 col-sm-6">
+                <a href="">
+                <div class="white-box">
+                    <a alt="default" data-toggle="modal" data-target="#quarterly-issuance-modal" />
+                    <div class="r-icon-stats">
+                        <i class="ti-truck bg-info"></i>
+                        <div class="bodystate">
+                            <h4>Filter</h4>
+                            <span class="text-muted">By Nets Issued</span>
+                        </div>
+                    </div>
+                    </a>
+                </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>
+<!-- Row -->
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="white-box">
+            <h3 class="box-title m-b-0"><span class="target-total">{% if quarter %}{{ mwaka }} Quarter {{ quarter }}{% endif %}</span> Graphical Distribution details </h3>
+            <div id="countyQuarterlyIssuance"></div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+<!-- Row -->
+<div class="row">
+    <div class="col-sm-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %} danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        <div class="white-box">
+            <h3 class="box-title m-b-0"><span class="target-total">{% if quarter %}{{ mwaka }} Quarter {{ quarter }}{% endif %}</span> Distribution details </h3>
+            <div class="table-responsive"> 
+                <table class="table">
+                    <thead>
+                        <th>County</th>
+                        <th>Nets issued</th>
+                    </thead>
+                    <tbody>
+                        {% for issuance in quarter_issuance %}
+                        <tr>
+                            <td>{{ issuance.0 | intcomma }}</td>
+                            <td>{{ issuance.1 | intcomma }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center"><h3>No nets delivery records yet!</h3></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+
+{% endblock %}

@@ -53,6 +53,15 @@
                     {% endfor %}
                 </ul>
             </div>
+            <div class="btn-group m-r-10">
+                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-warning dropdown-toggle waves-effect waves-light" type="button">Duplicate visits <span class="caret"></span></button>
+                <ul role="menu" class="dropdown-menu county-dropdown">
+                    <li><a href="#">--Select Month--</a></li>
+                    {% for mwezi in months_choices %}
+                    <li><a href="{% url 'visits:monthly_duplicate_visits' mwezi.0 %}">{{ mwezi.1 }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
             {% endifequal %}
             <a class="btn btn-danger" href="{% url 'visits:record_visit' %}"><i class="fa fa-plus"></i> Record visit</a>
             <a class="btn btn-success" href="{% url 'visits:coordinators_aggregate_visits' %}"><i class="fa fa-group"></i> Visits aggregate</a>
@@ -64,39 +73,39 @@
 
 <!-- Row -->
 <div class="row">
-    <div class="col-md-3 col-sm-6">
+    <div class="col-md-4 col-sm-6">
         <div class="white-box">
             <div class="r-icon-stats">
                 <i class="fa fa-hospital-o bg-megna"></i>
                 <div class="bodystate">
                     <h4>{{ total_visits | intcomma }}</h4>
                     <span class="text-muted">Total visits</span>
-                    {% if query_month %}<p>({{ query_month.capitalize }})</p>{% endif %}
+                    {% if query_month %}<p>({{ query_month.capitalize }} {{ this_mwaka }})</p>{% endif %}
                 </div>
             </div>
         </div>
     </div>
-    {% if current_month or previous_month %}
-    <div class="col-md-3 col-sm-6">
+    {% if current_month or mwezi_uliopita %}
+    <div class="col-md-4 col-sm-6">
         <div class="white-box">
             <div class="r-icon-stats">
                 <i class="fa fa-hospital-o bg-megna"></i>
                 <div class="bodystate">
                     <h4>{{ current_month | intcomma }}</h4>
-                    <span class="text-muted">Current month</span>
-                    <p>{% if mwezi_huu %}({{ mwezi_huu }}){% endif %}</p>
+                    <span class="text-muted">Total visits</span>
+                    <p>{% if mwezi_huu %}({{ mwezi_huu }} {{ this_mwaka }}){% endif %}</p>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-md-3 col-sm-6">
+    <div class="col-md-4 col-sm-6">
         <div class="white-box">
             <div class="r-icon-stats">
                 <i class="fa fa-hospital-o bg-megna"></i>
                 <div class="bodystate">
                     <h4>{{ previous_month | intcomma }}</h4>
-                    <span class="text-muted">Previous month</span>
-                    <p>{% if mwezi_uliopita %}({{ mwezi_uliopita }}){% endif %}</p>
+                    <span class="text-muted">Total visits</span>
+                    <p>{% if mwezi_uliopita %}({{ mwezi_uliopita }} {{ this_mwaka }}){% endif %}</p>
                 </div>
             </div>
         </div>

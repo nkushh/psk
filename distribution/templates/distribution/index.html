@@ -50,6 +50,15 @@
                     {% endfor %}
                 </ul>
             </div>
+            <div class="btn-group m-r-10">
+                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-success dropdown-toggle waves-effect waves-light" type="button">Download By Year <span class="caret"></span></button>
+                <ul role="menu" class="dropdown-menu county-dropdown">
+                    <li><a href="#">All years</a></li>
+                    {% for mwaka in years %}
+                    <li><a href="{% url 'distribution:yearly_distribution_download' mwaka %}">{{ mwaka }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
         </div>
     </div>
 </div>
@@ -113,7 +122,7 @@
     <div class="col-md-6 col-sm-12 col-xs-12">
         <div class="white-box">
             {% if query_month %}
-             <a href="{% url 'distribution:distribution_download' mwezi %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
+             <a href="{% url 'distribution:distribution_download' mwezi mwaka %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
             {% else %}
             <a href="{% url 'distribution:all_distribution_download' %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
             <!-- <a href="{% url 'distribution:quarter_report_download' %}" class="btn btn-primary pull-right" target="_blank"><i class="fa fa-download"></i> Quarter report</a> -->

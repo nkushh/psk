@@ -1,4 +1,5 @@
 {% load static %}
+{% load crispy_forms_tags %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -98,7 +99,7 @@
                                 </div>
                                 <p><label for="recipient-name" class="control-label">Visit date:</label></p>
                                 <div class="input-group date">
-                                    <input type="text" name="visit_date" id="visiting-date" onblur="verifyDates();" class="form-control mydatepicker" placeholder="yyyy-mm-dd" required>
+                                    <input type="text" name="visit_date" id="visiting-date" onfocusout="verifyDates();" class="form-control mydatepicker" placeholder="yyyy-mm-dd" required>
                                     <span class="input-group-addon"><i class="icon-calender"></i></span> 
                                 </div>
                                 <div id="date-error" style="display: none;"></div>
@@ -108,9 +109,11 @@
                     <div class="col-md-4">
                         <div class="white-box">
                             <h3 class="box-title m-b-0">Visit details</h3>
-                                <p>Reports submission for last 3 months:<span class="break-text">*</span></p>
                                 <div class="form-group">
                                     <label class="radio-inline">
+                                    {{ form.reporting_frequency|as_crispy_field }}
+                                    </label>
+                                    <!-- <label class="radio-inline">
                                         <input type="radio" name="reporting_frequency" id="report-submit-one" value="0" checked>0
                                     </label>
                                     <label class="radio-inline">
@@ -121,12 +124,13 @@
                                     </label>
                                     <label class="radio-inline">
                                         <input type="radio" name="reporting_frequency" id="report-submit-four" value="3">3
-                                    </label>
+                                    </label> -->
                                 </div>
                                 <p>Ordered last quarter?: <span class="break-text">*</span></p>
                                 <div class="form-group">
-                                    <label class="radio-inline"><input type="radio" name="quarter_order" id="quarter-order-yes" value="1">Yes</label>
-                                    <label class="radio-inline"><input type="radio" name="quarter_order" id="quarter-order-no" value="0">No</label>
+                                    {{ form.quarter_order|as_crispy_field }}
+                                    <!-- <label class="radio-inline"><input type="radio" name="quarter_order" id="quarter-order-yes" value="1">Yes</label>
+                                    <label class="radio-inline"><input type="radio" name="quarter_order" id="quarter-order-no" value="0">No</label> -->
                                 </div>
                         </div>
                     </div>

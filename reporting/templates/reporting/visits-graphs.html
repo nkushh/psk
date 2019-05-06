@@ -33,3 +33,21 @@
       xLabelAngle: '40'
     });
 </script>
+
+<!-- Quarterly county visits bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'countyQuarterlyVisits',
+      data: [
+      {% for county in quarter_visits %}
+        { county: '{{ county.0 }}', visits: {{ county.1 }} },
+      {% endfor %}
+      ],
+      xkey: 'county',
+      ykeys: ['visits'],
+      labels: ['Visits'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e'],
+      xLabelAngle: '90'
+    });
+</script>

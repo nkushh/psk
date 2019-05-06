@@ -136,4 +136,4 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 LOGIN_REDIRECT_URL = '/'
 
 # Session timeouts
-SESSION_COOKIE_AGE = 7200 # expires in an hour
+SESSION_COOKIE_AGE = 7200 # expires in two hours

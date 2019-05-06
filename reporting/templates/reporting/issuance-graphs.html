@@ -66,3 +66,21 @@
       barColors: ['#4ac18e']
     });
 </script>
+
+<!-- Quarterly county issuance bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'countyQuarterlyIssuance',
+      data: [
+      {% for county in quarter_issuance %}
+        { county: '{{ county.0 }}', issued: {{ county.1 }} },
+      {% endfor %}
+      ],
+      xkey: 'county',
+      ykeys: ['issued'],
+      labels: ['Nets'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e'],
+      xLabelAngle: '90'
+    });
+</script>

@@ -196,6 +196,28 @@ input:invalid{
 	margin-left: 3px;
 }
 
+.comparison-box{
+	color: #fff;
+	border-radius: 10px;
+}
+.comparison-box h4{
+	color: #fff;
+	font-weight: bolder;
+}
+
+.green-box{
+	background: #00c292 !important;
+}
+
+
+.blue-box{
+	background: #03a9f3 !important;
+}
+
+.grey-box{
+	background: #292b2c !important;
+}
+
 
 @media only screen and (max-width: 768px){
 		.ui-autocomplete{

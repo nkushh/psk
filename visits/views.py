@@ -11,6 +11,7 @@ from authentication.models import UserProfile
 from facilities.models import Facilities
 from distribution.models import Distribution_report
 from .models import Visit
+from .forms import NewVisitForm
 import datetime, calendar
 
 # Create your views here.
@@ -29,7 +30,7 @@ def visits_index(request):
 	    months_choices.append((i, datetime.date(this_mwaka, i, 1).strftime('%B')))
 
 	if account_profile.usertype == "Field Assistant":
-		recently_visited = Visit.objects.filter(supervisor=account).order_by('-date_recorded')
+		recently_visited = Visit.objects.filter(supervisor=account).order_by('-visit_date')
 		total_visits = Visit.objects.filter(supervisor=account).count()
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
 		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
@@ -38,7 +39,7 @@ def visits_index(request):
 		field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
 
 	elif account_profile.usertype == "Coordinator":
-		recently_visited = Visit.objects.filter(supervisor=account).order_by('-date_recorded')
+		recently_visited = Visit.objects.filter(supervisor=account).order_by('-visit_date')
 		total_visits = Visit.objects.filter(supervisor=account).count()
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month, supervisor=account).count()
 		monthly_visits = Visit.objects.filter(supervisor=account, visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
@@ -46,7 +47,7 @@ def visits_index(request):
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month, supervisor=account).count()
 		field_assistants = UserProfile.objects.filter(usertype="Field Assistant", psk_region=account_profile.psk_region)
 	elif account_profile.usertype == "Admin":
-		recently_visited = Visit.objects.all().order_by('-date_recorded')
+		recently_visited = Visit.objects.all().order_by('-visit_date')
 		total_visits = Visit.objects.count()
 		current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month).count()
 		monthly_visits = Visit.objects.filter(visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
@@ -304,15 +305,38 @@ def month_visits(request, mwezi):
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(this_mwaka, i, 1).strftime('%B')))
 
-	recently_visited = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=mwezi).order_by('-date_recorded')
+	recently_visited = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=mwezi).order_by('-visit_date')
 	total_visits = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=mwezi).count()
 	current_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=this_month).count()
 	previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month).count()
+	monthly_visits = Visit.objects.filter(visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
+	risk_status = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=mwezi).values('risk_level').annotate(status_count=Count('id'))
 	coordinators = UserProfile.objects.filter(usertype="Coordinator")
 	field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
-	query_month = calendar.month_name[int(mwezi)]
-	mwezi_huu = calendar.month_name[int(this_month)]
-	mwezi_uliopita = calendar.month_name[int(last_month)]
+
+	query_month = calendar.month_abbr[int(mwezi)]
+	mwezi_huu = calendar.month_abbr[int(this_month)]
+	mwezi_uliopita = calendar.month_abbr[int(last_month)]
+
+	try:
+	    page = request.GET.get('page', 1)
+	except:
+	    page = 1
+
+	paginator = Paginator(recently_visited, 30)
+
+	try:
+	    recently_visited = paginator.page(page)
+	except PageNotAnInteger:
+	    recently_visited = paginator.page(1)
+	except EmptyPage:
+	    recently_visited = paginator.page(paginator.num_pages)
+
+	index = recently_visited.number - 1
+	max_index = len(paginator.page_range)
+	start_index = index - 5 if index >= 5 else 0
+	end_index = index + 5 if index <= max_index - 5 else max_index
+	page_range = paginator.page_range[start_index:end_index]
 
 
 	context = {
@@ -320,11 +344,15 @@ def month_visits(request, mwezi):
 		'current_month' : current_month,
 		'field_assistants' : field_assistants,
 		'months_choices' : months_choices,
+		'monthly_visits' : monthly_visits,
 		'mwezi_huu' : mwezi_huu,
 		'mwezi_uliopita' : mwezi_uliopita,
+		'page_range' : page_range,
 		'previous_month' : previous_month,
 		'query_month' : query_month,
+		'risk_status' : risk_status,
 		'recently_visited' : recently_visited,
+		'this_mwaka' : this_mwaka,
 		'total_visits' : total_visits
 	}
 	template = "visits/index.html"
@@ -437,7 +465,7 @@ def update_risk_level(request):
 
 # Set risk status			
 def set_risk_status(amc, variance, stock_status):
-	if(variance > 10 or variance < -10) or (stock_status < 1) or (variance < 0 and variance < amc):
+	if(variance > 10 or variance < -10) or (variance < 0 and variance < amc):
 		return "High"
 	elif((5 < variance < 10) or (-5 > variance > -10)) or (1 < stock_status < 3):
 		return "Medium"
@@ -598,9 +626,34 @@ def record_visit(request):
 
 				
 	else:
-		context = {}
+		form = NewVisitForm()
+		context = {
+			'form' : form
+		}
 		template = "visits/record-visit.html"
 		return render(request, template, context)
+
+# Get duplicate values for a specific period
+@login_required(login_url='authentication:login')
+def get_duplicate_visits(request, mwezi):
+	today = datetime.datetime.now()
+	mwaka = today.year
+
+	coordinators = UserProfile.objects.filter(usertype="Coordinator")
+	field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
+	duplicates = Visit.objects.values('facility__mfl_code', 'facility__facility_name').annotate(visit_count=Count('id')).filter(visit_count__gt=1, visit_date__year=mwaka, visit_date__month=mwezi)
+
+	months_choices = []
+	for i in range(1,13):
+	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
+	context = {
+		'coordinators' : coordinators,
+		'duplicates' : duplicates,
+		'field_assistants' : field_assistants,
+		'months_choices' :months_choices
+	}
+	template = "visits/duplicate_visits.html"
+	return render(request, template, context)
 
 
 

@@ -11,7 +11,7 @@
     </div>
     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
         <ol class="breadcrumb">
-            <li><a href="{% url 'reporting:monthly_index' %}">Reports Dashboard</a></li>
+            <li><a href="{% url 'reporting:monthly_index' %}">Monthly Reports</a></li>
             <li class="active">Monthly visits</li>
         </ol>
     </div>
@@ -21,7 +21,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="top-bar-btns">
-            <a href="{% url 'distribution:issuance_download' mwezi mwaka %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
+            <a href="{% url 'reporting:export_monthly_county_visits' mwaka mwezi %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Export CSV</a>
         </div>
     </div>
 </div>
@@ -52,8 +52,8 @@
                     <tbody>
                         {% for record in visits %}
                         <tr>
-                            <td>{{ record.facility__county }}</td>
-                            <td>{{ record.total_visits | intcomma }}</td>
+                            <td>{{ record.0 }}</td>
+                            <td>{{ record.1 | intcomma }}</td>
                         </tr>
                         {% empty %}
                         <tr>

@@ -34,9 +34,12 @@ function verifyDates(){
 	var today = new Date();
 	today.setHours(0,0,0,0);
 
-	if(dateInput > today+1){
+	if(dateInput > today){
 		error_div.setAttribute("style", "display: block;");
-		error_div.innerHTML = "Error! Date entered is invalid. Kindly correct"
+		error_div.innerHTML = "Error! Date entered is invalid. Future dates are not allowed. Kindly correct";
+	}
+	else{
+		error_div.setAttribute("style", "display: none;");
 	}
 }
 

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block title %}Duplicate Facility Visits{% endblock %}
+
+{% block content %}
+<div class="row bg-title">
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title">Duplicate visits</h4>
+    </div>
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
+        <ol class="breadcrumb">
+            <li href="{% url 'visits:visits_index' %}">Visits Dashboard</li>
+            <li class="active">Duplicate visits</li>
+        </ol>
+    </div>
+    <!-- /.col-lg-12 -->
+</div>
+<!-- End row -->
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="top-bar-btns">
+            {% ifequal user.userprofile.usertype "Admin" %}
+
+            <div class="btn-group m-r-10">
+                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-warning dropdown-toggle waves-effect waves-light" type="button">Duplicate visits <span class="caret"></span></button>
+                <ul role="menu" class="dropdown-menu county-dropdown">
+                    <li><a href="#">--Select Month--</a></li>
+                    {% for mwezi in months_choices %}
+                    <li><a href="{% url 'visits:monthly_duplicate_visits' mwezi.0 %}">{{ mwezi.1 }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endifequal %}
+            <a class="btn btn-danger" href="{% url 'visits:record_visit' %}"><i class="fa fa-plus"></i> Record visit</a>
+            <a class="btn btn-success" href="{% url 'visits:coordinators_aggregate_visits' %}"><i class="fa fa-group"></i> Visits aggregate</a>
+            
+        </div>
+    </div>
+</div>
+
+<!-- Row -->
+<div class="row">
+    <div class="col-md-3 col-sm-6">
+        <div class="white-box">
+            <div class="r-icon-stats">
+                <i class="fa fa-hospital-o bg-megna"></i>
+                <div class="bodystate">
+                    <h4>{{ total_visits | intcomma }}</h4>
+                    <span class="text-muted">Total visits</span>
+                    {% if query_month %}<p>({{ query_month.capitalize }})</p>{% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End row -->
+
+
+<!-- /row -->
+<!-- messgae tags -->
+<div class="row">
+    <div class="col-md-12">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% ifequal message.tags 'error' %}danger {% else %}{{ message.tags }}{% endifequal %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+    </div>
+</div>
+<!-- End messages -->
+<div class="row">
+    <div class="col-sm-12">
+        <div class="white-box">
+            {% if account %}<h3 class="cordinator-name">{{ account.first_name }} {{ account.last_name }}</h3>{% endif %}
+            <h3 class="box-title m-b-0">Facility Visits</h3>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Facility</th>
+                            <th>Visits</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for visit in duplicates %}
+                        <tr>
+                            <td>{{ visit.facility__facility_name }}</td>
+                            <td>{{ visit.visit_count }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center"><h3>No visits recorded yet!</h3></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if recently_visited.has_other_pages %}
+            <ul class="pagination pagination-split">
+                {% if recently_visited.has_previous %}
+                  <li><a class="page-link" href="?page={{ recently_visited.previous_page_number }}">Previous</a></li>
+                {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                {% endif %}
+                {% for i in page_range %}
+                  {% if recently_visited.number == i %}
+                    <li class="active"><a href="#">{{ i }}</a></li>
+                  {% else %}
+                    <li><a class="page-link" href="?page={{ i }}">{{ i }}</a></li>
+                  {% endif %}
+                {% endfor %}
+
+                {% if recently_visited.has_next %}
+                  <li><a class="page-link" href="?page={{ recently_visited.next_page_number }}">&raquo;</a></li>
+                {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                {% endif %}
+            </ul>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<!-- /.row -->
+{% endblock %}

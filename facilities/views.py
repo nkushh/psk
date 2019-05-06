@@ -21,6 +21,8 @@ def dashboard(request):
     account = request.user
     account_profile = get_object_or_404(UserProfile, user=account)
     today = datetime.datetime.now()
+    mwaka = today.year
+    prev_year = mwaka - 1
 
     
     accounts = User.objects.count()
@@ -29,14 +31,31 @@ def dashboard(request):
 
     if account_profile.usertype != "Admin":
         nets_distributed = Nets_distributed.objects.filter(facility__psk_region=account_profile.psk_region).aggregate(distributed_nets=Sum('nets_issued'))
+        current_nets_distributed = Nets_distributed.objects.filter(facility__psk_region=account_profile.psk_region, date_issued__year=mwaka).aggregate(distributed_nets=Sum('nets_issued'))
+        prev_nets_distributed = Nets_distributed.objects.filter(facility__psk_region=account_profile.psk_region, date_issued__year=prev_year).aggregate(distributed_nets=Sum('nets_issued'))
+
         nets_issued = Distribution_report.objects.filter(facility__psk_region=account_profile.psk_region).aggregate(issued_nets=Sum('total_nets'))
+        current_nets_issued = Distribution_report.objects.filter(facility__psk_region=account_profile.psk_region, dist_year=mwaka).aggregate(issued_nets=Sum('total_nets'))
+        prev_nets_issued = Distribution_report.objects.filter(facility__psk_region=account_profile.psk_region, dist_year=prev_year).aggregate(issued_nets=Sum('total_nets'))
+
         total_facilities = Facilities.objects.filter(psk_region=account_profile.psk_region).count()
+
         total_visits = Visit.objects.filter(supervisor=account).count()
+        current_total_visits = Visit.objects.filter(supervisor=account, visit_date__year=mwaka).count()
+        prev_total_visits = Visit.objects.filter(supervisor=account, visit_date__year=prev_year).count()
     else:
         nets_distributed = Nets_distributed.objects.aggregate(distributed_nets=Sum('nets_issued'))
+        current_nets_distributed = Nets_distributed.objects.filter(date_issued__year=mwaka).aggregate(distributed_nets=Sum('nets_issued'))
+        prev_nets_distributed = Nets_distributed.objects.filter(date_issued__year=prev_year).aggregate(distributed_nets=Sum('nets_issued'))
+
         nets_issued = Distribution_report.objects.aggregate(issued_nets=Sum('total_nets'))
+        current_nets_issued = Distribution_report.objects.filter(dist_year=mwaka).aggregate(issued_nets=Sum('total_nets'))
+        prev_nets_issued = Distribution_report.objects.filter(dist_year=prev_year).aggregate(issued_nets=Sum('total_nets'))
+
         total_facilities = Facilities.objects.count()
         total_visits = Visit.objects.count()
+        current_total_visits = Visit.objects.filter(visit_date__year=mwaka).count()
+        prev_total_visits = Visit.objects.filter(visit_date__year=prev_year).count()
     # nets_to_anc = Distribution_report.objects.filter(dist_month="", dist_year=today.year).aggregate(issued_nets=Sum('anc_nets'))
     # nets_to_cwc = Distribution_report.objects.filter().aggregate(issued_nets=Sum('total_nets'))
     region_distribution = Nets_distributed.objects.values('facility__psk_region').annotate(region_total=Sum('nets_issued')).order_by('-region_total')
@@ -54,7 +73,15 @@ def dashboard(request):
         'region_visits' : region_visits,
         'total_facilities' : total_facilities,
         'total_visits' : total_visits,
-        'facilities_by_county' : facilities_by_county
+        'facilities_by_county' : facilities_by_county,
+        'prev_nets_distributed' : prev_nets_distributed,
+        'current_nets_distributed' : current_nets_distributed,
+        'prev_nets_issued' : prev_nets_issued,
+        'current_nets_issued' : current_nets_issued,
+        'current_total_visits' : current_total_visits,
+        'prev_total_visits' : prev_total_visits,
+        'mwaka' : mwaka,
+        'prev_year' : prev_year
         }
 
     template = "facilities/index.html"

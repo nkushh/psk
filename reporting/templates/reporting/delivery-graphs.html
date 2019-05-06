@@ -51,3 +51,21 @@
       xLabelAngle: '45'
     });
 </script>
+
+<!-- Quarterly county delivery bar graph -->
+<script type="text/javascript">
+    new Morris.Bar({
+      element: 'countyQuarterlyDistribution',
+      data: [
+      {% for county in quarter_dist %}
+        { county: '{{ county.0 }}', distributed: {{ county.1 }} },
+      {% endfor %}
+      ],
+      xkey: 'county',
+      ykeys: ['distributed'],
+      labels: ['Nets'],
+      hideHover: 'auto',
+      barColors: ['#4ac18e'],
+      xLabelAngle: '90'
+    });
+</script>

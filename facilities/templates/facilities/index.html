@@ -66,6 +66,32 @@
     </div>
 </div>
 <!--/row -->
+
+<!--Current year vs Previous year row -->
+<div class="row">
+    <div class="col-md-4 col-sm-6">
+        <div class="white-box comparison-box blue-box">
+            <h4>Nets Distributed</h4>
+            <p>Current year ({{ mwaka }}): {% if current_nets_distributed.distributed_nets %}{{ current_nets_distributed.distributed_nets|intcomma }}{% else %}0{% endif %}</p>
+            <p>Previous year ({{ prev_year }}): {% if prev_nets_distributed.distributed_nets %}{{ prev_nets_distributed.distributed_nets|intcomma }}{% else %}0{% endif %}</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="white-box comparison-box grey-box">
+            <h4>Nets Issued</h4>
+            <p>Current year ({{ mwaka }}): {% if current_nets_issued.issued_nets %}{{ current_nets_issued.issued_nets|intcomma }}{% else %}0{% endif %}</p>
+            <p>Previous year ({{ prev_year }}): {% if prev_nets_issued.issued_nets %}{{ prev_nets_issued.issued_nets|intcomma }}{% else %}0{% endif %}</p>
+        </div>
+    </div>
+    <div class="col-md-4 col-sm-6">
+        <div class="white-box comparison-box green-box">
+            <h4>Facility Visits</h4>
+            <p>Current year ({{ mwaka }}): {% if current_total_visits %}{{ current_total_visits|intcomma }}{% else %}0{% endif %}</p>
+            <p>Previous year ({{ prev_year }}): {% if prev_total_visits %}{{ prev_total_visits|intcomma }}{% else %}0{% endif %}</p>
+        </div>
+    </div>
+</div>
+<!--/row -->
 <!-- .row -->
 <div class="row">
     <div class="col-md-6 col-sm-12 col-xs-12">

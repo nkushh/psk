@@ -27,6 +27,7 @@ def distribution_index(request):
 	months_choices = []
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
+	years = range(2018,today.year+1)
 
 	county_distribution = Nets_distributed.objects.values('facility__county').annotate(county_total=Sum('nets_issued')).order_by('-county_total') 
 	distribution_by_ez = Nets_distributed.objects.values('facility__epidemiological_zone').annotate(ez_distribution=Sum('nets_issued')).order_by('-ez_distribution')
@@ -49,7 +50,8 @@ def distribution_index(request):
 		'total_facilities_delivered' : total_facilities_delivered,
 		'total_nets_delivered' : total_nets_delivered,
 		'total_nets_donated' : total_nets_donated,
-		'total_nets_issued' : total_nets_issued
+		'total_nets_issued' : total_nets_issued,
+		'years' : years
 	}
 	template = "distribution/index.html"
 	return render(request, template, context)
@@ -360,6 +362,20 @@ def download_all_distribution_excel(request):
 	else:
 		mwaka = today.year
 
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['County', 'Nets Issued'])
+
+	reports = Nets_distributed.objects.filter(date_issued__year=mwaka).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	for report in reports:
+	    writer.writerow(report)
+
+	return response
+
+@login_required(login_url='login')
+def download_distribution_by_year(request, mwaka):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
 
