@@ -4,8 +4,8 @@
     new Morris.Bar({
       element: 'visits-bar',
       data: [
-        { mwezi: '{{ current_month }}', distributed: {% if visits %}{{ visits }}{% else %}0{% endif %} },
         { mwezi: '{{ prev_month }}', distributed: {% if prev_month_visits %}{{ prev_month_visits }}{% else %}0{% endif %} },
+        { mwezi: '{{ current_month }}', distributed: {% if visits %}{{ visits }}{% else %}0{% endif %} },
       ],
       xkey: 'mwezi',
       ykeys: ['distributed'],

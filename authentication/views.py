@@ -102,16 +102,16 @@ def update_account(request, account_pk):
 
 @login_required(login_url='login')
 def deactivate_account(request, account):
-	farm = get_object_or_404(User, pk=account)
-	farm.is_active = False
+	user = get_object_or_404(User, pk=account)
+	user.is_active = False
 	farm.save()
 	messages.success(request, 'Account successfully deactivated')
 	return redirect('authentication:accounts')
 
 @login_required(login_url='login')
 def activate_account(request, account):
-	farm = get_object_or_404(User, pk=account)
-	farm.is_active = True
+	user = get_object_or_404(User, pk=account)
+	user.is_active = True
 	farm.save()
 	messages.success(request, 'Account successfully re-activated')
 	return redirect('authentication:accounts')
@@ -119,8 +119,8 @@ def activate_account(request, account):
 
 @login_required(login_url='login')
 def delete_account(request, account):
-	farm = get_object_or_404(User, pk=account)
-	farm.delete()
+	user = get_object_or_404(User, pk=account)
+	user.delete()
 	messages.success(request, 'Account successfully deleted')
 	return redirect('authentication:accounts')
 

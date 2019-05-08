@@ -556,6 +556,59 @@ def monthly_issuance_index(request, mwezi):
 	template = "distribution/index2.html"
 	return render(request, template, context)
 
+# Record the monthly net issuance report for single facilities
+@login_required(login_url='login')
+def record_distribution(request):
+	today = datetime.datetime.now()
+
+	if request.method=="POST":
+		facility = get_object_or_404(Facilities, mfl_code=request.POST['facility'])
+		dist_month = request.POST['dist_month']
+		dist_year = request.POST['dist_year']
+		bal_cf = request.POST['bal_cf']
+		anc_nets = request.POST['anc_nets']
+		cwc_nets = request.POST['cwc_nets']
+		others_nets = request.POST['others_nets']
+
+		total_nets = int(anc_nets)+int(cwc_nets)+int(others_nets)
+
+		# if confirm_nets_issuance(total_nets, facility.net_balance, facility.system_net_balance):
+
+		distribution = Distribution_report(
+				facility=facility, 
+				dist_month=dist_month, 
+				dist_year=dist_year, 
+				cwc_nets=cwc_nets, 
+				anc_nets=anc_nets, 
+				others_nets=others_nets,
+				total_nets=total_nets,
+				bal_cf=bal_cf
+				).save()
+
+		facility.net_balance = bal_cf
+		facility.system_net_balance = facility.system_net_balance - total_nets
+		facility.save()
+		messages.success(request, "Success! Nets distribution for {} {} successfully recorded.".format(facility.facility_name, dist_month))
+		return redirect('distribution:nets_distributed')
+		# else:
+		# 	messages.error(request, "Error! Nets issued exceed the remaining balance!")
+		# 	return redirect("distribution:record_distribution")
+	else:
+		today = datetime.datetime.now()
+		mwaka = today.year
+		months_choices = []
+		for i in range(1,13):
+		    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
+
+		template = "distribution/record-distribution.html"
+		context = {
+			'facilities' : Facilities.objects.all(),
+			'miaka' : range(2000, today.year+1),
+			'months_choices' : months_choices
+		}
+		return render(request, template, context)
+
+
 # record nets issued to pregnant women and children under one year upload
 @login_required(login_url='login')
 def record_nets_distributed_excel(request):
@@ -573,32 +626,36 @@ def record_nets_distributed_excel(request):
 				facility = get_object_or_404(Facilities, mfl_code=record['facility'])
 				dist_month = record['dist_month']
 				dist_year = record['dist_year']
-				anc_nets = int(record['anc_nets'])
-				cwc_nets = int(record['cwc_nets'])
-				others_nets = int(record['others_nets'])
+				anc_nets = int(check_for_blank_cells(record['anc_nets']))
+				cwc_nets = int(check_for_blank_cells(record['cwc_nets']))
+				others_nets = int(check_for_blank_cells(record['others_nets']))
 
 				total_nets = anc_nets + cwc_nets + others_nets
-				bal_cf = int(record['bal_cf'])
+				bal_cf = int(check_for_blank_cells(record['bal_cf']))
 
 				# if confirm_nets_issuance(total_nets, facility.net_balance, facility.system_net_balance):
-				distribution = Distribution_report(
-						facility=facility, 
-						dist_month=dist_month, 
-						dist_year=dist_year,
-						cwc_nets=cwc_nets, 
-						anc_nets=anc_nets, 
-						others_nets=others_nets,
-						total_nets=total_nets,
-						bal_cf=bal_cf
-						).save()
+				if Distribution_report.objects.filter(facility=facility, dist_month=dist_month, dist_year=dist_year).exists():
+					continue
+				else:
+					distribution = Distribution_report(
+							facility=facility, 
+							dist_month=dist_month, 
+							dist_year=dist_year,
+							cwc_nets=cwc_nets, 
+							anc_nets=anc_nets, 
+							others_nets=others_nets,
+							total_nets=total_nets,
+							bal_cf=bal_cf
+							).save()
 
-				facility.net_balance = bal_cf
-				facility.system_net_balance = facility.system_net_balance - total_nets
-				facility.save()
+					facility.net_balance = bal_cf
+					facility.system_net_balance = facility.system_net_balance - total_nets
+					facility.save()
 
-				# else:
-				# 	messages.error(request, "Error! Nets issued for {}, exceed the remaining balance!".format(facility))
-				# 	return redirect("distribution:record_distribution")
+					# else:
+					# 	messages.error(request, "Error! Nets issued for {}, exceed the remaining balance!".format(facility))
+					# 	return redirect("distribution:record_distribution")
+
 			else:
 				missing_facilities.append(record['facility'])
 				continue
@@ -658,64 +715,20 @@ def nets_distributed_by_county(request):
 	}
 	return render(request, template, context)
 
-# Record the monthly net issuance report for single facilities
-@login_required(login_url='login')
-def record_distribution(request):
-	today = datetime.datetime.now()
-
-	if request.method=="POST":
-		facility = get_object_or_404(Facilities, mfl_code=request.POST['facility'])
-		dist_month = request.POST['dist_month']
-		dist_year = request.POST['dist_year']
-		bal_cf = request.POST['bal_cf']
-		anc_nets = request.POST['anc_nets']
-		cwc_nets = request.POST['cwc_nets']
-		others_nets = request.POST['others_nets']
-
-		total_nets = int(anc_nets)+int(cwc_nets)+int(others_nets)
-
-		# if confirm_nets_issuance(total_nets, facility.net_balance, facility.system_net_balance):
-
-		distribution = Distribution_report(
-				facility=facility, 
-				dist_month=dist_month, 
-				dist_year=dist_year, 
-				cwc_nets=cwc_nets, 
-				anc_nets=anc_nets, 
-				others_nets=others_nets,
-				total_nets=total_nets,
-				bal_cf=bal_cf
-				).save()
-
-		facility.net_balance = bal_cf
-		facility.system_net_balance = facility.system_net_balance - total_nets
-		facility.save()
-		messages.success(request, "Success! Nets distribution for {} {} successfully recorded.".format(facility.facility_name, dist_month))
-		return redirect('distribution:nets_distributed')
-		# else:
-		# 	messages.error(request, "Error! Nets issued exceed the remaining balance!")
-		# 	return redirect("distribution:record_distribution")
-	else:
-		today = datetime.datetime.now()
-		mwaka = today.year
-		months_choices = []
-		for i in range(1,13):
-		    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
-
-		template = "distribution/record-distribution.html"
-		context = {
-			'facilities' : Facilities.objects.all(),
-			'miaka' : range(2000, today.year+1),
-			'months_choices' : months_choices
-		}
-		return render(request, template, context)
-
-
 def confirm_nets_issuance(total_nets, net_balance, system_net_balance):
 	if total_nets > net_balance or total_nets > system_net_balance:
 		return False
 	else:
 		return True
+
+# Check for blank cells and assign zero where appropriate
+def check_for_blank_cells(cell):
+	if cell == None or cell == "" or cell is None:
+		cell = 0
+	else:
+		cell = cell
+	return cell
+
 
 
 ###############################################################################################################################

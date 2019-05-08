@@ -63,7 +63,7 @@ def monthly_index(request):
 	nets_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=today.month).aggregate(total_issued=Sum('total_nets'))
 	counties = Facilities.objects.values('county').distinct()
 	visits = Visit.objects.filter(date_recorded__year=mwaka, date_recorded__month=today.month).count()
-	miaka = range(2010,mwaka+1)
+	miaka = range(2018,mwaka+1)
 
 	sub_counties = Facilities.objects.values('sub_county').distinct()
 	context = {
@@ -130,20 +130,28 @@ def monthly_report(request):
 	visits = Visit.objects.filter(date_recorded__year=user_year, date_recorded__month=user_month).count()
 	prev_month_visits = Visit.objects.filter(date_recorded__year=user_year, date_recorded__month=last_month).count()
 
+	miaka = range(2018,mwaka+1)
+	current_month = calendar.month_abbr[int(user_month)]
+	prev_month = calendar.month_abbr[int(last_month)]
+
 	context = {
 		'counties' : counties,
+		'current_month' : current_month,
 		'months_choices' : months_choices,
+		'miaka' : miaka,
 		'nets_delivered' : nets_delivered,
 		'new_facilities' : new_facilities,
 		'nets_issued' : nets_issued,
 		'nets_to_anc' : nets_to_anc,
 		'nets_to_cwc' : nets_to_anc,
+		'prev_month' : prev_month,
 		'prev_month_anc' : prev_month_anc,
 		'prev_month_cwc' : prev_month_cwc,
 		'prev_month_delivered' : prev_month_delivered,
 		'prev_month_issued' : prev_month_issued,
 		'prev_month_visits' : prev_month_visits,
-		'visits' : visits
+		'visits' : visits,
+		'mwaka' : user_year
 	}
 	template = "reporting/monthly-index.html"
 	return render(request, template, context)
@@ -601,7 +609,7 @@ def quarter_visits_report(request):
 
 		if quarter == "One":
 			quarter_visits = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=1, visit_date__year__lte=mwaka, visit_date__month__lte=3).values_list('facility__county').annotate(totalvisits=Count('id')).order_by('-totalvisits')
-			quarter_visits_total = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=1, visit_date__year__lte=mwaka, dist_month__lte=3).count()
+			quarter_visits_total = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=1, visit_date__year__lte=mwaka, visit_date__month__lte=3).count()
 		elif quarter == "Two":
 			quarter_visits = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=4, visit_date__year__lte=mwaka, visit_date__month__lte=6).values_list('facility__county').annotate(totalvisits=Count('id')).order_by('-totalvisits')
 			quarter_visits_total = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=4, visit_date__year__lte=mwaka, visit_date__month__lte=6).count()
@@ -612,6 +620,7 @@ def quarter_visits_report(request):
 			quarter_visits = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=10, visit_date__year__lte=mwaka, visit_date__month__lte=12).values_list('facility__county').annotate(totalvisits=Count('id')).order_by('-totalvisits')
 			quarter_visits_total = Visit.objects.filter(visit_date__year__gte=mwaka, visit_date__month__gte=10, visit_date__year__lte=mwaka, visit_date__month__lte=12).count()
 
+		
 		context = {
 			'miaka' : miaka,
 			'mwaka' : mwaka,
@@ -619,6 +628,7 @@ def quarter_visits_report(request):
 			'quarter_visits' : quarter_visits,
 			'quarter_visits_total' : quarter_visits_total
 		}
+
 		template = "reporting/quarter-visits.html"
 
 	return render(request, template, context)
