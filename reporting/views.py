@@ -81,6 +81,7 @@ def monthly_index(request):
 		'prev_month_cwc' : prev_month_cwc,
 		'prev_month_delivered' : prev_month_delivered,
 		'prev_month_issued' : prev_month_issued,
+		'prev_month_visits' : prev_month_visits,
 		'sub_counties' : sub_counties,
 		'visits' : visits
 	}
