@@ -21,7 +21,7 @@
                         </ul>
                     </li>
                     <li> <a href="{% url 'facilities:dashboard' %}" class="waves-effect"><i class="ti-dashboard p-r-10"></i> <span class="hide-menu">Dashboard</span></a> </li>
-                    
+
                     <li> <a href="" class="waves-effect"><i class="fa fa-hospital-o p-r-10"></i> <span class="hide-menu"> Facilities <span class="fa arrow"></span></span></a>
                         <ul class="nav nav-second-level">
                             <li> <a href="{% url 'facilities:facilities' %}">All Facilities</a> </li>
@@ -34,7 +34,7 @@
                             <li> <a href="{% url 'distribution:issuance_index' %}">Nets issuance</a> </li>
                         </ul>
                     </li>
-                    
+
                     <li> <a href="{% url 'visits:visits_index' %}" class="waves-effect"><i class="icon-folder p-r-10"></i> Facility visits</a>
                     </li>
                     {% ifequal user.userprofile.usertype "Admin" %}
@@ -53,16 +53,10 @@
                         <ul class="nav nav-second-level">
                             <li> <a href="{% url 'facilities:facility_settings' %}">Facility settings</a></li>
                             <li> <a href="{% url 'authentication:accounts' %}" class="waves-effect">Accounts</a></li>
-                            <li> <a href="{% url 'facilities:psk_regions' %}" class="waves-effect">Regions</a>
-                            </li>
-                            <li> <a href="{% url 'facilities:transmission_zones' %}" class="waves-effect">Transmission zones</a>
-                            </li>
-                            <li> <a href="#">Mail settings</a></li>
-                            <li> <a href="#">Permissions</a></li>
                         </ul>
                     </li>
                     {% endifequal %}
-                    
+
                 </ul>
             </div>
         </div>
