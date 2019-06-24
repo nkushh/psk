@@ -3,6 +3,7 @@
 *~
 *._
 __pycache__
+/static
 /venv_psk
 .DS_Store
 db.sqlite3
