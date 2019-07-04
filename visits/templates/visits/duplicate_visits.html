@@ -21,21 +21,9 @@
 <div class="row">
     <div class="col-md-12">
         <div class="top-bar-btns">
-            {% ifequal user.userprofile.usertype "Admin" %}
-
-            <div class="btn-group m-r-10">
-                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-warning dropdown-toggle waves-effect waves-light" type="button">Duplicate visits <span class="caret"></span></button>
-                <ul role="menu" class="dropdown-menu county-dropdown">
-                    <li><a href="#">--Select Month--</a></li>
-                    {% for mwezi in months_choices %}
-                    <li><a href="{% url 'visits:monthly_duplicate_visits' mwezi.0 %}">{{ mwezi.1 }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
-            {% endifequal %}
             <a class="btn btn-danger" href="{% url 'visits:record_visit' %}"><i class="fa fa-plus"></i> Record visit</a>
             <a class="btn btn-success" href="{% url 'visits:coordinators_aggregate_visits' %}"><i class="fa fa-group"></i> Visits aggregate</a>
-            
+
         </div>
     </div>
 </div>
@@ -47,7 +35,6 @@
             <div class="r-icon-stats">
                 <i class="fa fa-hospital-o bg-megna"></i>
                 <div class="bodystate">
-                    <h4>{{ total_visits | intcomma }}</h4>
                     <span class="text-muted">Total visits</span>
                     {% if query_month %}<p>({{ query_month.capitalize }})</p>{% endif %}
                 </div>
@@ -75,8 +62,7 @@
 <div class="row">
     <div class="col-sm-12">
         <div class="white-box">
-            {% if account %}<h3 class="cordinator-name">{{ account.first_name }} {{ account.last_name }}</h3>{% endif %}
-            <h3 class="box-title m-b-0">Facility Visits</h3>
+            <h3 class="box-title m-b-0">Facility Visits Duplicates</h3>
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -99,7 +85,7 @@
                     </tbody>
                 </table>
             </div>
-            {% if recently_visited.has_other_pages %}
+            <!-- {% if recently_visited.has_other_pages %}
             <ul class="pagination pagination-split">
                 {% if recently_visited.has_previous %}
                   <li><a class="page-link" href="?page={{ recently_visited.previous_page_number }}">Previous</a></li>
@@ -120,7 +106,7 @@
                   <li class="disabled"><span>&raquo;</span></li>
                 {% endif %}
             </ul>
-            {% endif %}
+            {% endif %} -->
         </div>
     </div>
 </div>

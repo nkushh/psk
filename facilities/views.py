@@ -24,10 +24,10 @@ def dashboard(request):
     mwaka = today.year
     prev_year = mwaka - 1
 
-    
+
     accounts = User.objects.count()
-    
-    
+
+
 
     if account_profile.usertype != "Admin":
         nets_distributed = Nets_distributed.objects.filter(facility__psk_region=account_profile.psk_region).aggregate(distributed_nets=Sum('nets_issued'))
@@ -62,7 +62,7 @@ def dashboard(request):
     region_visits = Visit.objects.values('facility__psk_region').annotate(visits_total=Count('pk')).order_by('-visits_total')
     facilities_by_county = Facilities.objects.values('county').annotate(county_facilities=Count('county')).order_by('-county_facilities')
     facilities_by_ez = Facilities.objects.values('epidemiological_zone').annotate(ez_facilities=Count('epidemiological_zone')).order_by('-ez_facilities')
-    
+
 
     context = {
         'accounts' : accounts,
@@ -261,7 +261,7 @@ def new_facility(request):
     else:
         counties = Facilities.objects.values('county').distinct()
         regions = Regions.objects.all()
-        
+
         context = {
             'counties' : counties,
             'regions' : regions
@@ -300,7 +300,7 @@ def update_facility(request, facility_pk):
     else:
         counties = Facilities.objects.values('county').distinct()
         regions = Regions.objects.all()
-        
+
         context = {
             'facility' : facility,
             'counties' : counties,
@@ -343,11 +343,12 @@ def facilities_excel_upload(request):
                         facility_ownership = facility_ownership,
                         epidemiological_zone = epidemiological_zone
                         ).save()
-        messages.success(request, "Success! Facilities added successfully.")        
+        messages.success(request, "Success! Facilities added successfully.")
         return redirect('facilities:facilities')
     else:
+        counties = Facilities.objects.values('county').distinct()
         template = "facilities/add-facilities.html"
-        return render(request, template)
+        return render(request, template, {'counties' : counties})
 
 # Fetch facility details
 @login_required(login_url='login')
@@ -598,7 +599,7 @@ def county_name_change(request):
             facility.save()
         messages.success(request, "Success! {} changed to {}".format(old_county_name, new_county_name))
         return redirect('facilities:facilities')
-    else:    
+    else:
         template = "facilities/facilities.html"
         return render(request, template, context)
 
@@ -614,7 +615,7 @@ def region_name_change(request):
             facility.save()
         messages.success(request, "Success! {} changed to {}".format(old_region_name, new_region_name))
         return redirect('facilities:facilities')
-    else:    
+    else:
         template = "facilities/facilities.html"
         return render(request, template, context)
 
@@ -745,5 +746,3 @@ def set_facility_zone(request, psk_zone):
 #         return redirect('facilities:add_facility')
 #     else:
 #         return redirect('facilities:facilities')
-
-

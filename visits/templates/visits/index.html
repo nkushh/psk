@@ -22,7 +22,7 @@
 <div class="row">
     <div class="col-md-12">
         <div class="top-bar-btns">
-            
+            {% ifequal user.userprofile.usertype "Admin" %}
             <div class="btn-group m-r-10">
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-info dropdown-toggle waves-effect waves-light" type="button">By Field Asst. <span class="caret"></span></button>
                 <ul role="menu" class="dropdown-menu county-dropdown">
@@ -33,7 +33,7 @@
                     {% endfor %}
                 </ul>
             </div>
-            {% ifequal user.userprofile.usertype "Admin" %}
+
             <div class="btn-group m-r-10">
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-info dropdown-toggle waves-effect waves-light" type="button">By Coordinator <span class="caret"></span></button>
                 <ul role="menu" class="dropdown-menu county-dropdown">
@@ -54,19 +54,19 @@
                 </ul>
             </div>
             <div class="btn-group m-r-10">
-                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-warning dropdown-toggle waves-effect waves-light" type="button">Duplicate visits <span class="caret"></span></button>
+                <button aria-expanded="false" data-toggle="dropdown" class="btn btn-warning dropdown-toggle waves-effect waves-light" type="button">All Filters <span class="caret"></span></button>
                 <ul role="menu" class="dropdown-menu county-dropdown">
-                    <li><a href="#">--Select Month--</a></li>
-                    {% for mwezi in months_choices %}
-                    <li><a href="{% url 'visits:monthly_duplicate_visits' mwezi.0 %}">{{ mwezi.1 }}</a></li>
-                    {% endfor %}
+                    <li><a href="#" disabled>--Select Filter--</a></li>
+                    <li><a data-toggle="modal" data-target="#duplicateVisitsModal">Duplicate visits</a></li>
+                    <li><a data-toggle="modal" data-target="#riskLevelModal">Risk level filter</a></li>
                 </ul>
             </div>
             {% endifequal %}
             <a class="btn btn-danger" href="{% url 'visits:record_visit' %}"><i class="fa fa-plus"></i> Record visit</a>
+
             <a class="btn btn-success" href="{% url 'visits:coordinators_aggregate_visits' %}"><i class="fa fa-group"></i> Visits aggregate</a>
             <a class="btn btn-primary" href="{% url 'visits:list_view' %}"><i class="fa fa-list-alt"></i> List view</a>
-            
+
         </div>
     </div>
 </div>
@@ -161,14 +161,14 @@
             <h3 class="box-title">Monthly Visits</h3>
             <div id="monthly-visits-graph"></div>
         </div>
-        
+
     </div>
     <div class="col-md-6">
         <div class="white-box">
             <h3 class="box-title">Risk Status</h3>
             <div id="risk-status-graph"></div>
         </div>
-        
+
     </div>
 </div>
 <!--/row -->

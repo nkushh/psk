@@ -56,7 +56,7 @@ def visits_index(request):
 		field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
 		coordinators = UserProfile.objects.filter(usertype="Coordinator")
 
-
+	miaka = range(2018,this_mwaka+1)
 	mwezi_huu = calendar.month_name[int(this_month)]
 	mwezi_uliopita = calendar.month_name[int(last_month)]
 	coordinators = UserProfile.objects.filter(usertype="Coordinator")
@@ -88,6 +88,7 @@ def visits_index(request):
 		'coordinators' : coordinators,
 		'current_month' : current_month,
 		'field_assistants' : field_assistants,
+		'miaka' : miaka,
 		'months_choices' : months_choices,
 		'monthly_visits' : monthly_visits,
 		'mwezi_huu' : mwezi_huu,
@@ -116,6 +117,7 @@ def list_view(request):
 	this_month = today.month
 	last_month = today.month - 1
 
+	miaka = range(2018,this_mwaka+1)
 	months_choices = []
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(this_mwaka, i, 1).strftime('%B')))
@@ -142,13 +144,12 @@ def list_view(request):
 		monthly_visits = Visit.objects.filter(visit_date__year=this_mwaka).annotate(month=TruncMonth('visit_date')).values('month').annotate(visits_sum=Count('id'))
 		previous_month = Visit.objects.filter(visit_date__year=this_mwaka, visit_date__month=last_month).count()
 		field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
-		
 
 
 	mwezi_huu = calendar.month_name[int(this_month)]
 	mwezi_uliopita = calendar.month_name[int(last_month)]
 	coordinators = UserProfile.objects.filter(usertype="Coordinator")
-	
+
 	less_ten = Visit.objects.filter(months_of_stock__range=(0, 10)).count()
 	less_thirty = Visit.objects.filter(months_of_stock__range=(10, 30)).count()
 	less_sixty = Visit.objects.filter(months_of_stock__range=(30, 60)).count()
@@ -177,6 +178,7 @@ def list_view(request):
 		'coordinators' : coordinators,
 		'current_month' : current_month,
 		'field_assistants' : field_assistants,
+		'miaka' : miaka,
 		'months_choices' : months_choices,
 		'monthly_visits' : monthly_visits,
 		'mwezi_huu' : mwezi_huu,
@@ -301,6 +303,7 @@ def month_visits(request, mwezi):
 	this_month = today.month
 	last_month = today.month - 1
 
+	miaka = range(2018, this_mwaka+1)
 	months_choices = []
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(this_mwaka, i, 1).strftime('%B')))
@@ -343,6 +346,7 @@ def month_visits(request, mwezi):
 		'coordinators' : coordinators,
 		'current_month' : current_month,
 		'field_assistants' : field_assistants,
+		'miaka' : miaka,
 		'months_choices' : months_choices,
 		'monthly_visits' : monthly_visits,
 		'mwezi_huu' : mwezi_huu,
@@ -463,7 +467,7 @@ def update_risk_level(request):
 
 	return redirect('visits:visits_index')
 
-# Set risk status			
+# Set risk status
 def set_risk_status(amc, variance, stock_status):
 	if(variance > 10 or variance < -10) or (variance < 0 and variance < amc):
 		return "High"
@@ -624,7 +628,7 @@ def record_visit(request):
 				messages.success(request, "Success! Visit details for {} successfully recorded.".format(facility.facility_name))
 				return redirect("visits:visits_index")
 
-				
+
 	else:
 		form = NewVisitForm()
 		context = {
@@ -635,25 +639,53 @@ def record_visit(request):
 
 # Get duplicate values for a specific period
 @login_required(login_url='authentication:login')
-def get_duplicate_visits(request, mwezi):
+def get_duplicate_visits(request):
 	today = datetime.datetime.now()
-	mwaka = today.year
+	if request.method == "POST":
+		mwezi = int(request.POST['mwezi'])
+		mwaka = int(request.POST['mwaka'])
 
-	coordinators = UserProfile.objects.filter(usertype="Coordinator")
-	field_assistants = UserProfile.objects.filter(usertype="Field Assistant")
-	duplicates = Visit.objects.values('facility__mfl_code', 'facility__facility_name').annotate(visit_count=Count('id')).filter(visit_count__gt=1, visit_date__year=mwaka, visit_date__month=mwezi)
+		duplicates = Visit.objects.values('facility__mfl_code', 'facility__facility_name').annotate(visit_count=Count('id')).filter(visit_count__gt=1, visit_date__year=mwaka, visit_date__month=mwezi)
 
 	months_choices = []
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
+	miaka = range(2018, today.year+1)
+	query_month = calendar.month_name[mwezi]
+
 	context = {
-		'coordinators' : coordinators,
 		'duplicates' : duplicates,
-		'field_assistants' : field_assistants,
-		'months_choices' :months_choices
+		'miaka' : miaka,
+		'months_choices' : months_choices,
+		'query_month' : query_month
 	}
 	template = "visits/duplicate_visits.html"
 	return render(request, template, context)
+
+@login_required(login_url='authentication:login')
+def fetch_visits_by_risk_level(request):
+	leo = datetime.datetime.now()
+	this_mwaka = leo.year
+	account = request.user
+	if request.method == "POST":
+		mwezi = int(request.POST['mwezi'])
+		mwaka = int(request.POST['mwaka'])
+		risk = request.POST['risk']
+
+		visits = Visit.objects.filter(visit_date__month=mwezi, visit_date__year=mwaka, risk_level=risk)
+		months_choices = []
+		for i in range(1,13):
+		    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
+		miaka = range(2018, int(this_mwaka+1))
+
+		context = {
+			'miaka' : miaka,
+			'months_choices' : months_choices,
+			'visits' : visits
+		}
+		template = "visits/risk_filter.html"
+		return render(request, template, context)
+
 
 
 
