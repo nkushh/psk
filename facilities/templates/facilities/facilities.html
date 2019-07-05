@@ -25,7 +25,7 @@
                     <li><a href="#">--Select county--</a></li>
                     <li><a href="{% url 'facilities:facilities' %}">All facilities</a></li>
                     {% for county in counties %}
-                    <li><a href="{% url 'facilities:county_facilities' county %}">{{ county.county }}</a></li>
+                    <li><a href="{% url 'facilities:county_facilities' county.pk %}">{{ county.county_name }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -36,7 +36,7 @@
                     <li><a href="#">--Select sub county--</a></li>
                     <li><a href="{% url 'facilities:facilities' %}">All facilities</a></li>
                     {% for scounty in sub_counties %}
-                    <li><a href="{% url 'facilities:subcounty_facilities' county scounty.sub_county %}">{{ scounty.sub_county }}</a></li>
+                    <li><a href="{% url 'facilities:subcounty_facilities' county.pk scounty.sub_county %}">{{ scounty.sub_county }}</a></li>
                     {% endfor %}
                 </ul>
             </div>
@@ -79,7 +79,7 @@
                         <tr>
                             <td>{{ facility.mfl_code }}</td>
                             <td><a href="{% url 'facilities:facility_details' facility.pk %}">{{ facility.facility_name }}</a></td>
-                            <td>{{ facility.county }}</td>
+                            <td>{{ facility.countyy }}</td>
                             <td>{{ facility.sub_county }}</td>
                             <td>
                             	<span class="label {% if facility.facility_ownership == 'Public' %}label-danger

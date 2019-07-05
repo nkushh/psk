@@ -10,7 +10,7 @@
     </div>
     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
         <ol class="breadcrumb">
-            <li href="{% url 'visits:visits_index' %}">Visits Dashboard</li>
+            <li><a href="{% url 'visits:visits_index' %}">Visits Dashboard</a></li>
             <li class="active">Risk level</li>
         </ol>
     </div>
@@ -33,10 +33,9 @@
     <div class="col-md-3 col-sm-6">
         <div class="white-box">
             <div class="r-icon-stats">
-                <i class="fa fa-hospital-o bg-megna"></i>
                 <div class="bodystate">
-                    <h4>{{ total_visits | intcomma }}</h4>
-                    <span class="text-muted">Total visits</span>
+                    <h3>{{ visits.count | intcomma }}</h3>
+                    <span class="text-muted">{{ risk }} Risk Facilities</span>
                     {% if query_month %}<p>({{ query_month.capitalize }})</p>{% endif %}
                 </div>
             </div>
@@ -64,7 +63,7 @@
     <div class="col-sm-12">
         <div class="white-box">
             {% if account %}<h3 class="cordinator-name">{{ account.first_name }} {{ account.last_name }}</h3>{% endif %}
-            <h3 class="box-title m-b-0">Facility Visits</h3>
+            <h3 class="box-title m-b-0">{{ mwezi }} {{ mwaka }} {{ risk }} Risk Facilities</h3>
             <div class="table-responsive">
                 <table class="table">
                     <thead>

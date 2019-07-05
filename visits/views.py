@@ -677,10 +677,14 @@ def fetch_visits_by_risk_level(request):
 		for i in range(1,13):
 		    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
 		miaka = range(2018, int(this_mwaka+1))
+		mwezi = calendar.month_name[mwezi]
 
 		context = {
 			'miaka' : miaka,
+			'mwaka' : mwaka,
+			'mwezi' : mwezi,
 			'months_choices' : months_choices,
+			'risk' : risk,
 			'visits' : visits
 		}
 		template = "visits/risk_filter.html"
