@@ -18,7 +18,6 @@
 </div>
 <div class="row">
     <div class="col-md-12">
-
         <div class="top-bar-btns">
             <div class="btn-group m-r-10">
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-info dropdown-toggle waves-effect waves-light" type="button">By County <span class="caret"></span></button>
@@ -28,8 +27,6 @@
                     {% for county in counties %}
                     <li><a href="{% url 'facilities:county_facilities' county %}">{{ county.county }}</a></li>
                     {% endfor %}
-                    <li class="divider"></li>
-                    <li><a href="#">Separated link</a></li>
                 </ul>
             </div>
             {% if sub_counties %}

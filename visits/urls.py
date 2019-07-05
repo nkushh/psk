@@ -17,5 +17,5 @@ urlpatterns = [
 	path('set-amc', views.set_amc, name="set_amc"),
 	path('update-risk-level', views.update_risk_level, name="update_risk_level"),
 	path('duplicate-visits', views.get_duplicate_visits, name="monthly_duplicate_visits"),
-	path('monthly-rsik-filter', views.fetch_visits_by_risk_level, name='monthly_risk_filter'),
+	path('monthly-risk-filter', views.fetch_visits_by_risk_level, name='monthly_risk_filter'),
 ]
