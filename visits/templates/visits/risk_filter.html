@@ -6,7 +6,7 @@
 {% block content %}
 <div class="row bg-title">
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-        <h4 class="page-title">Duplicate visits</h4>
+        <h4 class="page-title">Risk Level Status</h4>
     </div>
     <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
         <ol class="breadcrumb">
@@ -70,15 +70,16 @@
                     <thead>
                         <tr>
                             <th>Facility</th>
-                            <<th>Region</th>
+                            <th>County</th>
+                            <th>Region</th>
                         </tr>
                     </thead>
                     <tbody>
-                      {{ visits }}
                         {% for visit in visits %}
                         <tr>
-                            <td>{{ visit.facility }}</td>
-                            <td>{{ visit.facility__psk_region }}</td>
+                            <td>{{ visit.facility }} ({{ visit.facility.mfl_code }})</td>
+                            <td>{{ visit.facility.county }}</td>
+                            <td>{{ visit.facility.psk_region }}</td>
                         </tr>
                         {% empty %}
                         <tr>

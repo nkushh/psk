@@ -19,7 +19,7 @@
                     </div>
                     <div class="form-group">
                         <label>Year</label>
-                        <select class="form-control" name="mwaka">
+                        <select class="form-control" name="mwaka" required>
                           <option disbaled selected>--Pick year--</option>
                           {% for mwaka in miaka %}
                           <option value="{{ mwaka }}">{{ mwaka }}</option>
@@ -28,7 +28,7 @@
                     </div>
                     <div class="col-md-12 form-group">
                         <label for="message-text" class="control-label">County:</label>
-                        <select class="form-control" name="risk">
+                        <select class="form-control" name="risk" required>
                             <option disabled selected>--Select risk level--</option>
                             <option value="High">High</option>
                             <option value="Medium">Medium</option>
