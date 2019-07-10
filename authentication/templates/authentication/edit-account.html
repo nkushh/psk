@@ -11,9 +11,9 @@
 <div class="row justify-content-center">
 	<div class="col-md-6">
 		<div class="panel panel-default">
-			<div class="panel-heading"><h3>Account details</h3></div>
+			<div class="panel-heading"><h3>Account details: {{ me.pk }}</h3></div>
 			<div class="panel-body">
-				<form role="form" method="POST" action="{% url 'authentication:update_account' %}">{% csrf_token %}
+				<form role="form" method="POST" action="{% url 'authentication:update_account' account.pk %}">{% csrf_token %}
 					{{ form | crispy }}
 					<div class="col-md-offset-2">
 						<button type="submit" class="btn btn-primary">Update Account</button>

@@ -51,7 +51,7 @@ def register_user(request):
 		context = {
 			'form' : UserRegistrationForm(),
 		}
-		
+
 		template = 'authentication/register-user.html'
 	return render(request, template, context)
 
@@ -84,7 +84,7 @@ def create_account(request):
 @login_required(login_url='login')
 def update_account(request, account_pk):
 	account = get_object_or_404(User, pk=account_pk)
-	
+
 	if request.method=='POST':
 		form = UserUpdateForm(request.POST, instance=account)
 		if form.is_valid():
@@ -97,14 +97,19 @@ def update_account(request, account_pk):
 			return redirect('authentication:accounts')
 
 	else:
-		form = UserUpdateForm(instance=account)
-	return render(request, 'authentication/edit-account.html', {'form' : form})
+		context = {
+			'me' : request.user,
+			'account' : account,
+			'form' : UserUpdateForm(instance=account)
+		}
+
+	return render(request, 'authentication/edit-account.html', context)
 
 @login_required(login_url='login')
 def deactivate_account(request, account):
 	user = get_object_or_404(User, pk=account)
 	user.is_active = False
-	farm.save()
+	user.save()
 	messages.success(request, 'Account successfully deactivated')
 	return redirect('authentication:accounts')
 
@@ -112,7 +117,7 @@ def deactivate_account(request, account):
 def activate_account(request, account):
 	user = get_object_or_404(User, pk=account)
 	user.is_active = True
-	farm.save()
+	user.save()
 	messages.success(request, 'Account successfully re-activated')
 	return redirect('authentication:accounts')
 
@@ -123,4 +128,3 @@ def delete_account(request, account):
 	user.delete()
 	messages.success(request, 'Account successfully deleted')
 	return redirect('authentication:accounts')
-
