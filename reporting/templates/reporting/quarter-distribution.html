@@ -9,7 +9,7 @@
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
         <h4 class="page-title">Net delivery records</h4>
     </div>
-    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
         <ol class="breadcrumb">
             <li><a href="{% url 'reporting:monthly_index' %}">Reports Dashboard</a></li>
             <li class="active">Delivery records</li>
@@ -83,7 +83,7 @@
         {% endif %}
         <div class="white-box">
             <h3 class="box-title m-b-0"><span class="target-total">{% if quarter %}{{ mwaka }} Quarter {{ quarter }}{% endif %}</span> Distribution details </h3>
-            <div class="table-responsive"> 
+            <div class="table-responsive">
                 <table class="table">
                     <thead>
                         <th>County</th>
@@ -92,8 +92,8 @@
                     <tbody>
                         {% for delivery in quarter_dist %}
                         <tr>
-                            <td>{{ delivery.0 | intcomma }}</td>
-                            <td>{{ delivery.1 | intcomma }}</td>
+                            <td>{{ delivery.facility__countyy  }}</td>
+                            <td>{{ delivery.totalnets | intcomma}}</td>
                         </tr>
                         {% empty %}
                         <tr>

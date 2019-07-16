@@ -399,22 +399,22 @@ def month_dist_filter(request):
 		query_month = calendar.month_name[int(mwezi)]
 
 
-		# page = request.GET.get('page', 1)
-		#
-		# paginator = Paginator(distribution, 50)
-		#
-		# try:
-		# 	distribution = paginator.page(page)
-		# except PageNotAnInteger:
-		# 	distribution = paginator.page(1)
-		# except EmptyPage:
-		# 	distribution = paginator.page(paginator.num_pages)
-		#
-		# index = distribution.number - 1
-		# max_index = len(paginator.page_range)
-		# start_index = index - 5 if index >= 5 else 0
-		# end_index = index + 5 if index <= max_index - 5 else max_index
-		# page_range = paginator.page_range[start_index:end_index]
+		page = request.GET.get('page', 1)
+
+		paginator = Paginator(distribution, 50)
+
+		try:
+			distribution = paginator.page(page)
+		except PageNotAnInteger:
+			distribution = paginator.page(1)
+		except EmptyPage:
+			distribution = paginator.page(paginator.num_pages)
+
+		index = distribution.number - 1
+		max_index = len(paginator.page_range)
+		start_index = index - 5 if index >= 5 else 0
+		end_index = index + 5 if index <= max_index - 5 else max_index
+		page_range = paginator.page_range[start_index:end_index]
 
 		context = {
 			'counties' : counties,
@@ -545,18 +545,20 @@ def quarter_distribution_report(request):
 		mwaka = request.POST['mwaka']
 
 		if quarter == "One":
-			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=1, date_issued__year__lte=mwaka, date_issued__month__lte=3).values_list('facility__countyy').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=1, date_issued__year__lte=mwaka, date_issued__month__lte=3).values('facility__countyy').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
 			quarter_dist_total = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=1, date_issued__year__lte=mwaka, date_issued__month__lte=3).aggregate(total_nets=Sum('nets_issued'))
 		elif quarter == "Two":
-			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=4, date_issued__year__lte=mwaka, date_issued__month__lte=6).values_list('facility__countyy').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=4, date_issued__year__lte=mwaka, date_issued__month__lte=6).values('facility__countyy').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
 			quarter_dist_total = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=4, date_issued__year__lte=mwaka, date_issued__month__lte=6).aggregate(total_nets=Sum('nets_issued'))
 		elif quarter == "Three":
-			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=7, date_issued__year__lte=mwaka, date_issued__month__lte=9).values_list('facility__countyy').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=7, date_issued__year__lte=mwaka, date_issued__month__lte=9).values('facility__countyy').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
 			quarter_dist_total = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=7, date_issued__year__lte=mwaka, date_issued__month__lte=9).aggregate(total_nets=Sum('nets_issued'))
 		elif quarter == "Four":
-			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=10, date_issued__year__lte=mwaka, date_issued__month__lte=12).values_list('facility__countyy').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+			quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=10, date_issued__year__lte=mwaka, date_issued__month__lte=12).values('facility__countyy').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
 			quarter_dist_total = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=10, date_issued__year__lte=mwaka, date_issued__month__lte=12).aggregate(total_nets=Sum('nets_issued'))
 
+		for record in quarter_dist:
+			record['facility__countyy'] = get_object_or_404(Counties, pk=record['facility__countyy'])
 		context = {
 			'miaka' : miaka,
 			'mwaka' : mwaka,
