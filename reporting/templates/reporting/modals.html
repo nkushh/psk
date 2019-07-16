@@ -31,17 +31,17 @@
                         <select class="form-control" name="county">
                             <option disabled selected>--Select county--</option>
                             {% for county in counties %}
-                            <option value="{{ county.county }}">{{ county.county }}</option>
+                            <option value="{{ county.pk }}">{{ county.county_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Search</button>
                 <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                
+
             </div>
             </form>
         </div>
@@ -81,17 +81,17 @@
                         <select class="form-control" name="county">
                             <option disabled selected>--Select county--</option>
                             {% for county in counties %}
-                            <option value="{{ county.county }}">{{ county.county }}</option>
+                            <option value="{{ county.pk }}">{{ county.county_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Search</button>
                 <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                
+
             </div>
             </form>
         </div>
@@ -109,17 +109,17 @@
                 <form>
                     <div class="col-md-6"><div class="input-group date">
                         <input type="text" name="start_date" autocomplete="off" id="visiting-date" onblur="verifyDates();" class="form-control mydatepicker" placeholder="Start Date" required>
-                        <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                        <span class="input-group-addon"><i class="icon-calender"></i></span>
                     </div></div>
                     <div class="col-md-6"><div class="input-group date">
                         <input type="text" name="end_date" autocomplete="off" id="visiting-date" onblur="verifyDates();" class="form-control mydatepicker" placeholder="End Date" required>
-                        <span class="input-group-addon"><i class="icon-calender"></i></span> 
+                        <span class="input-group-addon"><i class="icon-calender"></i></span>
                     </div></div>
                     <div class="col-md-12 form-group pulldown">
                         <label for="message-text" class="control-label">County:</label>
                         <select class="form-control">
                             {% for county in counties %}
-                            <option value="{{ county.county }}">{{ county.county }}</option>
+                            <option value="{{ county.pk }}">{{ county.county_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
@@ -129,7 +129,7 @@
                 <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Search</button>
                 <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                
+
             </div>
         </div>
     </div>
@@ -168,17 +168,17 @@
                         <select class="form-control" name="county">
                             <option disabled selected>--Select county--</option>
                             {% for county in counties %}
-                            <option value="{{ county.county }}">{{ county.county }}</option>
+                            <option value="{{ county.pk }}">{{ county.county_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Search</button>
                 <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                
+
             </div>
             </form>
         </div>
@@ -218,17 +218,17 @@
                         <select class="form-control" name="county">
                             <option disabled selected>--Select county--</option>
                             {% for county in counties %}
-                            <option value="{{ county.county }}">{{ county.county }}</option>
+                            <option value="{{ county.pk }}">{{ county.county_name }}</option>
                             {% endfor %}
                         </select>
                     </div>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Search</button>
                 <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                
+
             </div>
             </form>
         </div>
@@ -266,13 +266,13 @@
                             {% endfor %}
                         </select>
                     </div>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Search</button>
                 <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                
+
             </div>
             </form>
         </div>
@@ -308,13 +308,13 @@
                             {% endfor %}
                         </select>
                     </div>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Search</button>
                 <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                
+
             </div>
             </form>
         </div>
@@ -350,13 +350,13 @@
                             {% endfor %}
                         </select>
                     </div>
-                
+
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Search</button>
                 <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
                 <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
-                
+
             </div>
             </form>
         </div>

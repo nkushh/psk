@@ -20,7 +20,7 @@ urlpatterns = [
 	path('monthly-distribution', views.month_dist_filter, name="month_dist_filter"),
 	path('monthly-issuance', views.month_issuance_filter, name="month_issuance_filter"),
 	path('monthly-visits', views.month_visits_filter, name="month_visits_filter"),
-	path('county-facility-distribution/<str:county>/<int:mwezi>/<int:mwaka>/', views.county_facility_distribution, name='county_facility_dist'),
+	path('county-facility-distribution/<int:county>/<int:mwezi>/<int:mwaka>/', views.county_facility_distribution, name='county_facility_dist'),
 	path('export-visits/<int:mwaka>/<int:mwezi>/', views.export_monthly_county_visits, name="export_monthly_county_visits"),
 	# Autocomplete
 	path('autocomplete/all-subcounties/', views.subcounty_autocomplete, name="scounty_autocomplete"),
