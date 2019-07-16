@@ -93,7 +93,7 @@
                     <tbody>
                         {% for delivery in quarter_dist %}
                         <tr>
-                            <td>{{ delivery.facility__countyy.county_name  }}</td>
+                            <td>{{ delivery.facility__county  }}</td>
                             <td>{{ delivery.totalnets | intcomma}}</td>
                         </tr>
                         {% empty %}
