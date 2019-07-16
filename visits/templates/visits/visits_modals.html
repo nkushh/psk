@@ -87,3 +87,44 @@
         </div>
     </div>
 </div>
+
+<!-- Download Monthly Visits Modal -->
+<div id="downloadVisitsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title">Download visits by month</h4>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'visits:download_visits_filter' %}">{% csrf_token%}
+                    <div class="form-group">
+                        <label>Month</label>
+                        <select class="form-control" name="mwezi" required>
+                            <option disabled selected>--Select month--</option>
+                            {% for mwezi in months_choices %}
+                            <option value="{{ mwezi.0 }}">{{ mwezi.1 }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Year</label>
+                        <select class="form-control" name="mwaka" required>
+                          <option disbaled selected>--Pick year--</option>
+                          {% for mwaka in miaka %}
+                          <option value="{{ mwaka }}">{{ mwaka }}</option>
+                          {% endfor %}
+                        </select>
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Download</button>
+                <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
+                <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+
+            </div>
+            </form>
+        </div>
+    </div>
+</div>

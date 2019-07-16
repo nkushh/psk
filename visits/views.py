@@ -6,13 +6,14 @@ from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count, Q
 from django.db.models.functions import TruncMonth
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from authentication.models import UserProfile
 from facilities.models import Facilities
 from distribution.models import Distribution_report
 from .models import Visit
 from .forms import NewVisitForm
-import datetime, calendar
+import datetime, calendar, csv
 
 # Create your views here.
 @login_required(login_url='login')
@@ -499,6 +500,90 @@ def email_sender(request):
 
 	messages.success(request, "Success! Email sent successfully")
 	return redirect('facilities:facilities')
+
+@login_required(login_url='login')
+def download_visits_excel(request):
+	if request.method == "POST":
+		mwezi = request.POST['mwezi']
+		mwaka = request.POST['mwaka']
+
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="visits.csv"'
+
+		writer = csv.writer(response)
+		writer.writerow(['supervisor','facility', 'visit_date', 'reporting_frequency', 'quarter_order', 'challenge_solver',
+			'ojt_perfomed',
+			'policy_compliance',
+			'non_compliance_reason',
+			'new_anc_moh711',
+			'nets_anc_moh711',
+		  	'nets_anc_fnprc',
+			'nets_anc_variance',
+			'new_cwc_moh710',
+			'nets_cwc_moh711',
+			'nets_cwc_fnprc',
+			'nets_cwc_variance',
+			'book_bal',
+			'physical_count',
+			'balance_variance',
+			'bal_variance_reason',
+			'ld_quantity',
+			'ld_invoice_no',
+			'ld_date',
+			'lld_quantity',
+			'lld_invoice_no',
+			'lld_date',
+			'amc',
+			'months_of_stock',
+		    'confirmable_cwc',
+			'confirmable_anc',
+			'store_type',
+			'stock_control_card',
+			'store_access',
+			'pests_risk',
+			'fire_prevention',
+			'fire_prevention_mechanism',
+			'other_remarks',
+			'risk_level'])
+
+		visits = Visit.objects.filter(visit_date__month=mwezi, visit_date__year=mwaka).values_list('supervisor','facility', 'visit_date', 'reporting_frequency', 'quarter_order', 'challenge_solver',
+			'ojt_perfomed',
+			'policy_compliance',
+			'non_compliance_reason',
+			'new_anc_moh711',
+			'nets_anc_moh711',
+		  	'nets_anc_fnprc',
+			'nets_anc_variance',
+			'new_cwc_moh710',
+			'nets_cwc_moh711',
+			'nets_cwc_fnprc',
+			'nets_cwc_variance',
+			'book_bal',
+			'physical_count',
+			'balance_variance',
+			'bal_variance_reason',
+			'ld_quantity',
+			'ld_invoice_no',
+			'ld_date',
+			'lld_quantity',
+			'lld_invoice_no',
+			'lld_date',
+			'amc',
+			'months_of_stock',
+		    'confirmable_cwc',
+			'confirmable_anc',
+			'store_type',
+			'stock_control_card',
+			'store_access',
+			'pests_risk',
+			'fire_prevention',
+			'fire_prevention_mechanism',
+			'other_remarks',
+			'risk_level')
+		for visit in visits:
+		    writer.writerow(visit)
+
+		return response
 
 @login_required(login_url='login')
 def record_visit(request):
