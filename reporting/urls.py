@@ -14,7 +14,6 @@ urlpatterns = [
 	path('visits-quarterly', views.quarter_visits_report, name='quarter_visits_report'),
 	path('dsitribution-by-quarter/<str:quarter>/<str:mwaka>/', views.download_qdistribution_excel, name='county_quarter_dist'),
 	path('dsitribution-by-quarter-download/<str:quarter>/<int:mwaka>/', views.quarter_distribution_csv, name='county_quarter_dist_download'),
-
 	# Monthly
 	path('monthly-report/<str:user_year>/<int:user_month>/', views.monthly_report, name='monthly_report'),
 	path('overall-monthly-filter', views.monthly_report, name="monthly_overall_filter"),
