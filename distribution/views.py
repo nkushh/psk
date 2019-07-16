@@ -405,6 +405,29 @@ def download_distribution_excel(request, mwaka, mwezi):
 	return response
 
 @login_required(login_url='login')
+def download_quarter_distribution_excel(request, quarter, mwaka):
+	today = datetime.datetime.now()
+	if quarter == "One":
+		quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=1, date_issued__year__lte=mwaka, date_issued__month__lte=3).values_list('facility__countyy__county_name').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	elif quarter == "Two":
+		quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=4, date_issued__year__lte=mwaka, date_issued__month__lte=6).values_list('facility__countyy__county_name').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	elif quarter == "Three":
+		quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=7, date_issued__year__lte=mwaka, date_issued__month__lte=9).values_list('facility__countyy__county_name').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	elif quarter == "Four":
+		quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=10, date_issued__year__lte=mwaka, date_issued__month__lte=12).values_list('facility__countyy__county_name').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['County', 'Nets Issued'])
+
+	for report in quarter_dist:
+	    writer.writerow(report)
+
+	return response
+
+@login_required(login_url='login')
 def download_issuance_excel(request, mwezi, mwaka):
 	today = datetime.datetime.now()
 

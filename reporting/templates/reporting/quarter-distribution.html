@@ -83,7 +83,9 @@
         {% endif %}
         <div class="white-box">
             <h3 class="box-title m-b-0"><span class="target-total">{% if quarter %}{{ mwaka }} Quarter {{ quarter }}{% endif %}</span> Distribution details </h3>
+            <a href="{% url 'distribution:quarter_distribution_download' quarter mwaka %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
             <div class="table-responsive">
+              {{ quarter_dist }}
                 <table class="table">
                     <thead>
                         <th>County</th>
@@ -92,7 +94,7 @@
                     <tbody>
                         {% for delivery in quarter_dist %}
                         <tr>
-                            <td>{{ delivery.facility__countyy  }}</td>
+                            <td>{{ delivery.facility__countyy.county_name  }}</td>
                             <td>{{ delivery.totalnets | intcomma}}</td>
                         </tr>
                         {% empty %}
