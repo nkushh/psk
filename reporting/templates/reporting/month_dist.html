@@ -52,7 +52,7 @@
                     <tbody>
                         {% for record in distribution %}
                         <tr>
-                            <td><a href="{% url 'reporting:county_facility_dist' record.facility__countyy mwezi mwaka %}">{{ record.facility__countyy }}</a></td>
+                            <td><a href="{% url 'reporting:county_facility_dist' record.facility__countyy.pk mwezi mwaka %}">{{ record.facility__countyy }}</a></td>
                             <td>{{ record.total_dist | intcomma }}</td>
                         </tr>
                         {% empty %}

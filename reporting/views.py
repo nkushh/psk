@@ -390,6 +390,8 @@ def month_dist_filter(request):
 		else:
 			distribution =  Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__countyy').annotate(total_dist=Sum('nets_issued')).order_by('-total_dist')
 			total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).aggregate(total_nets=Sum('nets_issued'))
+			for record in distribution:
+				record['facility__countyy'] = get_object_or_404(Counties, pk=record['facility__countyy'])
 
 
 		counties = Counties.objects.order_by('county_name')
@@ -397,22 +399,22 @@ def month_dist_filter(request):
 		query_month = calendar.month_name[int(mwezi)]
 
 
-		page = request.GET.get('page', 1)
-
-		paginator = Paginator(distribution, 50)
-
-		try:
-			distribution = paginator.page(page)
-		except PageNotAnInteger:
-			distribution = paginator.page(1)
-		except EmptyPage:
-			distribution = paginator.page(paginator.num_pages)
-
-		index = distribution.number - 1
-		max_index = len(paginator.page_range)
-		start_index = index - 5 if index >= 5 else 0
-		end_index = index + 5 if index <= max_index - 5 else max_index
-		page_range = paginator.page_range[start_index:end_index]
+		# page = request.GET.get('page', 1)
+		#
+		# paginator = Paginator(distribution, 50)
+		#
+		# try:
+		# 	distribution = paginator.page(page)
+		# except PageNotAnInteger:
+		# 	distribution = paginator.page(1)
+		# except EmptyPage:
+		# 	distribution = paginator.page(paginator.num_pages)
+		#
+		# index = distribution.number - 1
+		# max_index = len(paginator.page_range)
+		# start_index = index - 5 if index >= 5 else 0
+		# end_index = index + 5 if index <= max_index - 5 else max_index
+		# page_range = paginator.page_range[start_index:end_index]
 
 		context = {
 			'counties' : counties,
