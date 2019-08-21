@@ -106,7 +106,7 @@ def monthly_net_delivery(request, mwezi):
 def nets_issued_to_facilities(request):
 	account = request.user
 	account_profile = get_object_or_404(UserProfile, user=account)
-	counties = Facilities.objects.values('county').distinct()
+	counties = Counties.objects.all()
 	regions = Regions.objects.all()
 	if account_profile.usertype=="Coordinator":
 		recently_delivered = Nets_distributed.objects.filter(facility__psk_region=account_profile.psk_region)
