@@ -7,7 +7,7 @@
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
         <h4 class="page-title">Add New Facility</h4>
     </div>
-    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
         <ol class="breadcrumb">
             <li><a href="{% url 'facilities:dashboard' %}">Dashboard</a></li>
             <li class="active">New facility</li>
@@ -51,8 +51,8 @@
                         <option value="" required disbaled>--Select ownership--</option>
                         <option value="Public">Public</option>
                         <option value="Private">Private</option>
-                        <option value="FBO">FBO</option>    
-                        <option value="Other">Other</option>     
+                        <option value="FBO">FBO</option>
+                        <option value="Other">Other</option>
                     </select>
         		</div>
         		<div class="form-group">
@@ -60,7 +60,7 @@
         			<select name="county" class="form-control selectpicker" id="item-search" data-live-search="true" required>
                       <option value="" disabled selected>--Pick county--</option>
                       {% for county in counties %}
-                      <option value="{{ county.county }}">{{ county.county }}</option>
+                      <option value="{{ county.pk }}">{{ county.county_name }}</option>
                       {% endfor %}
                     </select>
         		</div>
