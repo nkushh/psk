@@ -648,7 +648,7 @@ def set_facility_region(request, psk_region):
                 facility.psk_region = region
                 facility.save()
         elif region=="Mountain":
-            facilities = Facilities.objects.filter(Q(county="Meru") | Q(county="Embu") | Q(county="Kirinyaga") | Q(county="Isiolo") | Q(county="Tharaka Nithi"))
+            facilities = Facilities.objects.filter(Q(county="Meru") | Q(county="Embu") | Q(county="Kirinyaga") | Q(county="Isiolo") | Q(county="Nyeri") | Q(county="Tharaka Nithi"))
             for facility in facilities:
                 facility.psk_region = region
                 facility.save()
