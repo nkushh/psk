@@ -340,7 +340,7 @@ def get_quarter_report(request, quarter, mwaka):
 	}
 	return render(request, template, context)
 
-# Quarterly nets distribution for all counties
+# Quarterly nets distribution for all county facilities CSV export
 @login_required(login_url='login')
 def quarter_distribution_facilities_csv(request, quarter, mwaka):
 	if quarter == "One":
@@ -355,10 +355,9 @@ def quarter_distribution_facilities_csv(request, quarter, mwaka):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="quarterly_distribution.csv"'
 	writer = csv.writer(response)
-	writer.writerow(['County', 'Nets Issued'])
+	writer.writerow(['Facility', 'County', 'Nets Issued'])
 
 	for report in quarter_dist:
-		print(report)
 		writer.writerow(report)
 
 	return response

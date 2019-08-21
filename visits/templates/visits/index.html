@@ -61,6 +61,7 @@
                     <li><a data-toggle="modal" data-target="#riskLevelModal">Risk level filter</a></li>
                 </ul>
             </div>
+            <a class="btn btn-primary" data-toggle="modal" data-target="#importVisitsModal">Upload Excel visits</a>
             {% endifequal %}
             <a class="btn btn-danger" href="{% url 'visits:record_visit' %}"><i class="fa fa-plus"></i> Record visit</a>
             <a class="btn btn-default" data-toggle="modal" data-target="#downloadVisitsModal">Download visits</a>

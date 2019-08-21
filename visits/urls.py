@@ -20,4 +20,6 @@ urlpatterns = [
 	path('monthly-risk-filter', views.fetch_visits_by_risk_level, name='monthly_risk_filter'),
 	# Downloads
 	path('download-visits', views.download_visits_excel, name="download_visits_filter"),
+	# Import/uploads
+	path('import-visits', views.visits_excel_upload, name="visits_excel_upload"),
 ]

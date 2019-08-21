@@ -1,10 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import User
 from datetime import date
 
 from facilities.models import Facilities
 # Create your models here.
 class Visit(models.Model):
-	supervisor = models.ForeignKey('auth.User', default=1, on_delete=models.CASCADE)
+	supervisor = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
 	facility = models.ForeignKey(Facilities, on_delete=models.CASCADE)
 	visit_date = models.DateField(default=date.today)
 	reporting_frequency = models.IntegerField(default=0)
@@ -48,7 +49,3 @@ class Visit(models.Model):
 
 	def __str__(self):
 		return self.facility.facility_name
-
-
-
-

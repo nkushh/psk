@@ -84,6 +84,7 @@
         <div class="white-box">
             <h3 class="box-title m-b-0"><span class="target-total">{% if quarter %}{{ mwaka }} Quarter {{ quarter }}{% endif %}</span> Distribution details </h3>
             <a href="{% url 'reporting:county_quarter_dist_download' quarter mwaka %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> Excel download</a>
+            <a href="{% url 'reporting:county_quarter_dist_facilities' quarter mwaka %}" class="btn btn-success pull-right" target="_blank"><i class="fa fa-download"></i> CSV Export</a>
             <div class="table-responsive">
                 <table class="table">
                     <thead>

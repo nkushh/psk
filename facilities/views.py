@@ -215,14 +215,14 @@ def subcounty_facilities(request, county_pk, subcounty):
     return render(request, template, context)
 
 def facility_region(county):
-    region = Facilities.objects.filter(county=county).values('psk_region').distinct()
+    region = Facilities.objects.filter(countyy=county).values('psk_region').distinct()
     data = []
     for i in region:
         data.append(i)
     return data[0]['psk_region']
 
 def facility_zone(county):
-    zone = Facilities.objects.filter(county=county).values('epidemiological_zone').distinct()
+    zone = Facilities.objects.filter(countyy=county).values('epidemiological_zone').distinct()
     data = []
     for i in zone:
         data.append(i)
@@ -697,7 +697,7 @@ def set_facility_region(request, psk_region):
 def set_facility_zone(request, psk_zone):
     if psk_zone:
         if zone=="Seasonal Transmission":
-            facilities = Facilities.objects.filter(Q(county="Kajiado") | Q(county="Makueni") | Q(county="Kitui") | Q(county="Machakos") | Q(county="Kimabu") | Q(county="Murang'a") | Q(county="Kirinyaga") | Q(county="Embu") | Q(county="Tharaka Nithi") | Q(county="Meru") | Q(county="Isiolo"))
+            facilities = Facilities.objects.filter(Q(county="Kajiado") | Q(county="Makueni") | Q(county="Kitui") | Q(county="Machakos") | Q(county="Kimabu") | Q(county="Murang'a") | Q(county="Kirinyaga") | Q(county="Embu") | Q(county="Tharaka Nithi") | Q(county="Meru") | Q(county="Nyeri") | Q(county="Isiolo"))
             for facility in facilities:
                 facility.epidemiological_zone = zone
                 facility.save()
