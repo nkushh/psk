@@ -30,6 +30,7 @@ class Stocking_history(models.Model):
 class Nets_distributed(models.Model):
 	facility = models.ForeignKey(Facilities, on_delete=models.CASCADE)
 	invoice_no = models.CharField(max_length=200, default="")
+	invoice_type = models.CharField(max_length=20, default="invoice")
 	warehouse = models.CharField(max_length=255, default="")
 	nets_issued = models.IntegerField()
 	donor_code = models.CharField(max_length=20, default="")
@@ -88,6 +89,3 @@ class Distribution_target(models.Model):
 
 	def __str__(self):
 		return self.donor
-
-
-
