@@ -9,7 +9,7 @@
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
         <h4 class="page-title">Net issuance records</h4>
     </div>
-    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
         <ol class="breadcrumb">
             <li><a href="{% url 'distribution:nets_distribution' %}">Distribution Dashboard</a></li>
             <li class="active">Issuance records</li>
@@ -35,7 +35,7 @@
                 <ul role="menu" class="dropdown-menu">
                     <li><a href="{% url 'distribution:nets_to_facilities' %}">All counties</a></li>
                     {% for county in counties %}
-                    <li><a href="{% url 'distribution:delivery_by_county' county.county %}">{{ county.county }}</a></li>
+                    <li><a href="{% url 'distribution:delivery_by_county' county.pk %}">{{ county.county_name }}</a></li>
                     {% endfor %}
                 </ul>
             </div>

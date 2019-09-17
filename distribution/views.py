@@ -29,7 +29,7 @@ def distribution_index(request):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
 	years = range(2018,today.year+1)
 
-	county_distribution = Nets_distributed.objects.values('facility__county').annotate(county_total=Sum('nets_issued')).order_by('-county_total') 
+	county_distribution = Nets_distributed.objects.values('facility__county').annotate(county_total=Sum('nets_issued')).order_by('-county_total')
 	distribution_by_ez = Nets_distributed.objects.values('facility__epidemiological_zone').annotate(ez_distribution=Sum('nets_issued')).order_by('-ez_distribution')
 	region_distribution = Nets_distributed.objects.values('facility__psk_region').annotate(region_total=Sum('nets_issued')).order_by('-region_total')
 	total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka).aggregate(nets=Sum('nets_issued'))
@@ -70,7 +70,7 @@ def monthly_net_delivery(request, mwezi):
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
 
-	county_distribution = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__county').annotate(county_total=Sum('nets_issued')).order_by('-county_total') 
+	county_distribution = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__county').annotate(county_total=Sum('nets_issued')).order_by('-county_total')
 	distribution_by_ez = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__epidemiological_zone').annotate(ez_distribution=Sum('nets_issued')).order_by('-ez_distribution')
 	region_distribution = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).values('facility__psk_region').annotate(region_total=Sum('nets_issued')).order_by('-region_total')
 	total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi).aggregate(nets=Sum('nets_issued'))
@@ -99,21 +99,21 @@ def monthly_net_delivery(request, mwezi):
 
 	}
 	template = "distribution/index.html"
-	return render(request, template, context)	
+	return render(request, template, context)
 
 # Fetch nets issued to facilities month and year
 @login_required(login_url='login')
 def nets_issued_to_facilities(request):
 	account = request.user
 	account_profile = get_object_or_404(UserProfile, user=account)
-	counties = Facilities.objects.values('county').distinct()
+	counties = Counties.objects.all()
 	regions = Regions.objects.all()
 	if account_profile.usertype=="Coordinator":
 		recently_delivered = Nets_distributed.objects.filter(facility__psk_region=account_profile.psk_region)
 	else:
 		recently_delivered = Nets_distributed.objects.all()
-	
-	
+
+
 
 	page = request.GET.get('page', 1)
 
@@ -151,8 +151,8 @@ def nets_donated(request):
 		recently_delivered = Nets_donated.objects.filter(facility__psk_region=account_profile.psk_region)
 	else:
 		recently_delivered = Nets_donated.objects.order_by('-date_issued')
-	
-	
+
+
 
 	page = request.GET.get('page', 1)
 
@@ -189,8 +189,8 @@ def delivery_by_county(request, county):
 
 	recently_delivered = Nets_distributed.objects.filter(facility__county=county).order_by('-date_issued')
 	nets_delivered = Nets_distributed.objects.filter(facility__county=county).aggregate(total_nets=Sum('nets_issued'))
-	
-	
+
+
 
 	page = request.GET.get('page', 1)
 
@@ -230,8 +230,8 @@ def delivery_by_region(request, region):
 
 	recently_delivered = Nets_distributed.objects.filter(facility__psk_region=region).order_by('-date_issued')
 	nets_delivered = Nets_distributed.objects.filter(facility__psk_region=region).aggregate(total_nets=Sum('nets_issued'))
-	
-	
+
+
 
 	page = request.GET.get('page', 1)
 
@@ -314,7 +314,7 @@ def record_nets_issued_excel(request):
 			facility.system_net_balance = int(nets_issued) + int(facility.system_net_balance)
 			facility.save()
 
-		messages.success(request, "Success! Nets issuance successfully recorded.")
+		messages.success(request, "Success! Nets issuance successfully recorded. Missing facilities {}".format(missing_facilities))
 		request.session['missing_facilities'] = missing_facilities
 		return redirect('distribution:nets_to_facilities')
 	else:
@@ -405,6 +405,29 @@ def download_distribution_excel(request, mwaka, mwezi):
 	return response
 
 @login_required(login_url='login')
+def download_quarter_distribution_excel(request, quarter, mwaka):
+	today = datetime.datetime.now()
+	if quarter == "One":
+		quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=1, date_issued__year__lte=mwaka, date_issued__month__lte=3).values_list('facility__countyy__county_name').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	elif quarter == "Two":
+		quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=4, date_issued__year__lte=mwaka, date_issued__month__lte=6).values_list('facility__countyy__county_name').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	elif quarter == "Three":
+		quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=7, date_issued__year__lte=mwaka, date_issued__month__lte=9).values_list('facility__countyy__county_name').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	elif quarter == "Four":
+		quarter_dist = Nets_distributed.objects.filter(date_issued__year__gte=mwaka, date_issued__month__gte=10, date_issued__year__lte=mwaka, date_issued__month__lte=12).values_list('facility__countyy__county_name').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['County', 'Nets Issued'])
+
+	for report in quarter_dist:
+	    writer.writerow(report)
+
+	return response
+
+@login_required(login_url='login')
 def download_issuance_excel(request, mwezi, mwaka):
 	today = datetime.datetime.now()
 
@@ -446,7 +469,7 @@ def download_qdistribution_excel(request):
 	    writer.writerow(report)
 
 	return response
-	
+
 
 # Delete all the net delivery records in the database.
 # Super admin only
@@ -479,7 +502,7 @@ def reset_nets_balance(request):
 @login_required(login_url='login')
 def issuance_index(request):
 	today = datetime.datetime.now()
-	
+
 	if today.month < 2:
 		mwaka = today.year - 1
 	else:
@@ -489,7 +512,7 @@ def issuance_index(request):
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
 
-	county_issuance = Distribution_report.objects.values('facility__county').annotate(county_total=Sum('total_nets')).order_by('-county_total') 
+	county_issuance = Distribution_report.objects.values('facility__county').annotate(county_total=Sum('total_nets')).order_by('-county_total')
 	issuance_by_ez = Distribution_report.objects.values('facility__epidemiological_zone').annotate(ez_issuance=Sum('total_nets')).order_by('-ez_issuance')
 	region_issuance = Distribution_report.objects.values('facility__psk_region').annotate(region_total=Sum('total_nets')).order_by('-region_total')
 	total_nets_issued = Distribution_report.objects.filter(dist_year=mwaka).aggregate(nets=Sum('total_nets'))
@@ -517,7 +540,7 @@ def issuance_index(request):
 @login_required(login_url='login')
 def monthly_issuance_index(request, mwezi):
 	today = datetime.datetime.now()
-	
+
 	if today.month < 2:
 		mwaka = today.year - 1
 	else:
@@ -527,7 +550,7 @@ def monthly_issuance_index(request, mwezi):
 	for i in range(1,13):
 	    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
 
-	county_issuance = Distribution_report.objects.filter(dist_year=mwaka, dist_month=mwezi).values('facility__county').annotate(county_total=Sum('total_nets')).order_by('-county_total') 
+	county_issuance = Distribution_report.objects.filter(dist_year=mwaka, dist_month=mwezi).values('facility__county').annotate(county_total=Sum('total_nets')).order_by('-county_total')
 	issuance_by_ez = Distribution_report.objects.filter(dist_year=mwaka, dist_month=mwezi).values('facility__epidemiological_zone').annotate(ez_issuance=Sum('total_nets')).order_by('-ez_issuance')
 	region_issuance = Distribution_report.objects.filter(dist_year=mwaka, dist_month=mwezi).values('facility__psk_region').annotate(region_total=Sum('total_nets')).order_by('-region_total')
 	total_nets_issued = Distribution_report.objects.filter(dist_year=mwaka, dist_month=mwezi).aggregate(nets=Sum('total_nets'))
@@ -575,11 +598,11 @@ def record_distribution(request):
 		# if confirm_nets_issuance(total_nets, facility.net_balance, facility.system_net_balance):
 
 		distribution = Distribution_report(
-				facility=facility, 
-				dist_month=dist_month, 
-				dist_year=dist_year, 
-				cwc_nets=cwc_nets, 
-				anc_nets=anc_nets, 
+				facility=facility,
+				dist_month=dist_month,
+				dist_year=dist_year,
+				cwc_nets=cwc_nets,
+				anc_nets=anc_nets,
 				others_nets=others_nets,
 				total_nets=total_nets,
 				bal_cf=bal_cf
@@ -638,11 +661,11 @@ def record_nets_distributed_excel(request):
 					continue
 				else:
 					distribution = Distribution_report(
-							facility=facility, 
-							dist_month=dist_month, 
+							facility=facility,
+							dist_month=dist_month,
 							dist_year=dist_year,
-							cwc_nets=cwc_nets, 
-							anc_nets=anc_nets, 
+							cwc_nets=cwc_nets,
+							anc_nets=anc_nets,
 							others_nets=others_nets,
 							total_nets=total_nets,
 							bal_cf=bal_cf
@@ -740,7 +763,7 @@ def create_target(request):
         target_year = request.POST['target_year']
         donor = request.POST['donor'].upper()
         target = request.POST['target']
-        
+
         if Distribution_target.objects.filter(target_month=target_month, target_year=target_year, donor=donor).exists():
             messages.error(request, "Target details were not saved. That target exists. Try again!")
             return redirect("distribution:create_target")
@@ -777,7 +800,7 @@ def fetch_targets(request):
 	targets = Distribution_target.objects.filter(target_year=mwaka).order_by('target_month')
 	targets_graph = Distribution_target.objects.filter(target_year=mwaka).values('target_month', 'target').order_by('target_month')
 	achieved = Nets_distributed.objects.filter(date_issued__year=mwaka, donor_code='USAID').annotate(mwezi=Extract('date_issued', 'month')).values('mwezi').annotate(total_achieved=Sum('nets_issued')).order_by('mwezi')
-	
+
 	# Convert month to string
 	for i in targets:
 		i.target_month = calendar.month_abbr[i.target_month]
@@ -873,19 +896,3 @@ def stockin_history(request):
 	}
 	template = "distribution/stocking-history.html"
 	return render(request, template, context)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

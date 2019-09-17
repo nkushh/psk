@@ -47,6 +47,7 @@ class Facilities(models.Model):
 	mfl_code = models.CharField(max_length=200)
 	facility_name = models.CharField(max_length=200)
 	county = models.CharField(max_length=200)
+	countyy = models.ForeignKey(Counties, default=1, on_delete=models.CASCADE)
 	sub_county = models.CharField(max_length=200)
 	constituency = models.CharField(max_length=255)
 	ward = models.CharField(max_length=200, default="")
@@ -60,5 +61,3 @@ class Facilities(models.Model):
 
 	def __str__(self):
 		return self.facility_name
-
-

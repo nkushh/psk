@@ -89,7 +89,7 @@ def dashboard(request):
 
 @login_required(login_url='login')
 def facilities(request):
-    counties = Facilities.objects.values('county').distinct()
+    counties = Counties.objects.all().order_by('county_name')
     facilities = Facilities.objects.all()
     facility_count = Facilities.objects.all().count()
     page_count = int(facility_count/50)
@@ -139,12 +139,12 @@ def download_facilities_excel(request):
 
 # Fetch facilities by county
 @login_required(login_url='login')
-def county_facilities(request, county_name):
-    county = county_name
-    counties = Facilities.objects.values('county').distinct()
+def county_facilities(request, county_pk):
+    county = get_object_or_404(Counties, pk=county_pk)
+    counties = Counties.objects.all().order_by('county_name')
     sub_counties = Facilities.objects.filter(county=county).values('sub_county').distinct()
-    facilities = Facilities.objects.filter(county=county).order_by('facility_name')
-    facility_count = Facilities.objects.filter(county=county).count()
+    facilities = Facilities.objects.filter(countyy=county).order_by('facility_name')
+    facility_count = Facilities.objects.filter(countyy=county).count()
     page_count = int(facility_count/50)
 
     page = request.GET.get('page', 1)
@@ -177,10 +177,10 @@ def county_facilities(request, county_name):
     return render(request, template, context)
 
 @login_required(login_url='login')
-def subcounty_facilities(request, county_name, subcounty):
-    county = county_name
-    counties = Facilities.objects.values('county').distinct()
-    sub_counties = Facilities.objects.filter(county=county).values('sub_county').distinct()
+def subcounty_facilities(request, county_pk, subcounty):
+    county = get_object_or_404(Counties, pk=county_pk)
+    counties = Counties.objects.all().order_by('county_name')
+    sub_counties = Facilities.objects.filter(countyy=county).values('sub_county').distinct()
     facilities = Facilities.objects.filter(sub_county=subcounty).order_by('facility_name')
     facility_count = Facilities.objects.filter(sub_county=subcounty).count()
     page_count = int(facility_count/50)
@@ -203,7 +203,7 @@ def subcounty_facilities(request, county_name, subcounty):
     page_range = paginator.page_range[start_index:end_index]
 
     context = {
-        'county' : county_name,
+        'county' : county,
         'counties' : counties,
         'facilities' : facilities,
         'facility_count' : facility_count,
@@ -215,14 +215,14 @@ def subcounty_facilities(request, county_name, subcounty):
     return render(request, template, context)
 
 def facility_region(county):
-    region = Facilities.objects.filter(county=county).values('psk_region').distinct()
+    region = Facilities.objects.filter(countyy=county).values('psk_region').distinct()
     data = []
     for i in region:
         data.append(i)
     return data[0]['psk_region']
 
 def facility_zone(county):
-    zone = Facilities.objects.filter(county=county).values('epidemiological_zone').distinct()
+    zone = Facilities.objects.filter(countyy=county).values('epidemiological_zone').distinct()
     data = []
     for i in zone:
         data.append(i)
@@ -233,7 +233,7 @@ def new_facility(request):
     if request.method=="POST":
         mfl_code = request.POST['mfl_code']
         facility_name = request.POST['facility_name'].title()
-        county = request.POST['county'].title()
+        county = get_object_or_404(Counties, pk=request.POST['county'].title())
         sub_county = request.POST['sub_county'].title()
         constituency = request.POST['constituency'].title()
         ward = request.POST['ward'].title()
@@ -249,7 +249,7 @@ def new_facility(request):
                     psk_region = psk_region,
                     mfl_code = mfl_code,
                     facility_name = facility_name,
-                    county = county,
+                    countyy = county,
                     sub_county = sub_county,
                     constituency = constituency,
                     ward = ward,
@@ -259,7 +259,7 @@ def new_facility(request):
             messages.success(request, "Success! {} addded to facilities database successfully".format(facility_name))
             return redirect('facilities:facilities')
     else:
-        counties = Facilities.objects.values('county').distinct()
+        counties = Counties.objects.all().order_by('county_name')
         regions = Regions.objects.all()
 
         context = {
@@ -276,7 +276,7 @@ def update_facility(request, facility_pk):
         psk_region = request.POST['psk_region']
         mfl_code = request.POST['mfl_code']
         facility_name = request.POST['facility_name'].title()
-        county = request.POST['county'].title()
+        county = get_object_or_404(Counties, pk=request.POST['county'].title())
         sub_county = request.POST['sub_county'].title()
         constituency = request.POST['constituency'].title()
         ward = request.POST['ward'].title()
@@ -285,7 +285,7 @@ def update_facility(request, facility_pk):
 
         facility.mfl_code = mfl_code
         facility.facility_name = facility_name
-        facility.county = county
+        facility.countyy = county
         facility.sub_county = sub_county
         facility.constituency = constituency
         facility.ward = ward
@@ -298,7 +298,7 @@ def update_facility(request, facility_pk):
 
 
     else:
-        counties = Facilities.objects.values('county').distinct()
+        counties = Counties.objects.all().order_by('county_name')
         regions = Regions.objects.all()
 
         context = {
@@ -322,7 +322,7 @@ def facilities_excel_upload(request):
         for record in records:
             mfl_code = record['mfl']
             facility_name = record['name'].title()
-            county = record['county'].title()
+            county = get_object_or_404(Counties, county_name=record['county'].title())
             sub_county = record['subcounty'].title()
             constituency = record['constituency'].title()
             ward = record['ward'].title()
@@ -336,7 +336,7 @@ def facilities_excel_upload(request):
                 Facilities(
                         mfl_code = mfl_code,
                         facility_name = facility_name,
-                        county = county,
+                        countyy = county,
                         sub_county = sub_county,
                         constituency = constituency,
                         ward = ward,
@@ -346,7 +346,7 @@ def facilities_excel_upload(request):
         messages.success(request, "Success! Facilities added successfully.")
         return redirect('facilities:facilities')
     else:
-        counties = Facilities.objects.values('county').distinct()
+        counties = Counties.objects.all().order_by('county_name')
         template = "facilities/add-facilities.html"
         return render(request, template, {'counties' : counties})
 
@@ -406,7 +406,7 @@ def facilities_autocomplete(request,*args,**kwargs):
 
 @login_required(login_url='login')
 def facility_search(request):
-    counties = Facilities.objects.values('county').distinct()
+    counties = Counties.objects.all().order_by('county_name')
     if request.method=="GET":
         search_query = request.GET.get('facility')
         facilities = Facilities.objects.filter(Q(facility_name__istartswith=search_query) | Q(mfl_code__istartswith=search_query))
@@ -648,7 +648,7 @@ def set_facility_region(request, psk_region):
                 facility.psk_region = region
                 facility.save()
         elif region=="Mountain":
-            facilities = Facilities.objects.filter(Q(county="Meru") | Q(county="Embu") | Q(county="Kirinyaga") | Q(county="Isiolo") | Q(county="Tharaka Nithi"))
+            facilities = Facilities.objects.filter(Q(county="Meru") | Q(county="Embu") | Q(county="Kirinyaga") | Q(county="Isiolo") | Q(county="Nyeri") | Q(county="Tharaka Nithi"))
             for facility in facilities:
                 facility.psk_region = region
                 facility.save()
@@ -697,7 +697,7 @@ def set_facility_region(request, psk_region):
 def set_facility_zone(request, psk_zone):
     if psk_zone:
         if zone=="Seasonal Transmission":
-            facilities = Facilities.objects.filter(Q(county="Kajiado") | Q(county="Makueni") | Q(county="Kitui") | Q(county="Machakos") | Q(county="Kimabu") | Q(county="Murang'a") | Q(county="Kirinyaga") | Q(county="Embu") | Q(county="Tharaka Nithi") | Q(county="Meru") | Q(county="Isiolo"))
+            facilities = Facilities.objects.filter(Q(county="Kajiado") | Q(county="Makueni") | Q(county="Kitui") | Q(county="Machakos") | Q(county="Kimabu") | Q(county="Murang'a") | Q(county="Kirinyaga") | Q(county="Embu") | Q(county="Tharaka Nithi") | Q(county="Meru") | Q(county="Nyeri") | Q(county="Isiolo"))
             for facility in facilities:
                 facility.epidemiological_zone = zone
                 facility.save()
@@ -726,6 +726,21 @@ def set_facility_zone(request, psk_zone):
     else:
             template = "facilities/facility-settings.html"
             return render(request, template)
+
+@login_required(login_url='authentication:login')
+def update_facility_county(request):
+    facilities = Facilities.objects.all()
+    counties = Counties.objects.all()
+    for facility in facilities:
+        for county in counties:
+            if facility.county == county.county_name:
+                facility.countyy = get_object_or_404(Counties, county_name=facility.county)
+                facility.save()
+                print(facility.countyy)
+            else:
+                continue
+    messages.success(request, "Update done")
+    return redirect('facilities:facilities')
 
 
 # @login_required(login_url='login')

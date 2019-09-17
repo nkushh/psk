@@ -8,8 +8,8 @@ urlpatterns = [
 	# Facilities
 	path('', views.dashboard, name="dashboard"),
 	path('facilities/', views.facilities, name="facilities"),
-	path('county-facilities/<str:county_name>/', views.county_facilities, name="county_facilities"),
-	path('subcounty-facilities/<str:county_name>/<str:subcounty>/', views.subcounty_facilities, name="subcounty_facilities"),
+	path('county-facilities/<int:county_pk>/', views.county_facilities, name="county_facilities"),
+	path('subcounty-facilities/<int:county_pk>/<str:subcounty>/', views.subcounty_facilities, name="subcounty_facilities"),
 	path('add-facility', views.new_facility, name="new_facility"),
 	path('new-facilities', views.facilities_excel_upload, name="new_facilities"),
 	path('change-county-name', views.county_name_change, name="county_name_change"),
@@ -33,6 +33,7 @@ urlpatterns = [
 	path('delete-zone/<int:zone_pk>/', views.delete_zone, name="delete_zone"),
 	# Settings
 	path('facility-settings', views.facility_settings, name="facility_settings"),
+	path('update-facilities-counties', views.update_facility_county, name="update_facility_county"),
 	path('set-facilities-region/<str:psk_region>/', views.set_facility_region, name="set_facility_region"),
 	path('set-facilities-zone/<str:psk_zone>/', views.set_facility_zone, name="set_facility_zone"),
 	path('change-region-name', views.region_name_change, name="region_name_change"),

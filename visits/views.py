@@ -1,18 +1,21 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.core.files.storage import FileSystemStorage
 from django.core.mail import send_mail
 from django.conf import settings
 from django.core.paginator import Paginator
 from django.db.models import Sum, Count, Q
 from django.db.models.functions import TruncMonth
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from authentication.models import UserProfile
 from facilities.models import Facilities
 from distribution.models import Distribution_report
 from .models import Visit
 from .forms import NewVisitForm
-import datetime, calendar
+import datetime, calendar, csv
+import pyexcel as pe
 
 # Create your views here.
 @login_required(login_url='login')
@@ -501,6 +504,223 @@ def email_sender(request):
 	return redirect('facilities:facilities')
 
 @login_required(login_url='login')
+def download_visits_excel(request):
+	if request.method == "POST":
+		mwezi = request.POST['mwezi']
+		mwaka = request.POST['mwaka']
+
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="visits.csv"'
+
+		writer = csv.writer(response)
+		writer.writerow(['supervisor','facility', 'visit_date', 'reporting_frequency', 'quarter_order', 'challenge_solver',
+			'ojt_perfomed',
+			'policy_compliance',
+			'non_compliance_reason',
+			'new_anc_moh711',
+			'nets_anc_moh711',
+		  	'nets_anc_fnprc',
+			'nets_anc_variance',
+			'new_cwc_moh710',
+			'nets_cwc_moh711',
+			'nets_cwc_fnprc',
+			'nets_cwc_variance',
+			'book_bal',
+			'physical_count',
+			'balance_variance',
+			'bal_variance_reason',
+			'ld_quantity',
+			'ld_invoice_no',
+			'ld_date',
+			'lld_quantity',
+			'lld_invoice_no',
+			'lld_date',
+			'amc',
+			'months_of_stock',
+		    'confirmable_cwc',
+			'confirmable_anc',
+			'store_type',
+			'stock_control_card',
+			'store_access',
+			'pests_risk',
+			'fire_prevention',
+			'fire_prevention_mechanism',
+			'other_remarks',
+			'risk_level'])
+
+		visits = Visit.objects.filter(visit_date__month=mwezi, visit_date__year=mwaka).values_list('supervisor','facility', 'visit_date', 'reporting_frequency', 'quarter_order', 'challenge_solver',
+			'ojt_perfomed',
+			'policy_compliance',
+			'non_compliance_reason',
+			'new_anc_moh711',
+			'nets_anc_moh711',
+		  	'nets_anc_fnprc',
+			'nets_anc_variance',
+			'new_cwc_moh710',
+			'nets_cwc_moh711',
+			'nets_cwc_fnprc',
+			'nets_cwc_variance',
+			'book_bal',
+			'physical_count',
+			'balance_variance',
+			'bal_variance_reason',
+			'ld_quantity',
+			'ld_invoice_no',
+			'ld_date',
+			'lld_quantity',
+			'lld_invoice_no',
+			'lld_date',
+			'amc',
+			'months_of_stock',
+		    'confirmable_cwc',
+			'confirmable_anc',
+			'store_type',
+			'stock_control_card',
+			'store_access',
+			'pests_risk',
+			'fire_prevention',
+			'fire_prevention_mechanism',
+			'other_remarks',
+			'risk_level')
+		for visit in visits:
+		    writer.writerow(visit)
+
+		return response
+
+
+# Add facilities by excel
+@login_required(login_url='login')
+def visits_excel_upload(request):
+	if request.method == 'POST' and request.FILES['excel_file']:
+		myfile = request.FILES['excel_file']
+		fs = FileSystemStorage()
+		filename = fs.save(myfile.name, myfile)
+		uploaded_file_url = fs.url(filename)
+
+		records = pe.get_records(file_name=settings.BASE_DIR+uploaded_file_url)
+		for record in records:
+			facility = get_object_or_404(Facilities, mfl_code=record['facility'])
+			print(facility)
+			# supervisor = get_object_or_404(User, pk=record['supervisor'])
+			# facility = get_object_or_404(Facilities, mfl_code=record['facility'])
+			# visit_date = record['visit_date']
+			# reporting_frequency = record['reporting_frequency']
+			# quarter_order = record['quarter_order']
+			# challenge_solver = record['challenge_solver']
+			# ojt_perfomed = record['ojt_performed']
+			# policy_compliance = record['policy_compliance']
+			# non_compliance_reason = record['non_compliance_reason']
+			# new_anc_moh711 = int(record['new_anc_moh711'])
+			# nets_anc_moh711 = int(record['nets_anc_moh711'])
+			# nets_anc_fnprc = record['nets_anc_fnprc']
+			# nets_anc_variance = int(new_anc_moh711 - nets_anc_moh711)
+			# new_cwc_moh710 = int(record['new_cwc_moh710'])
+			# nets_cwc_moh711 = int(record['nets_cwc_moh711'])
+			# nets_cwc_fnprc = int(record['nets_cwc_fnprc'])
+			# nets_cwc_variance = int(new_cwc_moh710 - nets_cwc_moh711)
+			# book_bal = int(record['book_bal'])
+			# physical_count = int(record['physical_count'])
+			# balance_variance = int(book_bal - physical_count)
+			# bal_variance_reason = record['bal_variance_reason']
+			# if record['ld_quantity']:
+			# 	ld_quantity = record['ld_quantity']
+			# else:
+			# 	ld_quantity = 0
+			#
+			# ld_invoice_no = record['ld_invoice_no']
+			# # Blank date fields capture
+			# if record['ld_date']:
+			# 	ld_date = record['ld_date']
+			# else:
+			# 	ld_date = datetime.date.today()
+			#
+			# # Blank quantity fields capture
+			# if record['lld_quantity']:
+			# 	lld_quantity = record['lld_quantity']
+			# else:
+			# 	lld_quantity = 0
+			# lld_invoice_no = record['lld_invoice_no']
+			#
+			# # Blank date fields capture
+			# if record['lld_date']:
+			# 	lld_date = record['lld_date']
+			# else:
+			# 	lld_date = datetime.date.today()
+			# # Average monthly consumption
+			# amc = float(get_amc(facility.pk))
+			# months_of_stock = float(physical_count/amc)
+			# confirmable_cwc = record['confirmable_cwc']
+			# confirmable_anc = rrecord['confirmable_anc']
+			# store_type = record['store_type']
+			# stock_control_card = int(record['stock_control_card'])
+			# store_access = record['store_access']
+			# pests_risk = record['pests_risk']
+			# fire_prevention = record['fire_prevention']
+			# fire_prevention_mechanism = record['fire_prevention_mechanism']
+			# other_remarks = rrecord['other_remarks']
+			# risk_level = set_risk_status(amc, balance_variance, months_of_stock)
+			#
+			# new_visit = Visit(
+			# 		supervisor = supervisor,
+			# 		facility = facility,
+			# 		visit_date = visit_date,
+			# 		reporting_frequency = reporting_frequency,
+			# 		quarter_order = quarter_order,
+			# 		challenge_solver = challenge_solver,
+			# 		ojt_perfomed = ojt_perfomed,
+			# 		policy_compliance = policy_compliance,
+			# 		non_compliance_reason = non_compliance_reason,
+			# 		new_anc_moh711 = new_anc_moh711,
+			# 		nets_anc_moh711 = nets_anc_moh711,
+			# 		nets_anc_fnprc = nets_anc_fnprc,
+			# 		nets_anc_variance = nets_anc_variance,
+			# 		new_cwc_moh710 = new_cwc_moh710,
+			# 		nets_cwc_moh711 = nets_cwc_moh711,
+			# 		nets_cwc_fnprc = nets_cwc_fnprc,
+			# 		nets_cwc_variance = nets_cwc_variance,
+			# 		book_bal = book_bal,
+			# 		physical_count = physical_count,
+			# 		balance_variance = balance_variance,
+			# 		bal_variance_reason = bal_variance_reason,
+			# 		ld_quantity = ld_quantity,
+			# 		ld_invoice_no = ld_invoice_no,
+			# 		ld_date = ld_date,
+			# 		lld_quantity = lld_quantity,
+			# 		lld_invoice_no = lld_invoice_no,
+			# 		lld_date = lld_date,
+			# 		amc = amc,
+			# 		months_of_stock = months_of_stock,
+			# 		confirmable_cwc = confirmable_cwc,
+			# 		confirmable_anc = confirmable_anc,
+			# 		store_type = store_type,
+			# 		stock_control_card = stock_control_card,
+			# 		store_access = store_access,
+			# 		pests_risk = pests_risk,
+			# 		fire_prevention = fire_prevention,
+			# 		fire_prevention_mechanism = fire_prevention_mechanism,
+			# 		other_remarks = other_remarks,
+			# 		risk_level = risk_level
+			# 	).save()
+			#
+			# if get_balance_variance(book_bal,physical_count):
+			# 	region = facility.psk_region
+			# 	variance = int(physical_count) - int(book_bal)
+			# 	subject = 'Facility visit variance'
+			# 	name = "Net Distribution"
+			# 	emailFrom = settings.EMAIL_HOST_USER
+			# 	message = 'A variance of {} was detected during the visit to facility {}. Kindly check on the same.'.format(variance, facility.facility_name)
+			# 	emailTo = ['mugunapiero@gmail.com',coordinator_email(account)]
+			#
+			# 	send_mail(subject, message, emailFrom, emailTo, fail_silently=True)
+	messages.success(request, "Success! Visit details successfully recorded.")
+	return redirect("visits:visits_index")
+
+
+
+
+
+
+@login_required(login_url='login')
 def record_visit(request):
 	account = request.user
 	if request.method == "POST":
@@ -677,10 +897,14 @@ def fetch_visits_by_risk_level(request):
 		for i in range(1,13):
 		    months_choices.append((i, datetime.date(mwaka, i, 1).strftime('%B')))
 		miaka = range(2018, int(this_mwaka+1))
+		mwezi = calendar.month_name[mwezi]
 
 		context = {
 			'miaka' : miaka,
+			'mwaka' : mwaka,
+			'mwezi' : mwezi,
 			'months_choices' : months_choices,
+			'risk' : risk,
 			'visits' : visits
 		}
 		template = "visits/risk_filter.html"

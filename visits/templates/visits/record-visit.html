@@ -85,6 +85,7 @@
                         </div>
                         {% endfor %}
                         {% endif %}
+                        
                     </div>
                 </div>
                 <!-- Start row -->
@@ -99,7 +100,7 @@
                                 </div>
                                 <p><label for="recipient-name" class="control-label">Visit date:</label></p>
                                 <div class="input-group date">
-                                    <input type="text" name="visit_date" id="visiting-date" onfocusout="verifyDates();" class="form-control mydatepicker" placeholder="yyyy-mm-dd" required>
+                                    <input type="text" name="visit_date" id="visiting-date" onfocusout="return verifyDates();" class="form-control mydatepicker" placeholder="yyyy-mm-dd" required>
                                     <span class="input-group-addon"><i class="icon-calender"></i></span>
                                 </div>
                                 <div id="date-error" style="display: none;"></div>
@@ -436,6 +437,33 @@
         <!-- /#page-wrapper -->
     </div>
     <!-- /#wrapper -->
+
+    <!-- Import Visits Modal -->
+    <div id="importVisitsModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">Import visits by excel</h4>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" enctype="multipart/form-data" action="{% url 'visits:visits_excel_upload' %}">{% csrf_token%}
+                        <div class="form-group">
+                            <label>Excel file</label>
+                            <<input type="file" name="excel_file" class="form-control">
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary waves-effect waves-light"><i class="fa fa-search"></i> Import</button>
+                    <button type="reset" class="btn btn-warning waves-effect waves-light"><i class="fa fa-refresh"></i> Reset</button>
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- jQuery -->
     <script src="{% static 'plugins/bower_components/jquery/dist/jquery.min.js' %}"></script>

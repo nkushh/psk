@@ -61,9 +61,10 @@
                     <li><a data-toggle="modal" data-target="#riskLevelModal">Risk level filter</a></li>
                 </ul>
             </div>
+            <a class="btn btn-primary" data-toggle="modal" data-target="#importVisitsModal">Upload Excel visits</a>
             {% endifequal %}
             <a class="btn btn-danger" href="{% url 'visits:record_visit' %}"><i class="fa fa-plus"></i> Record visit</a>
-
+            <a class="btn btn-default" data-toggle="modal" data-target="#downloadVisitsModal">Download visits</a>
             <a class="btn btn-success" href="{% url 'visits:coordinators_aggregate_visits' %}"><i class="fa fa-group"></i> Visits aggregate</a>
             <a class="btn btn-primary" href="{% url 'visits:list_view' %}"><i class="fa fa-list-alt"></i> List view</a>
 

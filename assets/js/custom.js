@@ -7,7 +7,7 @@ function hideRegionSelect() {
 	}else{
 		psk_region.setAttribute("style", "display: none;");
 	}
-	
+
 }
 
 function visit_form_validator(){
@@ -37,9 +37,11 @@ function verifyDates(){
 	if(dateInput > today){
 		error_div.setAttribute("style", "display: block;");
 		error_div.innerHTML = "Error! Date entered is invalid. Future dates are not allowed. Kindly correct";
+		return false;
 	}
 	else{
 		error_div.setAttribute("style", "display: none;");
+		return true;
 	}
 }
 
@@ -55,7 +57,7 @@ function hideNonComplianceReason() {
 	}else{
 		noncompliance_reason.setAttribute("style", "display: none;");
 	}
-	
+
 }
 
 function hideLDFields() {
@@ -78,7 +80,7 @@ function hideLDFields() {
 		ld_invoice_avail.setAttribute("style", "display: none;");
 		ld_dates.setAttribute("style", "display: none;");
 	}
-	
+
 }
 
 function hideLLDFields() {
@@ -101,7 +103,7 @@ function hideLLDFields() {
 		lld_invoice_avail.setAttribute("style", "display: none;");
 		lld_dates.setAttribute("style", "display: none;");
 	}
-	
+
 }
 
 function hideInvoiceFields() {
@@ -116,7 +118,7 @@ function hideInvoiceFields() {
 	}else{
 		ld_invoice.setAttribute("style", "display: none;");
 	}
-	
+
 }
 
 function hideLLDInvoiceFields() {
@@ -131,7 +133,7 @@ function hideLLDInvoiceFields() {
 	}else{
 		lld_invoice.setAttribute("style", "display: none;");
 	}
-	
+
 }
 
 function showFirePreventionMech() {
@@ -146,7 +148,7 @@ function showFirePreventionMech() {
 	}else{
 		fire_prevention_mechanism.setAttribute("style", "display: none;");
 	}
-	
+
 }
 
 function hideBalVarianceReason(){
