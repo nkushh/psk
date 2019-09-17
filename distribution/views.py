@@ -305,11 +305,15 @@ def record_nets_issued_excel(request):
 				nets_issued = record['nets']
 				donor = record['donor']
 				date_issued = record['date_issued']
+				if nets_issued < 0:
+					invoice_type = "Return"
+				else:
+					invoice_type = "Invoice"
 			else:
 				missing_facilities.append(record['facility'])
 				continue
 
-			issued = Nets_distributed(facility=facility, invoice_no=invoice_no, nets_issued=nets_issued, donor_code=donor, date_issued=date_issued).save()
+			issued = Nets_distributed(facility=facility, invoice_no=invoice_no, invoice_type=invoice_type, nets_issued=nets_issued, donor_code=donor, date_issued=date_issued).save()
 			facility.net_balance = int(nets_issued) + int(facility.net_balance)
 			facility.system_net_balance = int(nets_issued) + int(facility.system_net_balance)
 			facility.save()
