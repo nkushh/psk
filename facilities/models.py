@@ -42,6 +42,7 @@ class Epidemiological_zones(models.Model):
 	def __str__(self):
 		return self.zone_name
 
+
 class Facilities(models.Model):
 	psk_region = models.CharField(max_length=200, default="")
 	mfl_code = models.CharField(max_length=200)

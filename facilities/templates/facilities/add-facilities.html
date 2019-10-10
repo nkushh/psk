@@ -7,7 +7,7 @@
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
         <h4 class="page-title">Add Facilities</h4>
     </div>
-    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12"> 
+    <div class="col-lg-9 col-sm-8 col-md-8 col-xs-12">
         <ol class="breadcrumb">
             <li><a href="index.html">Facilities</a></li>
             <li class="active">New facilities</li>
@@ -32,6 +32,19 @@
 			<form method="POST" action="{% url 'facilities:new_facilities' %}" enctype="multipart/form-data">{% csrf_token %}
 				<div class="form-group">
 					<label>Excel filename</label>
+					<input type="file" name="excel_file">
+				</div>
+				<button type="submit" class="btn btn-primary">Upload</button>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class=" col-md-6">
+		<div class="facility-form">
+			<form method="POST" action="{% url 'facilities:new_inventory' %}" enctype="multipart/form-data">{% csrf_token %}
+				<div class="form-group">
+					<label>Inventory filename</label>
 					<input type="file" name="excel_file">
 				</div>
 				<button type="submit" class="btn btn-primary">Upload</button>

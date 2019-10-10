@@ -137,6 +137,20 @@ def download_facilities_excel(request):
 
     return response
 
+@login_required(login_url='login')
+def download_inventory_excel(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="inventory.csv"'
+
+    writer = csv.writer(response)
+    writer.writerow(['Id', 'Name', 'Dispensing Unit', 'Unit in Stock', 'Batch Numbers'])
+
+    inventory = Inventory.objects.all().values_list('inv_id', 'name', 'du', 'us', 'bn')
+    for inv in inventory:
+        writer.writerow(inv)
+
+    return response
+
 # Fetch facilities by county
 @login_required(login_url='login')
 def county_facilities(request, county_pk):
@@ -308,6 +322,7 @@ def update_facility(request, facility_pk):
         }
         template = "facilities/update-facility.html"
         return render(request, template, context)
+
 
 # Add facilities by excel
 @login_required(login_url='login')
@@ -732,14 +747,10 @@ def update_facility_county(request):
     facilities = Facilities.objects.all()
     counties = Counties.objects.all()
     for facility in facilities:
-        for county in counties:
-            if facility.county == county.county_name:
-                facility.countyy = get_object_or_404(Counties, county_name=facility.county)
-                facility.save()
-                print(facility.countyy)
-            else:
-                continue
-    messages.success(request, "Update done")
+        facility.countyy = get_object_or_404(Counties, county_name=facility.county)
+        facility.save()
+        print(facility.countyy)
+    messages.success(request, "Facility county update done")
     return redirect('facilities:facilities')
 
 
