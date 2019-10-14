@@ -34,7 +34,7 @@ urlpatterns = [
 	# Settings
 	path('facility-settings', views.facility_settings, name="facility_settings"),
 	path('update-facilities-counties', views.update_facility_county, name="update_facility_county"),
-	path('set-facilities-region/<str:psk_region>/', views.set_facility_region, name="set_facility_region"),
+	path('set-facilities-region', views.match_county_to_region, name="set_facility_region"),
 	path('set-facilities-zone/<str:psk_zone>/', views.set_facility_zone, name="set_facility_zone"),
 	path('change-region-name', views.region_name_change, name="region_name_change"),
 ]

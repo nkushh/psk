@@ -36,13 +36,8 @@
 		<div class="white-box">
 			<h4>Assign facility regions</h4>
 			<p><span class="text text-info">* Click on any region to update its information on related facilities. *</span></p>
-			<ul class="list-inline">
-				{% for region in regions %}
-				<li class="list-inline-item settings-ul"><a href="{% url 'facilities:set_facility_region' region.region_name %}">{{ region.region_name }}</a></li> |
-				{% empty %}
-				<li class="list-inline-item"><span class="text text-info">No regions saved yet!</span></li>
-				{% endfor %}
-			</ul>
+      <p><a href="{% url 'facilities:set_facility_region' %}">Update facility transmission zones</a></p>
+
 		</div>
 	</div>
 

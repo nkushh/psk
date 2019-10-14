@@ -137,20 +137,6 @@ def download_facilities_excel(request):
 
     return response
 
-@login_required(login_url='login')
-def download_inventory_excel(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="inventory.csv"'
-
-    writer = csv.writer(response)
-    writer.writerow(['Id', 'Name', 'Dispensing Unit', 'Unit in Stock', 'Batch Numbers'])
-
-    inventory = Inventory.objects.all().values_list('inv_id', 'name', 'du', 'us', 'bn')
-    for inv in inventory:
-        writer.writerow(inv)
-
-    return response
-
 # Fetch facilities by county
 @login_required(login_url='login')
 def county_facilities(request, county_pk):
@@ -263,6 +249,7 @@ def new_facility(request):
                     psk_region = psk_region,
                     mfl_code = mfl_code,
                     facility_name = facility_name,
+                    county = county.county_name,
                     countyy = county,
                     sub_county = sub_county,
                     constituency = constituency,
@@ -299,6 +286,7 @@ def update_facility(request, facility_pk):
 
         facility.mfl_code = mfl_code
         facility.facility_name = facility_name
+        facility.county = county.county_name
         facility.countyy = county
         facility.sub_county = sub_county
         facility.constituency = constituency
@@ -351,6 +339,7 @@ def facilities_excel_upload(request):
                 Facilities(
                         mfl_code = mfl_code,
                         facility_name = facility_name,
+                        county = county.county_name,
                         countyy = county,
                         sub_county = sub_county,
                         constituency = constituency,
@@ -644,69 +633,46 @@ def facility_settings(request):
     return render(request, template, context)
 
 @login_required(login_url='login')
-def set_facility_region(request, psk_region):
-    if psk_region:
-        region = psk_region
-        if region=="Central":
-            facilities = Facilities.objects.filter(Q(county="Kiambu") | Q(county="Murang'a") | Q(county="Kitui"))
-            for facility in facilities:
-                facility.psk_region = region
-                facility.save()
-        elif region=="Central Nyanza":
-            facilities = Facilities.objects.filter(Q(county="Kisumu") | Q(county="Siaya") | Q(county="Homa Bay"))
-            for facility in facilities:
-                facility.psk_region = region
-                facility.save()
-        elif region=="Coast":
-            facilities = Facilities.objects.filter(Q(county="Mombasa") | Q(county="Kwale") | Q(county="Kilifi") | Q(county="Lamu") | Q(county="Tana River") | Q(county="Taita Taveta"))
-            for facility in facilities:
-                facility.psk_region = region
-                facility.save()
-        elif region=="Mountain":
-            facilities = Facilities.objects.filter(Q(county="Meru") | Q(county="Embu") | Q(county="Kirinyaga") | Q(county="Isiolo") | Q(county="Nyeri") | Q(county="Tharaka Nithi"))
-            for facility in facilities:
-                facility.psk_region = region
-                facility.save()
+def match_county_to_region(request):
+    facilities = Facilities.objects.all()
+    for facility in facilities:
+        county = facility.countyy.county_name
+        facility.psk_region = set_facility_region(county)
+        facility.save()
+    messages.success(request, "Successfully updated facilities region")
+    return redirect('facilities:facility_settings')
 
-        elif region=="Nairobi 2":
-            facilities = Facilities.objects.filter(Q(county="Kajiado") | Q(county="Makueni") | Q(county="Machakos"))
-            for facility in facilities:
-                facility.psk_region = region
-                facility.save()
+def set_facility_region(county):
+    central = ["Kiambu","Murang'a","Kitui"]
+    central_nyanza = ["Kisumu","Siaya","Homa Bay"]
+    coast = ["Mombasa","Kwale","Kilifi","Lamu","Tana River","Taita Taveta"]
+    mountain = ["Meru","Embu","Kirinyaga","Isiolo","Nyeri","Tharaka Nithi"]
+    nairobi = ["Kajiado","Makueni","Machakos"]
+    north_rift = ["Baringo","West Pokot","Uasin Gishu","Trans Nzoia","Elgeyo Marakwet"]
+    south_nyanza = ["Migori","Kisii","Nyamira"]
+    south_rift = ["Kericho","Nandi","Bomet","Narok"]
+    western = ["Busia","Vihiga","Bungoma","Kakamega"]
 
-        elif region=="North Rift":
-            facilities = Facilities.objects.filter(Q(county="Baringo") | Q(county="West Pokot") | Q(county="Uasin Gishu") | Q(county="Trans Nzoia") | Q(county="Elgeyo Marakwet"))
-            for facility in facilities:
-                facility.psk_region = region
-                facility.save()
-
-        elif region=="South Nyanza":
-            facilities = Facilities.objects.filter(Q(county="Migori") | Q(county="Kisii") | Q(county="Nyamira"))
-            for facility in facilities:
-                facility.psk_region = region
-                facility.save()
-
-        elif region=="South Rift":
-            facilities = Facilities.objects.filter(Q(county="Kericho") | Q(county="Nandi") | Q(county="Bomet") | Q(county="Narok"))
-            for facility in facilities:
-                facility.psk_region = region
-                facility.save()
-
-        elif region=="Western":
-            facilities = Facilities.objects.filter(Q(county="Busia") | Q(county="Vihiga") | Q(county="Bungoma") | Q(county="Kakamega"))
-            for facility in facilities:
-                facility.psk_region = region
-                facility.save()
-        else:
-            messages.warning(request, "Warning! The provided region is not valid. Kindly enter a valid PS Kenya region")
-            return redirect('facilities:facilities')
-
-        messages.success(request, "Success! {} region set to {} facilities".format(region, facilities.count()))
-        return redirect('facilities:facility_settings')
-
+    if county in central:
+        return "Central"
+    elif county in central_nyanza:
+        return "Central Nyanza"
+    elif county in coast:
+        return "Coast"
+    elif county in mountain:
+        return "Mountain"
+    elif county in nairobi:
+        return "Nairobi 2"
+    elif county in north_rift:
+        return "North Rift"
+    elif county in south_nyanza:
+        return "South Nyanza"
+    elif county in south_rift:
+        return "South Rift"
+    elif county in western:
+        return "Western"
     else:
-            template = "facilities/facility-settings.html"
-            return render(request, template)
+        return "N/A"
 
 @login_required(login_url='login')
 def set_facility_zone(request, psk_zone):
