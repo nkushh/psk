@@ -3,7 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from django.db.models.functions import Extract, TruncMonth
 from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -427,6 +427,23 @@ def download_quarter_distribution_excel(request, quarter, mwaka):
 	writer.writerow(['County', 'Nets Issued'])
 
 	for report in quarter_dist:
+	    writer.writerow(report)
+
+	return response
+
+@login_required(login_url='login')
+def download_annual_distribution_excel(request, mwaka):
+	start_date = datetime.date(mwaka-1,10,1)
+	end_date = datetime.date(mwaka,9,30)
+	annual_dist = Nets_distributed.objects.filter(date_issued__gte=start_date, date_issued__lte=end_date).values_list('facility__countyy__county_name').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['County', 'Nets Issued'])
+
+	for report in annual_dist:
 	    writer.writerow(report)
 
 	return response
