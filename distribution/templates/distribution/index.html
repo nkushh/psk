@@ -214,11 +214,6 @@
 </div>
 <!-- /.row -->
 
-<script type="text/javascript">
-// Date Picker
-jQuery('.mydatepicker, #datepicker').datepicker({format: 'yyyy-mm-dd'});
-</script>
-
 <div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -271,14 +266,15 @@ jQuery('.mydatepicker, #datepicker').datepicker({format: 'yyyy-mm-dd'});
        	<form method="POST" action="{% url 'distribution:date_range_distribution_by_county' %}">{% csrf_token %}
           <label> Start Date</label>
   				<div class="input-group date" data-provide="datepicker">
-  					<input type="text" class="form-control" placeholder="format: 1991-01-17" autocomplete="off" required>
+  					<input type="text" id="datepicker" name="start_date" class="form-control" placeholder="format: 1991-01-17" autocomplete="off" required>
   					<span class="input-group-addon">
   				        <span class="glyphicon glyphicon-calendar"></span>
   				    </span>
   				</div>
+          <br>
           <label>End Date</label>
   				<div class="input-group date" data-provide="datepicker">
-  					<input type="text" name="end_date" class="form-control" placeholder="format: 1991-01-17" autocomplete="off" required>
+  					<input type="text" name="end_date" id="datepicker" class="form-control" placeholder="format: 1991-01-17" autocomplete="off" required>
   					<span class="input-group-addon">
   				        <span class="glyphicon glyphicon-calendar"></span>
   				    </span>

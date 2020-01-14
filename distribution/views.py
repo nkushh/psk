@@ -235,7 +235,7 @@ def date_range_distribution_by_county(request):
 	account_profile = get_object_or_404(UserProfile, user=account)
 	counties = Facilities.objects.values('county').distinct()
 
-	if request.method == "POST":
+	if request.method=="POST":
 		start_date = request.POST['start_date']
 		end_date = request.POST['end_date']
 		nets_delivered = Nets_distributed.objects.filter(date_issued__range=[start_date, end_date]).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
@@ -245,7 +245,7 @@ def date_range_distribution_by_county(request):
 
 	page = request.GET.get('page', 1)
 
-	paginator = Paginator(recently_delivered, 50)
+	paginator = Paginator(nets_delivered, 50)
 
 	try:
 		recently_delivered = paginator.page(page)
@@ -260,13 +260,11 @@ def date_range_distribution_by_county(request):
 	end_index = index + 5 if index <= max_index - 5 else max_index
 	page_range = paginator.page_range[start_index:end_index]
 
-	template = "distribution/counties-issuance.html"
+	template = "distribution/distribution-by-county.html"
 	context = {
 		'page_range' : page_range,
-		'nets_delivered' : nets_delivered,
-		'counties' : counties,
-		'regions' : regions,
-		'county' : county
+		'records' : nets_delivered,
+		'counties' : counties
 	}
 	return render(request, template, context)
 

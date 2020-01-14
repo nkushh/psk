@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load humanize %}
 {% block title %}Counties Net Distribution Records{% endblock %}
 
 {% block content %}
@@ -41,11 +41,10 @@
                         <th>Total nets</th>
                     </thead>
                     <tbody>
-                      {{ records }}
                         {% for record in records %}
                         <tr>
-                            <td>{{ record.facility__county }}</td>
-                            <td>{{ record.total_issued }}</td>
+                            <td>{{ record.0 }}</td>
+                            <td>{{ record.1|intcomma }}</td>
                         </tr>
                         {% empty %}
                         <tr>
