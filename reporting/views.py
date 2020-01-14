@@ -431,7 +431,7 @@ def month_dist_filter(request):
 		template = "reporting/month_dist.html"
 		if county:
 			county = get_object_or_404(Counties, pk=county)
-			distribution = Nets_distributed.objects.filter(date_issued__month=mwezi, date_issued__year=mwaka, facility__county=county.name).values('facility__facility_name').annotate(total_dist=Sum('nets_issued')).order_by('-total_dist')
+			distribution = Nets_distributed.objects.filter(date_issued__month=mwezi, date_issued__year=mwaka, facility__county=county).values('facility__facility_name').annotate(total_dist=Sum('nets_issued')).order_by('-total_dist')
 			total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka, date_issued__month=mwezi, facility__county=county).aggregate(total_nets=Sum('nets_issued'))
 			template = "reporting/county_month_dist.html"
 		else:
