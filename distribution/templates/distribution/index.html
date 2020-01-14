@@ -54,6 +54,7 @@
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-success dropdown-toggle waves-effect waves-light" type="button">Download By Year <span class="caret"></span></button>
                 <ul role="menu" class="dropdown-menu county-dropdown">
                     <li><a href="#">All years</a></li>
+                    <li><a href="{% url 'distribution:download_current_year_distribution_excel' %}">Current year</a></li>
                     {% for mwaka in years %}
                     <li><a href="{% url 'distribution:yearly_distribution_download' mwaka %}">{{ mwaka }}</a></li>
                     {% endfor %}

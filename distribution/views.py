@@ -30,6 +30,7 @@ def distribution_index(request):
 	years = range(2018,today.year+1)
 
 	county_distribution = Nets_distributed.objects.values('facility__county').annotate(county_total=Sum('nets_issued')).order_by('-county_total')
+	annual_county_distribution = Nets_distributed.objects.filter(date_issued__year=2019).values('facility__county').annotate(county_total=Sum('nets_issued')).order_by('-county_total')
 	distribution_by_ez = Nets_distributed.objects.values('facility__epidemiological_zone').annotate(ez_distribution=Sum('nets_issued')).order_by('-ez_distribution')
 	region_distribution = Nets_distributed.objects.values('facility__psk_region').annotate(region_total=Sum('nets_issued')).order_by('-region_total')
 	total_nets_delivered = Nets_distributed.objects.filter(date_issued__year=mwaka).aggregate(nets=Sum('nets_issued'))
@@ -41,6 +42,7 @@ def distribution_index(request):
 	regions = Regions.objects.order_by('region_name')
 
 	context = {
+		'annual_county_distribution' : annual_county_distribution,
 		'counties' : counties,
 		'county_distribution' : county_distribution,
 		'distribution_by_ez' : distribution_by_ez,
@@ -442,6 +444,23 @@ def download_quarter_distribution_excel(request, quarter, mwaka):
 
 # Function to download nets distribution data for HCM Year
 # Year starting October of previous year to September of current year
+@login_required(login_url='login')
+def download_current_year_distribution_excel(request):
+	today = datetime.datetime.now()
+	mwaka = today.year
+	annual_dist = Nets_distributed.objects.filter(date_issued__year=mwaka).values_list('facility__countyy__county_name').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['County', 'Nets Issued'])
+
+	for report in annual_dist:
+	    writer.writerow(report)
+
+	return response
+
 @login_required(login_url='login')
 def download_annual_distribution_excel(request, mwaka):
 	start_date = datetime.date(mwaka-1,10,1)
