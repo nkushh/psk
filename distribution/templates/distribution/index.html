@@ -41,6 +41,7 @@
                     {% endfor %}
                 </ul>
             </div> -->
+            <a class="btn btn-success" data-toggle="modal" data-target="#distributionByDateRange"><i class="fa fa-filter"></i> Filter by dates</a>
             <div class="btn-group m-r-10">
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-success dropdown-toggle waves-effect waves-light" type="button">By Month <span class="caret"></span></button>
                 <ul role="menu" class="dropdown-menu county-dropdown">
@@ -50,6 +51,7 @@
                     {% endfor %}
                 </ul>
             </div>
+
             <div class="btn-group m-r-10">
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-success dropdown-toggle waves-effect waves-light" type="button">Download By Year <span class="caret"></span></button>
                 <ul role="menu" class="dropdown-menu county-dropdown">
@@ -212,6 +214,10 @@
 </div>
 <!-- /.row -->
 
+<script type="text/javascript">
+// Date Picker
+jQuery('.mydatepicker, #datepicker').datepicker({format: 'yyyy-mm-dd'});
+</script>
 
 <div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
@@ -249,5 +255,41 @@
             </form>
         </div>
     </div>
+</div>
+
+<!-- Filter nets distribution between two date ranges -->
+<div class="modal fade" id="distributionByDateRange" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Filter Nets Distribution</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       	<form method="POST" action="{% url 'distribution:date_range_distribution_by_county' %}">{% csrf_token %}
+          <label> Start Date</label>
+  				<div class="input-group date" data-provide="datepicker">
+  					<input type="text" class="form-control" placeholder="format: 1991-01-17" autocomplete="off" required>
+  					<span class="input-group-addon">
+  				        <span class="glyphicon glyphicon-calendar"></span>
+  				    </span>
+  				</div>
+          <label>End Date</label>
+  				<div class="input-group date" data-provide="datepicker">
+  					<input type="text" name="end_date" class="form-control" placeholder="format: 1991-01-17" autocomplete="off" required>
+  					<span class="input-group-addon">
+  				        <span class="glyphicon glyphicon-calendar"></span>
+  				    </span>
+  				</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

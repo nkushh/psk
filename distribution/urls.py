@@ -34,6 +34,7 @@ urlpatterns = [
 	path('reset-balances', views.reset_nets_balance, name="reset_nets_balance"),
 	path('quarter-report-download', views.download_qdistribution_excel, name="quarter_report_download"),
 	path('issuance-index', views.issuance_index, name="issuance_index"),
+	path('quarters-report-download', views.date_range_distribution_by_county, name="date_range_distribution_by_county"),
 	# Targets
 	path('set-distribution-targets', views.create_target, name="create_target"),
 	path('fetch-targets', views.fetch_targets, name="fetch_targets"),

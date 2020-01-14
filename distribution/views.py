@@ -228,6 +228,48 @@ def delivery_by_county(request, county):
 	}
 	return render(request, template, context)
 
+# Fetches data on nets distribution by county based on date ranges provided by user
+@login_required(login_url='login')
+def date_range_distribution_by_county(request):
+	account = request.user
+	account_profile = get_object_or_404(UserProfile, user=account)
+	counties = Facilities.objects.values('county').distinct()
+
+	if request.method == "POST":
+		start_date = request.POST['start_date']
+		end_date = request.POST['end_date']
+		nets_delivered = Nets_distributed.objects.filter(date_issued__range=[start_date, end_date]).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	else:
+		messages.error(request, "Error! No date ranges were provided")
+		return redirect('distribution:nets_distribution')
+
+	page = request.GET.get('page', 1)
+
+	paginator = Paginator(recently_delivered, 50)
+
+	try:
+		recently_delivered = paginator.page(page)
+	except PageNotAnInteger:
+		recently_delivered = paginator.page(1)
+	except EmptyPage:
+		recently_delivered = paginator.page(paginator.num_pages)
+
+	index = recently_delivered.number - 1
+	max_index = len(paginator.page_range)
+	start_index = index - 5 if index >= 5 else 0
+	end_index = index + 5 if index <= max_index - 5 else max_index
+	page_range = paginator.page_range[start_index:end_index]
+
+	template = "distribution/counties-issuance.html"
+	context = {
+		'page_range' : page_range,
+		'nets_delivered' : nets_delivered,
+		'counties' : counties,
+		'regions' : regions,
+		'county' : county
+	}
+	return render(request, template, context)
+
 # Fetches data of nets distributed to the facilities but grouping them by region
 # specified by the user.
 @login_required(login_url='login')
