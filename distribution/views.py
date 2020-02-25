@@ -409,6 +409,21 @@ def record_nets_donated_excel(request):
 # Downloads all data on nets distributed for the current year
 # grouping by county.
 @login_required(login_url='login')
+def download_facility_distribution_excel(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['MFL Code', 'Facility name', 'County', 'Nets Issued'])
+
+	reports = Nets_distributed.objects.values_list('facility__mfl_code', 'facility__facility_name', 'facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	for report in reports:
+	    writer.writerow(report)
+
+	return response
+
+
+@login_required(login_url='login')
 def download_all_distribution_excel(request):
 	today = datetime.datetime.now()
 
