@@ -423,7 +423,7 @@ def download_facility_distribution_excel(request):
 	return response
 
 @login_required(login_url='login')
-def download_facility_distribution_excel(request):
+def download_facility_distribution_excel_2019(request):
 	response = HttpResponse(content_type='text/csv')
 	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
 
