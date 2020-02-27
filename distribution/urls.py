@@ -17,6 +17,7 @@ urlpatterns = [
 	path('distribution-download/<str:quarter>/<int:mwaka>/', views.download_quarter_distribution_excel, name='quarter_distribution_download'),
 	path('download_facility_distribution_excel', views.download_facility_distribution_excel, name='download_facility_distribution_excel'),
 	path('download_facility_distribution_excel_2019', views.download_facility_distribution_excel_2019, name='download_facility_distribution_excel_2019'),
+	path('download_facility_distribution_excel_2019_2020', views.download_facility_distribution_excel_2019_2020, name='download_facility_distribution_excel_2019_2020'),
 	path('excel-nets-issuance', views.record_nets_issued_excel, name='issue_nets_excel' ),
 	path('issuance-download/<int:mwezi>/<str:mwaka>/', views.download_issuance_excel, name='issuance_download'),
 	path('excel-nets-donation', views.record_nets_donated_excel, name='donate_nets_excel' ),

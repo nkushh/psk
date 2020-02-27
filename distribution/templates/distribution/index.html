@@ -59,6 +59,7 @@
                     <div class="dropdown-divider"></div>
                     <li>Normal Calendar</li>
                     <li><a href="{% url 'distribution:download_facility_distribution_excel_2019' %}">2019 Facilities</a></li>
+                    <li><a href="{% url 'distribution:download_facility_distribution_excel_2019_2020' %}">2019 - 2020</a></li>
                     {% for mwaka in years %}
                     <li><a href="{% url 'distribution:county_annual_distribution_download' mwaka %}">{{ mwaka }} Counties</a></li>
                     {% endfor %}
