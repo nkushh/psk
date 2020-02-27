@@ -444,7 +444,7 @@ def download_facility_distribution_excel_2019_2020(request):
 	writer = csv.writer(response)
 	writer.writerow(['MFL Code', 'Facility name', 'County', 'Nets Issued'])
 
-	reports = Nets_distributed.objects.filter(date_issued__year>=2019).values_list('facility__mfl_code', 'facility__facility_name', 'facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	reports = Nets_distributed.objects.filter(date_issued__year=2019,date_issued__year=2020).values_list('facility__mfl_code', 'facility__facility_name', 'facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
 	for report in reports:
 	    writer.writerow(report)
 
