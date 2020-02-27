@@ -242,7 +242,7 @@ def download_facility_distribution_excel_date_range(request,start_date,end_date)
 		    writer.writerow(report)
 
 		return response
-	
+
 
 @login_required(login_url='login')
 def date_range_distribution_by_county(request):
@@ -281,7 +281,7 @@ def date_range_distribution_by_county(request):
 		'records' : nets_delivered,
 		'counties' : counties,
 		'start_date' : start_date,
-		'end_date' : end_date,
+		'end_date' : end_date
 	}
 	return render(request, template, context)
 
