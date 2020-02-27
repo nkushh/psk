@@ -230,6 +230,21 @@ def delivery_by_county(request, county):
 
 # Fetches data on nets distribution by county based on date ranges provided by user
 @login_required(login_url='login')
+def download_facility_distribution_excel_date_range(request,start_date,end_date):
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+		writer = csv.writer(response)
+		writer.writerow(['MFL Code', 'Facility name', 'County', 'Nets Issued'])
+
+		reports = Nets_distributed.objects.filter(date_issued__range=[start_date, end_date]).values_list('facility__mfl_code', 'facility__facility_name', 'facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+		for report in reports:
+		    writer.writerow(report)
+
+		return response
+	
+
+@login_required(login_url='login')
 def date_range_distribution_by_county(request):
 	account = request.user
 	account_profile = get_object_or_404(UserProfile, user=account)
@@ -264,7 +279,9 @@ def date_range_distribution_by_county(request):
 	context = {
 		'page_range' : page_range,
 		'records' : nets_delivered,
-		'counties' : counties
+		'counties' : counties,
+		'start_date' : start_date,
+		'end_date' : end_date,
 	}
 	return render(request, template, context)
 
