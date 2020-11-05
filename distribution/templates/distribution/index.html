@@ -41,6 +41,7 @@
                     {% endfor %}
                 </ul>
             </div> -->
+            <a class="btn btn-success" data-toggle="modal" data-target="#distributionByDateRange"><i class="fa fa-filter"></i> Filter by dates</a>
             <div class="btn-group m-r-10">
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-success dropdown-toggle waves-effect waves-light" type="button">By Month <span class="caret"></span></button>
                 <ul role="menu" class="dropdown-menu county-dropdown">
@@ -50,11 +51,19 @@
                     {% endfor %}
                 </ul>
             </div>
+
             <div class="btn-group m-r-10">
                 <button aria-expanded="false" data-toggle="dropdown" class="btn btn-success dropdown-toggle waves-effect waves-light" type="button">Download By Year <span class="caret"></span></button>
                 <ul role="menu" class="dropdown-menu county-dropdown">
-                    <li><a href="#">All years</a></li>
-                    <li><a href="{% url 'distribution:download_current_year_distribution_excel' %}">Current year</a></li>
+                    <li><a href="{% url 'distribution:download_facility_distribution_excel' %}">All years</a></li>
+                    <div class="dropdown-divider"></div>
+                    <li>Normal Calendar</li>
+                    <li><a href="{% url 'distribution:download_facility_distribution_excel_2019' %}">2019 Facilities</a></li>
+                    {% for mwaka in years %}
+                    <li><a href="{% url 'distribution:county_annual_distribution_download' mwaka %}">{{ mwaka }} Counties</a></li>
+                    {% endfor %}
+                    <div class="dropdown-divider"></div>
+                    <li>USAID Calendar</li>
                     {% for mwaka in years %}
                     <li><a href="{% url 'distribution:yearly_distribution_download' mwaka %}">{{ mwaka }}</a></li>
                     {% endfor %}
@@ -212,7 +221,6 @@
 </div>
 <!-- /.row -->
 
-
 <div id="responsive-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -249,5 +257,42 @@
             </form>
         </div>
     </div>
+</div>
+
+<!-- Filter nets distribution between two date ranges -->
+<div class="modal fade" id="distributionByDateRange" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Filter Nets Distribution</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+       	<form method="POST" action="{% url 'distribution:date_range_distribution_by_county' %}">{% csrf_token %}
+          <label> Start Date</label>
+  				<div class="input-group date" data-provide="datepicker">
+  					<input type="text" id="datepicker" name="start_date" class="form-control" placeholder="format: 1991-01-17" autocomplete="off" required>
+  					<span class="input-group-addon">
+  				        <span class="glyphicon glyphicon-calendar"></span>
+  				    </span>
+  				</div>
+          <br>
+          <label>End Date</label>
+  				<div class="input-group date" data-provide="datepicker">
+  					<input type="text" name="end_date" id="datepicker" class="form-control" placeholder="format: 1991-01-17" autocomplete="off" required>
+  					<span class="input-group-addon">
+  				        <span class="glyphicon glyphicon-calendar"></span>
+  				    </span>
+  				</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

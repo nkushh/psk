@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load humanize %}
 {% block title %}Counties Net Distribution Records{% endblock %}
 
 {% block content %}
@@ -19,7 +19,7 @@
     <div class="col-md-12">
         <div class="top-bar-btns">
             <a class="btn btn-primary" href="{% url 'distribution:issue_nets' %}"><i class="fa fa-plus"></i> Nets delivery</a>
-            <a class="btn btn-secondary" href="{% url 'distribution:download_facility_distribution_excel_date_range' start_date, end_date %}"><i class="fa fa-plus"></i> Download data</a>
+            <a class="btn btn-secondary" href="{% url 'distribution:download_facility_distribution_excel_date_range' start_date end_date %}"><i class="fa fa-plus"></i> Download data</a>
         </div>
     </div>
 </div>
@@ -42,11 +42,10 @@
                         <th>Total nets</th>
                     </thead>
                     <tbody>
-                      {{ records }}
                         {% for record in records %}
                         <tr>
-                            <td>{{ record.facility__county }}</td>
-                            <td>{{ record.total_issued }}</td>
+                            <td>{{ record.0 }}</td>
+                            <td>{{ record.1|intcomma }}</td>
                         </tr>
                         {% empty %}
                         <tr>

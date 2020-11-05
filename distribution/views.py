@@ -14,7 +14,7 @@ from authentication.models import UserProfile
 from .models import Distribution_report, Distribution_target, Nets_distributed, Nets_donated, Stocking_history, Warehouse
 from facilities.models import Counties, Epidemiological_zones, Facilities, Regions
 
-# Loads distribution dashboard template
+# Loads net distribution dashboard template
 @login_required(login_url='login')
 def distribution_index(request):
 	today = datetime.datetime.now()
@@ -58,7 +58,9 @@ def distribution_index(request):
 	template = "distribution/index.html"
 	return render(request, template, context)
 
-# Fetch month nets delivery
+# Fetch nets distribution data by the month specified by the user
+# The year by default picks the current year if the months are past february
+# of the current year.
 @login_required(login_url='login')
 def monthly_net_delivery(request, mwezi):
 	today = datetime.datetime.now()
@@ -103,7 +105,8 @@ def monthly_net_delivery(request, mwezi):
 	template = "distribution/index.html"
 	return render(request, template, context)
 
-# Fetch nets issued to facilities month and year
+# Fetch nets delivered to facilities and loads up a template that lists the
+# facilities and nets delivered there.
 @login_required(login_url='login')
 def nets_issued_to_facilities(request):
 	account = request.user
@@ -143,6 +146,7 @@ def nets_issued_to_facilities(request):
 	}
 	return render(request, template, context)
 
+# Fetches nets distributed to other parties that are not facilities.
 @login_required(login_url='login')
 def nets_donated(request):
 	account = request.user
@@ -182,6 +186,8 @@ def nets_donated(request):
 	}
 	return render(request, template, context)
 
+# Fetches nets distribution data by the county specified by the user.
+# With that data is also the aggregate number delivered to that county
 @login_required(login_url='login')
 def delivery_by_county(request, county):
 	account = request.user
@@ -222,7 +228,65 @@ def delivery_by_county(request, county):
 	}
 	return render(request, template, context)
 
+# Fetches data on nets distribution by county based on date ranges provided by user
+@login_required(login_url='login')
+def download_facility_distribution_excel_date_range(request,start_date,end_date):
+		response = HttpResponse(content_type='text/csv')
+		response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
 
+		writer = csv.writer(response)
+		writer.writerow(['MFL Code', 'Facility name', 'County', 'Nets Issued'])
+
+		reports = Nets_distributed.objects.filter(date_issued__range=[start_date, end_date]).values_list('facility__mfl_code', 'facility__facility_name', 'facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+		for report in reports:
+		    writer.writerow(report)
+
+		return response
+
+
+@login_required(login_url='login')
+def date_range_distribution_by_county(request):
+	account = request.user
+	account_profile = get_object_or_404(UserProfile, user=account)
+	counties = Facilities.objects.values('county').distinct()
+
+	if request.method=="POST":
+		start_date = request.POST['start_date']
+		end_date = request.POST['end_date']
+		nets_delivered = Nets_distributed.objects.filter(date_issued__range=[start_date, end_date]).values_list('facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	else:
+		messages.error(request, "Error! No date ranges were provided")
+		return redirect('distribution:nets_distribution')
+
+	page = request.GET.get('page', 1)
+
+	paginator = Paginator(nets_delivered, 50)
+
+	try:
+		recently_delivered = paginator.page(page)
+	except PageNotAnInteger:
+		recently_delivered = paginator.page(1)
+	except EmptyPage:
+		recently_delivered = paginator.page(paginator.num_pages)
+
+	index = recently_delivered.number - 1
+	max_index = len(paginator.page_range)
+	start_index = index - 5 if index >= 5 else 0
+	end_index = index + 5 if index <= max_index - 5 else max_index
+	page_range = paginator.page_range[start_index:end_index]
+
+	template = "distribution/distribution-by-county.html"
+	context = {
+		'page_range' : page_range,
+		'records' : nets_delivered,
+		'counties' : counties,
+		'start_date' : start_date,
+		'end_date' : end_date
+	}
+	return render(request, template, context)
+
+# Fetches data of nets distributed to the facilities but grouping them by region
+# specified by the user.
 @login_required(login_url='login')
 def delivery_by_region(request, region):
 	account = request.user
@@ -263,7 +327,7 @@ def delivery_by_region(request, region):
 	}
 	return render(request, template, context)
 
-# record nets issued to a facility
+# record nets delivered to a facility
 @login_required(login_url='login')
 def record_nets_issued(request):
 	if request.method=="POST":
@@ -274,8 +338,6 @@ def record_nets_issued(request):
 		warehouse = request.POST['warehouse']
 		date_issued = request.POST['date_issued']
 		invoice_no = request.POST['invoice_no']
-		# request_id = request.POST['request_id']
-		# transporter = request.POST['transporter']
 
 		issued = Nets_distributed(facility=facility, invoice_no=invoice_no, nets_issued=nets_issued, donor_code=donor, date_issued=date_issued).save()
 		facility.net_balance = int(nets_issued) + int(facility.net_balance)
@@ -287,7 +349,8 @@ def record_nets_issued(request):
 		context={}
 		return render(request, template, context)
 
-# record nets issued to a facility excel upload
+# record nets issued to a facility by importing an excel file
+# containing the information on various invoices for a particular period of time.
 @login_required(login_url='login')
 def record_nets_issued_excel(request):
 	if request.method=='POST' and request.FILES['excel_file']:
@@ -327,7 +390,8 @@ def record_nets_issued_excel(request):
 		template = "distribution/excel-issuance.html"
 		context={}
 		return render(request, template, context)
-
+# Imports data on nets distributed to other parties that are not
+# conventional recipients of the LLINs
 @login_required(login_url='login')
 def record_nets_donated_excel(request):
 	if request.method=='POST' and request.FILES['excel_file']:
@@ -358,6 +422,51 @@ def record_nets_donated_excel(request):
 		template = "distribution/excel-donation.html"
 		context={}
 		return render(request, template, context)
+
+# Downloads all data on nets distributed for the current year
+# grouping by county.
+@login_required(login_url='login')
+def download_facility_distribution_excel(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['MFL Code', 'Facility name', 'County', 'Nets Issued'])
+
+	reports = Nets_distributed.objects.values_list('facility__mfl_code', 'facility__facility_name', 'facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	for report in reports:
+	    writer.writerow(report)
+
+	return response
+
+@login_required(login_url='login')
+def download_facility_distribution_excel_2019(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['MFL Code', 'Facility name', 'County', 'Nets Issued'])
+
+	reports = Nets_distributed.objects.filter(date_issued__year=2019).values_list('facility__mfl_code', 'facility__facility_name', 'facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	for report in reports:
+	    writer.writerow(report)
+
+	return response
+
+@login_required(login_url='login')
+def download_facility_distribution_excel_2019_2020(request):
+	response = HttpResponse(content_type='text/csv')
+	response['Content-Disposition'] = 'attachment; filename="distribution.csv"'
+
+	writer = csv.writer(response)
+	writer.writerow(['MFL Code', 'Facility name', 'County', 'Nets Issued'])
+
+	reports = Nets_distributed.objects.filter(date_issued__year=2019).filter(date_issued__year=2020).values_list('facility__mfl_code', 'facility__facility_name', 'facility__county').annotate(totalnets=Sum('nets_issued')).order_by('-totalnets')
+	for report in reports:
+	    writer.writerow(report)
+
+	return response
+
 
 @login_required(login_url='login')
 def download_all_distribution_excel(request):
@@ -433,6 +542,8 @@ def download_quarter_distribution_excel(request, quarter, mwaka):
 
 	return response
 
+# Function to download nets distribution data for HCM Year
+# Year starting October of previous year to September of current year
 @login_required(login_url='login')
 def download_current_year_distribution_excel(request):
 	today = datetime.datetime.now()
@@ -483,6 +594,7 @@ def download_issuance_excel(request, mwezi, mwaka):
 
 	return response
 
+# Downloads data by quarter and year specified by user in a CSV file
 def download_qdistribution_excel(request):
 	today = datetime.datetime.now()
 
