@@ -1,5 +1,5 @@
 asgiref==3.3.0
-Django==3.0.7
+Django==3.0.12
 django-crispy-forms==1.7.2
 django-excel==0.0.10
 et-xmlfile==1.0.1
